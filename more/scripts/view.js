@@ -2014,11 +2014,11 @@ const view = {
 			`,
 			generate(){
 				let index = 0;
-				for(let i=0;i<3;i++){
+				for(let i=0;i<2;i++){
 					this.addChild(makeElement('div',{
 						className:'item',
 						onadded(){
-							for(let j=0;j<2;j++){
+							for(let j=0;j<3;j++){
 								let category = param[index].category.toLowerCase();
 								category = category[0].toUpperCase() + category.slice(1);
 								let brand = param[index].brand.toLowerCase();
@@ -2033,6 +2033,7 @@ const view = {
 				              display: flex;
 				              justify-content: center;
 				              padding:20px 0;
+				              padding-bottom:5px;
 				            ">
 				              <img src="${param[index].thumbnail}" style="
 				                width:64px;
@@ -2055,7 +2056,6 @@ const view = {
 				                text-align: center;
 				                background: whitesmoke;
 				                color: black;
-				                border-top:1px solid gainsboro;
 				              ">${category + ' ' +brand}</div>
 				            </div>
 									`,

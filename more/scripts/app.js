@@ -256,6 +256,7 @@ const app = {
 				productsRandom.push(choosed);
 			}
 		}
+		console.log(allproducts,productsRandom);
 		app.bodydiv.replaceChild(view.randomProducts(productsRandom));
 	},
 	generateBanner(){

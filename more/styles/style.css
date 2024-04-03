@@ -81,11 +81,11 @@ textarea{
   position: relative;
   cursor: pointer;
   border-radius:5px;
-  background: white;
+/*  background: white;*/
 /*  border:1px solid gainsboro;*/
   overflow: hidden;
-  background-clip: padding-box;
-  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+/*  background-clip: padding-box;*/
+/*  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);*/
 }
 .item .box:hover{
   border-color: #8973df;
@@ -161,7 +161,7 @@ textarea{
   gap: 10px;
   position: sticky;
   top:10px;
-  padding:20px;
+  padding:10px;
   background: white;
   z-index:12;
   border-radius: 5px;
