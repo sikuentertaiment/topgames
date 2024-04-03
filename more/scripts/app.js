@@ -37,6 +37,29 @@ const app = {
 		//record guest
 		await this.handleVisitor();
 		this.removeInitLoading();
+		this.startNotifMovement();
+	},
+	startNotifMovement(){
+		const notif = find('#notif');
+		const notifdiv = notif.find('#notif div div');
+		let shouldMove = true;
+		notif.onmouseover = ()=>{
+			shouldMove = false;
+		}
+		notif.onmouseleave = ()=>{
+			shouldMove = true;
+		}
+		let margin = 0;
+		const frame = ()=>{
+			if(shouldMove){
+				margin += 1;
+				notifdiv.style.marginLeft = `${margin}px`;
+				if(margin >= 480)
+					margin = -50;
+			}
+			requestAnimationFrame(frame);
+		}
+		frame();
 	},
 	openInitLoading(){
 		this.initLoading = this.body.addChild(view.initLoading());
