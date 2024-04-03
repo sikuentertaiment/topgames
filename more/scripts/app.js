@@ -10,6 +10,7 @@ const app = {
 	development:true,
 	app:find('#app'),
 	menu:find('#menu'),
+	menuLogin:find('#menulogin'),
 	bodydiv:find('#body'),
 	menuButtons:findall('#menu div'),
 	topLayer:find('#toplayer'),
@@ -18,6 +19,7 @@ const app = {
 		this.openInitLoading();
 		this.provideScurities();
 		await this.handleFrontData();
+		this.loginMenuEventInit();
 		this.menuButtonsInit();
 		let {products,paymentMethods,carousel,valid} = await this.getPriceList();
 		if(!valid){
@@ -326,6 +328,20 @@ const app = {
       if(!isHover)
         $('.owl-carousel').trigger('next.owl.carousel',[1000]);
     },2000)
+	},
+	openLogin(){
+		this.topLayer.replaceChild(view.loginPage());
+	},
+	openRegis(){
+		this.topLayer.replaceChild(view.regisPage());
+	},
+	loginMenuEventInit(){
+		this.menuLogin.findall('div').forEach((div)=>{
+			div.onclick = ()=>{
+				this.hideAndShow();
+				this[`open${div.id}`]();
+			}
+		})
 	}
 }
 

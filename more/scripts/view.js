@@ -2532,5 +2532,189 @@ const view = {
 				}
 			}
 		})
+	},
+	loginPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+			`,
+			innerHTML:`
+				<div style="
+					background:white;
+					padding:20px;
+					border-radius:0.5rem;
+					margin-top:20px;
+					background-clip: padding-box;
+    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				">
+					<div style="
+						text-align: center;
+				    font-size: 1.75rem;
+				    opacity: 1;
+				    transition: opacity 0.15s ease-in-out;
+				    color: #697a8d !important;
+				    font-weight: 900 !important;
+				    margin-bottom: 30px;
+					">Login member</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Email Atau Username</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Email Anda...">
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 20px;
+				    color:#566a7f;
+					">
+						<div>Password</div>
+						<div style=display:flex;>
+							<input type=password class=formc placeholder="Masukan Password Anda...">
+						</div>
+					</div>
+					<div style="
+						padding: 10px;
+				    background: #303f9f !important;
+				    color: white;
+				    border-radius: 0.375rem;
+				    text-align: center;
+				    /* font-weight: 400; */
+				    font-size: 0.9375rem;
+				    font-weight: bold;
+				    cursor: pointer;
+				    border: 1px solid #696cff;
+					">Login Sekarang</div>
+					<div style="
+						margin-top: 15px;
+				    cursor: pointer;
+				    color: #696cff;
+				    font-weight: bold;
+					">Lupa Password?</div>
+				</div>
+			`
+		})
+	},
+	regisPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+			`,
+			innerHTML:`
+				<div style="
+					background:white;
+					padding:20px;
+					border-radius:0.5rem;
+					margin-top:20px;
+					background-clip: padding-box;
+    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				">
+					<div style="
+						text-align: center;
+				    font-size: 1.75rem;
+				    opacity: 1;
+				    transition: opacity 0.15s ease-in-out;
+				    color: #697a8d !important;
+				    font-weight: 900 !important;
+				    margin-bottom: 30px;
+					">New Member</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Nama Lengkap</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Nama Anda...">
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Email Atau Username</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Email Anda...">
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Nomor Whatsapp</div>
+						<div style=display:flex;align-items:center;>
+							<input type=password class=formc placeholder="Masukan Password Anda..." style="
+								border-radius:8px 0 0 8px;
+							">
+							<div style="
+								color: #fff;
+						    background-color: #303f9f !important;
+						    border-color: #696cff;
+						    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
+						    white-space:nowrap;
+						    padding:9px;
+						    border-radius:0 8px 8px 0;
+						    cursor:pointer;
+							">Kirim Otp</div>
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Kode Otp</div>
+						<div style=display:flex;>
+							<input type=number class=formc placeholder="Masukan Password Anda...">
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 20px;
+				    color:#566a7f;
+					">
+						<div>Password</div>
+						<div style=display:flex;>
+							<input type=password class=formc placeholder="Masukan Password Anda...">
+						</div>
+					</div>
+					<div style="
+						padding: 10px;
+				    background: #303f9f !important;
+				    color: white;
+				    border-radius: 0.375rem;
+				    text-align: center;
+				    /* font-weight: 400; */
+				    font-size: 0.9375rem;
+				    font-weight: bold;
+				    cursor: pointer;
+				    border: 1px solid #696cff;
+					">Daftar Sekarang</div>
+				</div>
+			`
+		})
 	}
 }
