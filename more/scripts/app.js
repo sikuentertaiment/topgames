@@ -42,6 +42,7 @@ const app = {
 	startNotifMovement(){
 		const notif = find('#notif');
 		const notifdiv = notif.find('#notif div div');
+		const charlen = notifdiv.innerText.length;
 		let shouldMove = true;
 		notif.onmouseover = ()=>{
 			shouldMove = false;
@@ -55,7 +56,7 @@ const app = {
 				margin += 1;
 				notifdiv.style.marginLeft = `${margin}px`;
 				if(margin >= 480)
-					margin = -50;
+					margin = -charlen * 10;
 			}
 			requestAnimationFrame(frame);
 		}
