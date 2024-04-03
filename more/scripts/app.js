@@ -272,7 +272,7 @@ const app = {
 				})
 			}
 		}
-		while(productsRandom.length<6){
+		while(productsRandom.length<9){
 			const choosed = allproducts.getRandom();
 			if(!skuinside.includes(choosed.brand)){
 				skuinside.push(choosed.brand);

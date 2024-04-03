@@ -2014,7 +2014,7 @@ const view = {
 			`,
 			generate(){
 				let index = 0;
-				for(let i=0;i<2;i++){
+				for(let i=0;i<3;i++){
 					this.addChild(makeElement('div',{
 						className:'item',
 						onadded(){
@@ -2036,11 +2036,10 @@ const view = {
 				              padding-bottom:5px;
 				            ">
 				              <img src="${param[index].thumbnail}" style="
-				                width:64px;
-				                height:64px;
+				                width:90px;
+				                height:90px;
 				                object-fit: cover;
 				                border-radius:5px;
-				                margin-top:15px;
 				              ">
 				            </div>
 				            <div style="
@@ -2051,11 +2050,12 @@ const view = {
 				              align-items:flex-end;
 				            ">
 				              <div style="
-				                padding: 15px;
-				                width: 100%;
+				                padding: 0 15px;
+				                width: 90%;
 				                text-align: center;
 				                background: whitesmoke;
 				                color: black;
+				                white-space:nowrap;
 				              ">${category + ' ' +brand}</div>
 				            </div>
 									`,
