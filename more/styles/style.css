@@ -135,7 +135,7 @@ textarea{
 }
 #banner{
   height: 200px;
-  padding:10px;
+/*  padding:10px;*/
 /*  border:1px solid gainsboro;*/
   border-radius: 5px;
   cursor: pointer;
@@ -144,6 +144,7 @@ textarea{
   background: white;
   background-clip: padding-box;
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+  overflow: hidden;
 }
 #banner div{
   width:100%;
@@ -168,6 +169,21 @@ textarea{
 /*  border:1px solid gainsboro;*/
   overflow: auto;
   background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+}
+#notif{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  top:10px;
+  padding:1rem !important;
+  background: white;
+  z-index:12;
+  border-radius: 5px;
+/*  border:1px solid gainsboro;*/
+  overflow: auto;
+  background-clip: padding-box;
+  margin-top:10px;
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
 #menu div{

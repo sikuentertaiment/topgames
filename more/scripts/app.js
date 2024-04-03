@@ -285,11 +285,11 @@ const app = {
 		}
 		$('.owl-carousel').owlCarousel({
       loop:true,
-      margin:10,
+      margin:0,
       nav:false,
       dots:false,
       items:1,
-      stagePadding:30,
+      // stagePadding:30,
     });
     let isHover = false;
     $('.owl-carousel').mouseover(()=>{
