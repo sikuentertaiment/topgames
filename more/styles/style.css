@@ -33,13 +33,13 @@ body {
   width: 100%;
   top: 0;
   left: 0;
-  background:whitesmoke;
+  background:#f5f5f9;
   display: flex;
   align-items: flex-start;
   padding:0;
   margin:0;
   justify-content: center;
-  font-family: 'JSfont';
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-tap-highlight-color:  rgba(255, 255, 255, 0);
 }
 input, textarea, select{
@@ -82,8 +82,10 @@ textarea{
   cursor: pointer;
   border-radius:5px;
   background: white;
-  border:1px solid gainsboro;
+/*  border:1px solid gainsboro;*/
   overflow: hidden;
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
 .item .box:hover{
   border-color: #8973df;
@@ -96,6 +98,7 @@ textarea{
   justify-content: center;
   color:gray;
   font-size: 11px;
+  margin-bottom: 100px;
 }
 #texttitle{
   font-size:24px;
@@ -105,15 +108,42 @@ textarea{
   justify-content: center;
   position: relative;
   text-align: center;
+  display: none;
+}
+#bottomNav{
+  display:flex;
+  padding:20px 0;
+  gap:10px;
+  justify-content: space-between;
+  background:white;
+  position: fixed;
+  bottom: 0;
+  z-index:2;
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+  border-radius:10px 10px 0 0;
+}
+#bottomNav div{
+  width:100%;
+  text-align: center;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
 }
 #banner{
   height: 200px;
   padding:10px;
-  border:1px solid gainsboro;
+/*  border:1px solid gainsboro;*/
   border-radius: 5px;
   cursor: pointer;
   margin-bottom: 20px;
+  margin-top: 10px;
   background: white;
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
 #banner div{
   width:100%;
@@ -135,12 +165,14 @@ textarea{
   background: white;
   z-index:12;
   border-radius: 5px;
-  border:1px solid gainsboro;
+/*  border:1px solid gainsboro;*/
   overflow: auto;
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
 #menu div{
   padding:10px;
-  background: #8973df;
+  background: #696cff;
   color:white;
   display: flex;
   justify-content: center;
@@ -149,14 +181,15 @@ textarea{
   border-radius:5px;
   cursor: pointer;
   gap:5px;
-  border:1px solid gainsboro;
+/*  border:1px solid gainsboro;*/
+  font-size: 16px;
 }
 #menu div img{
   width:24px;
   height: 24px;
 }
 #menu div:hover{
-  background: gray;
+  background: #5f61e6;
 }
 .fullsize{
   width: 100%;

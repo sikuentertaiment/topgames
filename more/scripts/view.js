@@ -2056,7 +2056,6 @@ const view = {
 				                background: whitesmoke;
 				                color: black;
 				                border-top:1px solid gainsboro;
-				                font-weight:bold;
 				              ">${category + ' ' +brand}</div>
 				            </div>
 									`,

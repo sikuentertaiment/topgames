@@ -33,7 +33,7 @@ const app = {
 		this.carousel = carousel;
 		this.generateBanner();
 		this.generateRandomProduct();
-		this.handleCustomerSupport();
+		// this.handleCustomerSupport();
 		//record guest
 		await this.handleVisitor();
 		this.removeInitLoading();
