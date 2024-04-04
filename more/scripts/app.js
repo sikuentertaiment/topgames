@@ -10,6 +10,7 @@ const app = {
 	development:true,
 	app:find('#app'),
 	menu:find('#menu'),
+	bottomNav:find('#bottomNav'),
 	menuLogin:find('#menulogin'),
 	bodydiv:find('#body'),
 	menuButtons:findall('#menu div'),
@@ -21,6 +22,7 @@ const app = {
 		await this.handleFrontData();
 		this.loginMenuEventInit();
 		this.menuButtonsInit();
+		this.bottomNavEventInit();
 		let {products,paymentMethods,carousel,valid} = await this.getPriceList();
 		if(!valid){
 			const old = this.getOldList();
@@ -130,6 +132,10 @@ const app = {
 	hideAndShow(){
 		this.body.style.overflow = 'hidden';
 		this.topLayer.show('flex');
+	},
+	topLayerClose(){
+		this.topLayer.hide();
+		this.body.style.overflow = 'auto';
 	},
 	openDetailsProduct(productId='defaultid'){
 		this.hideAndShow();
@@ -337,6 +343,23 @@ const app = {
 	},
 	loginMenuEventInit(){
 		this.menuLogin.findall('div').forEach((div)=>{
+			div.onclick = ()=>{
+				this.hideAndShow();
+				this[`open${div.id}`]();
+			}
+		})
+	},
+	openCallcs(){
+		this.topLayer.replaceChild(view.callCsPage());
+	},
+	openHome(){
+		this.topLayerClose();
+	},
+	openCekpesanan(){
+		this.topLayer.replaceChild(view.cekPesanan());
+	},
+	bottomNavEventInit(){
+		this.bottomNav.findall('div').forEach((div)=>{
 			div.onclick = ()=>{
 				this.hideAndShow();
 				this[`open${div.id}`]();

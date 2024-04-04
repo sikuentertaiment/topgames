@@ -135,7 +135,7 @@ textarea{
   cursor: pointer;
 }
 #banner{
-  height: 250px;
+/*  height: 250px;*/
 /*  padding:10px;*/
 /*  border:1px solid gainsboro;*/
   border-radius: 0.5rem !important;
@@ -202,6 +202,7 @@ textarea{
   margin-top:10px;
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
   color:#303f9f;
+  cursor:pointer;
 }
 #notif div div{
   white-space: nowrap;
@@ -326,6 +327,6 @@ textarea{
     width:100%;
   }
   #banner{
-    height: 200px;
+/*    height: 200px;*/
   }
 }

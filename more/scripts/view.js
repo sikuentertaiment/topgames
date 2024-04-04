@@ -2056,6 +2056,7 @@ const view = {
 				                background: whitesmoke;
 				                color: black;
 				                white-space:nowrap;
+				                font-size:13px;
 				              ">${category + ' ' +brand}</div>
 				            </div>
 									`,
@@ -2565,9 +2566,9 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Email Atau Username</div>
+						<div>Username</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Email Anda...">
+							<input class=formc placeholder="Masukan Username Anda...">
 						</div>
 					</div>
 					<div style="
@@ -2578,8 +2579,22 @@ const view = {
 				    color:#566a7f;
 					">
 						<div>Password</div>
-						<div style=display:flex;>
-							<input type=password class=formc placeholder="Masukan Password Anda...">
+						<div id=passwordmechanism>
+							<div style=display:flex;gap:10px;>
+								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
+								<img src=./more/media/hide.png style="
+									object-fit:contain;
+									cursor:pointer;
+								" id=0_1>
+							</div>
+							<div style=display:flex;gap:10px;display:none;>
+								<input class=formc placeholder="Masukan Password Anda..." id=0>
+								<img src=./more/media/show.png style="
+									object-fit:contain;
+									cursor:pointer;
+									width:24px;
+								" id=1_0>
+							</div>
 						</div>
 					</div>
 					<div style="
@@ -2601,7 +2616,31 @@ const view = {
 				    font-weight: bold;
 					">Lupa Password?</div>
 				</div>
-			`
+			`,
+			onadded(){
+				this.define();
+				this.initPasswordMechanism();
+			},
+			define(){
+				this.passparent = this.find('#passwordmechanism');
+			},
+			initPasswordMechanism(){
+				const divs = this.passparent.findall('div');
+				const inputs = this.passparent.findall('input');
+				this.passparent.findall('img').forEach(img=>{
+					img.onclick = ()=>{
+						const cmd = img.id.split('_');
+						divs[Number(cmd[0])].hide();
+						divs[Number(cmd[1])].show('flex');
+						divs[Number(cmd[1])].find('input').focus();
+					}
+				})
+				inputs.forEach((input)=>{
+					input.oninput = ()=>{
+						inputs[Number(input.id)].value = input.value;
+					}
+				})
+			}
 		})
 	},
 	regisPage(){
@@ -2662,7 +2701,7 @@ const view = {
 					">
 						<div>Nomor Whatsapp</div>
 						<div style=display:flex;align-items:center;>
-							<input type=password class=formc placeholder="Masukan Password Anda..." style="
+							<input type=password class=formc placeholder="Masukan No Whatsapp Anda..." style="
 								border-radius:8px 0 0 8px;
 							">
 							<div style="
@@ -2686,7 +2725,7 @@ const view = {
 					">
 						<div>Kode Otp</div>
 						<div style=display:flex;>
-							<input type=number class=formc placeholder="Masukan Password Anda...">
+							<input type=number class=formc placeholder="Masukan Kode Otp...">
 						</div>
 					</div>
 					<div style="
@@ -2697,8 +2736,22 @@ const view = {
 				    color:#566a7f;
 					">
 						<div>Password</div>
-						<div style=display:flex;>
-							<input type=password class=formc placeholder="Masukan Password Anda...">
+						<div id=passwordmechanism>
+							<div style=display:flex;gap:10px;>
+								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
+								<img src=./more/media/hide.png style="
+									object-fit:contain;
+									cursor:pointer;
+								" id=0_1>
+							</div>
+							<div style=display:flex;gap:10px;display:none;>
+								<input class=formc placeholder="Masukan Password Anda..." id=0>
+								<img src=./more/media/show.png style="
+									object-fit:contain;
+									cursor:pointer;
+									width:24px;
+								" id=1_0>
+							</div>
 						</div>
 					</div>
 					<div style="
@@ -2713,6 +2766,146 @@ const view = {
 				    cursor: pointer;
 				    border: 1px solid #696cff;
 					">Daftar Sekarang</div>
+				</div>
+			`,
+			onadded(){
+				this.define();
+				this.initPasswordMechanism();
+			},
+			define(){
+				this.passparent = this.find('#passwordmechanism');
+			},
+			initPasswordMechanism(){
+				const divs = this.passparent.findall('div');
+				const inputs = this.passparent.findall('input');
+				this.passparent.findall('img').forEach(img=>{
+					img.onclick = ()=>{
+						const cmd = img.id.split('_');
+						divs[Number(cmd[0])].hide();
+						divs[Number(cmd[1])].show('flex');
+						divs[Number(cmd[1])].find('input').focus();
+					}
+				})
+				inputs.forEach((input)=>{
+					input.oninput = ()=>{
+						inputs[Number(input.id)].value = input.value;
+					}
+				})
+			}
+		})
+	},
+	cekPesanan(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+			`,
+			innerHTML:`
+				<div style="
+					background:white;
+					padding:20px;
+					border-radius:0.5rem;
+					margin-top:20px;
+					background-clip: padding-box;
+    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				">
+					<div style="
+						text-align: center;
+				    font-size: 1.75rem;
+				    opacity: 1;
+				    transition: opacity 0.15s ease-in-out;
+				    color: #697a8d !important;
+				    font-weight: 900 !important;
+				    margin-bottom: 30px;
+					">Cek Pesanan</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 20px;
+				    color:#566a7f;
+					">
+						<div>Masukan Id Transaksi</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Transaksi Id Anda...">
+						</div>
+					</div>
+					<div style="
+						padding: 10px;
+				    background: #303f9f !important;
+				    color: white;
+				    border-radius: 0.375rem;
+				    text-align: center;
+				    /* font-weight: 400; */
+				    font-size: 0.9375rem;
+				    font-weight: bold;
+				    cursor: pointer;
+				    border: 1px solid #696cff;
+					">Cek Sekarang</div>
+				</div>
+			`
+		})
+	},
+	callCsPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+			`,
+			innerHTML:`
+				<div style="
+					background:white;
+					padding:20px;
+					border-radius:0.5rem;
+					margin-top:20px;
+					background-clip: padding-box;
+    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				">
+					<div style="
+						text-align: center;
+				    font-size: 1.75rem;
+				    opacity: 1;
+				    transition: opacity 0.15s ease-in-out;
+				    color: #697a8d !important;
+				    font-weight: 900 !important;
+				    margin-bottom: 30px;
+					">Kontak</div>
+					<div style="
+						display: flex;
+				    gap: 10px;
+				    margin-bottom: 20px;
+				    color: #566a7f;
+				    padding: 1rem !important;
+				    background-clip: padding-box;
+				    box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				    border-radius: 8px;
+				    font-weight: 500;
+				    cursor: pointer;
+				    align-items: center;
+    				justify-content: space-between;
+					">
+						Whatsapp
+						<img src="https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/whatsapp_icon.png" width=30>
+					</div>
+					<div style="
+						display: flex;
+				    gap: 10px;
+				    margin-bottom: 20px;
+				    color: #566a7f;
+				    padding: 1rem !important;
+				    background-clip: padding-box;
+				    box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				    border-radius: 8px;
+				    font-weight: 500;
+				    cursor: pointer;
+				    align-items: center;
+    				justify-content: space-between;
+					">
+						Email
+						<img src="https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/icons-mail.png" width=25>
+					</div>
 				</div>
 			`
 		})
