@@ -25,7 +25,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -34,7 +34,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -50,21 +49,19 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Detail Produk</div>
+					<div class=bold>Detail Produk</div>
 				</div>
 				<div style="
 					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				">
 					<div style="
 						margin-bottom: 10px;
 				    padding: 5px;
 				    background: white;
-				    border: 1px solid gainsboro;
 				    border-radius:5px;
-					">
+					" class="card">
 						<div style="
 							width:100%;height:200px;
 						">
@@ -73,64 +70,43 @@ const view = {
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:10px;font-weight:bold;">${param.title}</div>
 						<div>Menyediakan ${param.title} beragam varian dengan harga yang sangat terjangkau.</div>
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:20px;font-weight:bold;">Detail Kustomer</div>
 						<div style=margin-bottom:20px;>
 							<div style=margin-bottom:10px;>${param.products[0].category !== 'Games' ? 'Hp Tujuan' : 'User Id / Zone'}</div>
-							<div style=display:flex;gap:10px;><input placeholder="${param.products[0].category !== 'Games' ? '08xxxxxxxxx' : 'user id/zone id'}" id=goalNumber type=number>
+							<div style=display:flex;gap:10px;><input placeholder="${param.products[0].category !== 'Games' ? '08xxxxxxxxx' : 'user id/zone id'}" id=goalNumber type=number class=formc>
 								<div style="
-									padding: 10px;
-							    border-radius: 5px;
-							    color: white;
-							    background: #8973df;
 							    display: ${param.products[0].category !== 'Games' ? 'none' : 'flex'};
-							    align-items: center;
-							    justify-content: center;
-							    cursor: pointer;
-							    border: 1px solid gainsboro;
-							    white-space: nowrap;
-								" id=useridchecker>Cek UserID</div>
+								" id=useridchecker class=goldbutton>Cek UserID</div>
 								<div style="
-									padding: 10px;
-							    border-radius: 5px;
-							    color: white;
-							    background: #8973df;
-							    display: ${param.products[0].category === 'Games' ? 'none' : 'flex'};
-							    align-items: center;
-							    justify-content: center;
-							    cursor: pointer;
-							    border: 1px solid gainsboro;
-							    white-space: nowrap;
-								" id=findNumber>Cari Nomor</div>
+							    display: ${param.products[0].category === 'Games' ? 'none' : 'flex'};;
+								" id=findNumber class=goldbutton>Cari Nomor</div>
 							</div>
-							${param.products[0].category === 'Games' ? '<div style=margin-top:10px;><span style="font-size:12px;color:red;">Jika games memiliki zona id, maka gunakan formula berikut:<br>"user id/zona id"</span></div>' : ''}
+							${param.products[0].category === 'Games' ? '<div style="margin-top:10px;background-color: #d7f5fc;padding:10px;border-radius:8px;border-color: #b3edf9;color: #03c3ec;"><span style="font-size:12px;">Jika games memiliki zona id, maka gunakan formula berikut:<br>"user id/zona id"</span></div>' : ''}
 						</div>
 						<div>
 							<div style=margin-bottom:10px;>Notifikasi Whatsapp</div>
-							<div style=display:flex;><input placeholder=08xxxxxxxxx id=waNotif type=number></div>
+							<div style=display:flex;><input placeholder=08xxxxxxxxx id=waNotif type=number class=formc></div>
 						</div>
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:10px;font-weight:bold;">Varian Produk</div>
 						<div id=productvarians>
 							
@@ -138,11 +114,10 @@ const view = {
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:10px;font-weight:bold;">Metode Pembayaran</div>
 						<div id=payments>
 							<div style=margin-top:10px;font-size:12px;color:gray;font-weight:bold;>Memuat metode pembayaran...</div>
@@ -150,32 +125,22 @@ const view = {
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:10px;font-weight:bold;">Gunakan Voucher</div>
 						<div style=display:flex;gap:10px;>
 							<div style=display:flex;width:100%;>
-								<input placeholder="Masukan kode voucher anda" id=voucher type=number>
+								<input placeholder="Masukan kode voucher anda" id=voucher type=number class=formc>
 							</div>
-							<div style="
-								padding:10px;
-								color:white;
-								background:#8973df;
-								border-radius:5px;
-								white-space:nowrap;display:flex;
-								align-items:center;
-								border:1px solid gainsboro;
-								cursor:pointer;
-							" id=checkvoucherstatus>
+							<div class=goldbutton id=checkvoucherstatus>
 								Cek Voucher	
 							</div>
 						</div>
 					</div>
 					<div style="margin:20px 0;" class=smallimportan>*Dengan melanjutkan berarti anda setuju dengan semua persyaratan kami.</div>
-					<div class=goldbutton style=margin-bottom:10px;border-radius:5px; id=buybutton>Proses Pembelian</div>
+					<div class=goldbutton style=margin-bottom:100px;border-radius:5px; id=buybutton>Proses Pembelian</div>
 				</div>
 			`,
 			close(){
@@ -298,9 +263,9 @@ const view = {
 					title = title[0].toUpperCase() + title.slice(1);
 					this.variansdiv.addChild(makeElement('div',{
 						parent:this,
+						className:'card',
 						style:`
 							height:64px;
-							border:1px solid gainsboro;
 							border-radius:5px;
 							display:flex;
 							justify-content:space-between;
@@ -331,8 +296,8 @@ const view = {
 			generateSaldoGuaranteeMethod(price,activeVarian){
 				this.payments.addChild(makeElement('div',{
 					parent:this,
+					className:'card',
 					style:`
-						border:1px solid gainsboro;
 						border-radius:5px;
 						display:flex;
 						padding:20px;
@@ -343,7 +308,7 @@ const view = {
 						flex-wrap:wrap;
 					`,
 					innerHTML:`
-						<div><img src="./more/media/guaranteeicon.png" style="background:white;object-fit:contain;border:1px solid gainsboro;border-radius:5px;padding:10px;"></div>
+						<div><img src="./more/media/guaranteeicon.png" style="background:white;object-fit:contain;border-radius:5px;padding:10px;"></div>
 						<div style=display:flex;gap:10px;flex-direction:column;>
 							<div style=font-size:14px;>
 								<div>Saldo Garansi</div>
@@ -401,8 +366,8 @@ const view = {
 					availMethods.forEach(method=>{
 						this.payments.addChild(makeElement('div',{
 							parent:this,
+							className:'card',
 							style:`
-								border:1px solid gainsboro;
 								border-radius:5px;
 								display:flex;
 								padding:20px;
@@ -413,7 +378,7 @@ const view = {
 								flex-wrap:wrap;
 							`,
 							innerHTML:`
-								<div><img src="${method.paymentImage}" style="background:white;width:54px;height:54px;object-fit:contain;border:1px solid gainsboro;border-radius:5px;"></div>
+								<div><img src="${method.paymentImage}" style="background:white;width:54px;height:54px;object-fit:contain;border-radius:5px;"></div>
 								<div style=display:flex;gap:10px;flex-direction:column;>
 									<div style=font-size:14px;>${method.paymentName}</div>
 									<div style=font-size:12px;>Rp ${getPrice(Number(method.totalFee) + price)}</div>

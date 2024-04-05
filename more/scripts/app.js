@@ -142,6 +142,7 @@ const app = {
 	},
 	openDetailsProduct(productId='defaultid'){
 		this.hideAndShow();
+		this.topLayerSetBackground();
 		this.topLayer.replaceChild(view.productDetails(productId));
 	},
 	confirmAction(param){
@@ -201,6 +202,9 @@ const app = {
 		    font-size: 14px;
 		    border:1px solid gainsboro;
 		    z-index:20;
+		    background-color: #d7f5fc;
+		    border-color: #b3edf9;
+		    color: #03c3ec;
 			`,
 			innerHTML:`
 				<div>

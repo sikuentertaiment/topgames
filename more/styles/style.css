@@ -7,12 +7,12 @@
 
 /* width */
 ::-webkit-scrollbar {
-  
+  width: 0;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: var(--gray);
+  background: 'blue';
   width: 0;
 }
 
@@ -204,6 +204,8 @@ textarea{
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
   color:#303f9f;
   cursor:pointer;
+  position:sticky;
+  top:10px;
 }
 #notif div div{
   white-space: nowrap;
@@ -280,13 +282,18 @@ textarea{
   width: 480px;
 }
 .goldbutton{
-  padding:20px;
-  font-weight:bold;
-  text-align:center;cursor:pointer;
-  border:1px solid gainsboro;
-  color:white;
-  background:#8973df;
-  border-radius: 10px;
+  padding: 10px;
+  background: #303f9f;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+  gap: 5px;
+  border: 1px solid #696cff;
+  font-size: 16px;
+  white-space: nowrap;
 }
 #beranda{
   padding: 30px 0;
@@ -301,8 +308,9 @@ textarea{
   color: gray;
 }
 .varianselected{
-  background: #8973df;
-  color:white;
+/*  background: #8973df;*/
+/*  color:white;*/
+  border:1px solid #696cff;
 }
 .formc{
   display: block;
@@ -345,6 +353,10 @@ textarea{
 }
 .blackHover:hover{
   color:black;
+}
+.card{
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
 
 @media screen and (max-width:900px){
