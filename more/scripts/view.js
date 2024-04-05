@@ -1302,7 +1302,7 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											${i==0 ? 'padding:20px;':''}
+											${i==0 ? 'padding-top:20px;':''}
 											border-radius:5px 5px 0 0;
 											padding-bottom:10px;
 										">
@@ -1448,7 +1448,7 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											${i==0 ? 'padding:20px;':''}
+											${i==0 ? 'padding-top:20px;':''}
 											border-radius:5px 5px 0 0;
 											padding-bottom:10px;
 										">
@@ -1595,7 +1595,7 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											${i===0?'padding:20px;':''}
+											${i===0?'padding-top:20px;':''}
 											border-radius:5px 5px 0 0;
 											padding-bottom:10px;
 										">
@@ -1741,7 +1741,7 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											${i===0?'padding:10px;':''}
+											${i===0?'padding-top:20px;':''}
 											border-radius:5px 5px 0 0;
 											padding-bottom:10px;
 										">
@@ -1888,7 +1888,7 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											${i===0?'padding:20px;':''}
+											${i===0?'padding-top:20px;':''}
 											border-radius:5px 5px 0 0;
 											padding-bottom:10px;
 										">
@@ -2843,11 +2843,10 @@ const view = {
 			innerHTML:`
 				<div style="
 					background:#f5f5f9;
-					width:50%;
+					width:60%;
 					height:100%;
 					background-clip: padding-box;
-					transform: translate(-10px, 0);
-				">
+				" id=whitemoremenu>
 					<div style="
 						padding:15px;
 						display:flex;

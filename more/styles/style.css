@@ -101,7 +101,6 @@ textarea{
   justify-content: center;
   color:gray;
   font-size: 11px;
-  margin-bottom: 100px;
 }
 #texttitle{
   font-size:24px;
@@ -119,7 +118,7 @@ textarea{
   gap:10px;
   justify-content: space-between;
   background:white;
-  position: fixed;
+  position: sticky;
   bottom: 0;
   z-index:15;
   background-clip: padding-box;
@@ -298,6 +297,9 @@ textarea{
   padding: 30px 0;
   color: gray;
 }
+#whitemoremenu{
+    transform: translate(-10px, 0);
+  }
 .bigtitle{
   font-weight: bold;
   color:#8973df;
@@ -371,5 +373,8 @@ textarea{
   }
   .smartWidthMoreMenu{
     width: 100%;
+  }
+  #whitemoremenu{
+    transform: translate(0, 0);
   }
 }
