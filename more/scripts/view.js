@@ -26,11 +26,9 @@ const view = {
 			className:'smartWidth',
 			style:`
 				background:white;
-				border:1px solid gainsboro;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
-				border-radius:10px 10px 0 0;
 			`,
 			innerHTML:`
 				<div style="
@@ -260,7 +258,7 @@ const view = {
 				this.variansdiv = this.find('#productvarians');
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateVarians();
@@ -2926,15 +2924,35 @@ const view = {
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 				">
 					<div style="
-						padding:10px;
+						padding:15px;
+						display:flex;
+						justify-content:flex-end;
+						align-items:center;
 					">
-						<div>Menu Tambahan</div>
-						<div>
-							<img src=./more/media/close.png>
+						<div style="
+							display:flex;
+							align-items:center;
+						" id=close>
+							<img src=./more/media/close.png width=16 style=cursor:pointer;>
 						</div>
 					</div>
+					<div style="
+						padding:15px;
+					" class="columnMenuParent">
+						<div class="bottomMenu blackHover">Daftar Harga</div>
+						<div class="bottomMenu blackHover">Term Of Use</div>
+					</div>
 				</div>
-			`
+			`,
+			onadded(){
+				this.define();
+			},
+			define(){
+				this.closeButton = this.find('#close');
+				this.closeButton.onclick = ()=>{
+					app.topLayerClose();
+				}
+			}
 		})
 	}
 }
