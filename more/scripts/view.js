@@ -539,8 +539,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -550,7 +549,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -566,7 +564,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Detail Pesanan</div>
+					<div class=bold>Detail Pesanan</div>
 					<div style="
 						position: absolute;
 				    right: 10px;
@@ -574,12 +572,11 @@ const view = {
 				    width: 32px;
 				    height: 32px;
 				    cursor:pointer;
-				    background:mediumpurple;
 				    display: flex;
 				    align-items: center;
 				    justify-content: center;
 				    border-radius:5px;
-					" id=refreshbutton>
+					" id=refreshbutton class=goldbutton>
 						<img src=./more/media/refreshicon.png style=width:24px;height:24px;>
 					</div>
 				</div>
@@ -587,25 +584,22 @@ const view = {
 					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				">
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:10px;font-weight:bold;">Pesanan berhasil dibuat!</div>
 						<div>Terimakasih telah melakukan pemesanan, mohon hubungi admin jika ada kebingungan</div>
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:20px;font-weight:bold;">Detail Pesanan</div>
 						<div style=margin-bottom:20px;>
 							<div style=margin-bottom:10px;>Hp Tujuan</div>
@@ -646,11 +640,10 @@ const view = {
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
 						margin-bottom:10px;
 						border-radius:5px;
-					">
+					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:20px;font-weight:bold;">Detail Pembayaran</div>
 						<div style=margin-bottom:20px;>
 							<div style=margin-bottom:10px;>Metode Pembayaran</div>
@@ -665,16 +658,14 @@ const view = {
 							<div style=display:${param.payments.vaNumber ? 'flex' : 'none'};gap:10px;>
 								<input value="${param.payments.vaNumber}" id=vanumberinput>
 								<div style="
-									background: #8973df;
 							    display: flex;
 							    align-items: center;
 							    width: 32px;
 							    height: 32px;
 							    padding: 5px;
 							    border-radius:5px;
-							    border:1px solid gainsboro;
 							    cursor:pointer;
-								">
+								" class=goldbutton>
 									<img src=./more/media/copyicon.png id=vacopybutton>
 								</div>
 							</div>
@@ -723,22 +714,11 @@ const view = {
 					</div>
 					<div style="
 						padding:20px;
-						border:1px solid gainsboro;
 						background:white;
-						margin-bottom:10px;
+						margin-bottom:100px;
 						border-radius:5px;
-					">
-						<div style="
-							background: #8973df;
-					    color: white;
-					    padding: 10px;
-					    display: flex;
-					    gap: 15px;
-					    align-items: center;
-					    justify-content: center;
-					    border-radius:5px;
-					    cursor: pointer;
-						" id=givefeedback>
+					" class=card>
+						<div id=givefeedback class=goldbutton>
 							<img src=./more/media/feedbackicon.png>
 							<div>Berikan Masukan</div>
 						</div>
@@ -792,7 +772,7 @@ const view = {
 				}
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 			}
@@ -802,8 +782,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -813,7 +792,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -829,7 +807,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Histori Transaksi</div>
+					<div class=bold>Histori Transaksi</div>
 					<div style="
 						position: absolute;
 				    right: 10px;
@@ -848,46 +826,34 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 				">
-	        <div id=Pulsa><img src="./more/media/phone.png"></div>
-	        <div id=Data><img src=./more/media/smartphone.png></div>
-	        <div id=Games><img src=./more/media/joystick.png></div>
-	        <div id=PLN><img src=./more/media/electricity.png></div>
-        	<div id=Emoney><img src=./more/media/emoneyicon.png></div>
+	        <div id=Pulsa>Pulsa</div>
+	        <div id=Data>Data</div>
+	        <div id=Games>Games</div>
+	        <div id=PLN>Pln</div>
+        	<div id=Emoney>E-money</div>
 	      </div>
 				<div style="
 					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				" id=itemsparent>
 				<div>
 						<div style="
 							padding:20px;
-							border:1px solid gainsboro;
 							background:white;
 							border-radius:5px;
 							margin-bottom:10px;
 							display: flex;
 					    justify-content: space-between;
 					    align-items: center;
-						">
+						" class=card>
 							<div>
 								<div style=margin-bottom:10px;font-weight:bold;>Saldo Garansi</div>
 								<div style=display:flex;gap:10px; id=saldoguarantee>
 									Rp. 0
 								</div>
 							</div>
-							<div style="
-								padding: 10px;
-						    background: #8973df;
-						    width: 32px;
-						    height: 32px;
-						    display: flex;
-						    align-items: center;
-						    justify-content: center;
-						    border-radius: 5px;
-						    cursor: pointer;
-							" id=updatemysaldo>
+							<div id=updatemysaldo class=goldbutton>
 								<img src=./more/media/refreshicon.png>
 							</div>
 						</div>
@@ -896,28 +862,16 @@ const view = {
 					<div>
 						<div style="
 							padding:20px;
-							border:1px solid gainsboro;
 							background:white;
 							border-radius:5px;
 							margin-bottom:10px;
-						">
+						" class=card>
 							<div style=margin-bottom:10px;font-weight:bold;>Cek Pesanan</div>
 							<div style=display:flex;gap:10px;>
 								<div style=display:flex;width:100%;>
 									<input placeholder="Masukan / Paste orderId anda!" id=pasteid>
 								</div>
-								<div style="
-									padding:10px;
-									background:#8973df;
-									color:white;
-									border-radius:5px;
-									display:flex;
-									align-items:center;
-									text-align:center;
-									white-space:nowrap;
-									cursor:pointer;
-									border:1px solid gainsboro;
-								" id=forceCheckingButton>Cek Pesanan</div>
+								<div id=forceCheckingButton class=goldbutton>Cek Pesanan</div>
 							</div>
 						</div>
 					</div>
@@ -988,7 +942,7 @@ const view = {
 				this.handleNav();
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateHistoriesItem();
@@ -1022,10 +976,9 @@ const view = {
 						innerHTML:`
 							<div style="
 								padding:20px;
-								border:1px solid gainsboro;
 								background:white;
 								border-radius:10px 10px 0 0;
-							">
+							" class=card>
 								<div style="
 									font-size:12px;
 									margin-bottom:15px;
@@ -1055,7 +1008,7 @@ const view = {
 										<div>${data.payments.dateCreate}</div>
 									</div>
 									<div style=display:flex;justify-content:space-between;>
-										<div>Nomor Tujua / User Id</div>
+										<div>Nomor Tujuan / User Id</div>
 										<div>${data.products.goalNumber}</div>
 									</div>
 									<div style=display:flex;justify-content:space-between;>
@@ -2838,7 +2791,6 @@ const view = {
 			className:'smartWidthMoreMenu',
 			style:`
 				height:100%;
-				background:#00000057;
 			`,
 			innerHTML:`
 				<div style="
@@ -2846,6 +2798,7 @@ const view = {
 					width:60%;
 					height:100%;
 					background-clip: padding-box;
+					border-right:1px solid gainsboro;
 				" id=whitemoremenu>
 					<div style="
 						padding:15px;
@@ -2863,19 +2816,31 @@ const view = {
 					<div style="
 						padding:15px;
 					" class="columnMenuParent">
-						<div class="bottomMenu blackHover">Daftar Harga</div>
-						<div class="bottomMenu blackHover">Term Of Use</div>
+						<div class="bottomMenu blackHover" id=History>Histori</div>
+						<div class="bottomMenu blackHover" id=PriceList>Daftar Harga</div>
+						<div class="bottomMenu blackHover" id=TermOfUse>Term Of Use</div>
 					</div>
 				</div>
 			`,
 			onadded(){
 				this.define();
+				this.itemsClickInit();
 			},
 			define(){
+				this.clmnParent = this.find('.columnMenuParent');
 				this.closeButton = this.find('#close');
 				this.closeButton.onclick = ()=>{
 					app.topLayerClose();
 				}
+			},
+			itemsClickInit(){
+				this.clmnParent.findall('div').forEach((div)=>{
+					div.onclick = ()=>{
+						app.hideAndShow();
+						app.topLayerSetBackground();
+						app[`open${div.id}`]();
+					}
+				})
 			}
 		})
 	}
