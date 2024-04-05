@@ -429,14 +429,13 @@ const view = {
 				</div>
 				<div style="
 					background:white;
-					border:1px solid gainsboro;
 					border-radius:5px;
 					margin-top:20px;
 					display:flex;
 					flex-direction:column;
 					position:absolute;
 					top:0;
-				" class=smartWidth id=box>
+				" class="smartWidth card" id=box>
 					<div style="
 						padding:20px;
 						border-bottom:1px solid gainsboro;
@@ -462,31 +461,31 @@ const view = {
 						<div style=margin-bottom:15px;>
 							<div style=margin-bottom:10px;>Hp Tujuan</div>
 							<div style=display:flex;>
-								<input value="${param.goalNumber}">
+								<input value="${param.goalNumber}" class=formc>
 							</div>
 						</div>
 						<div style=margin-bottom:15px;>
 							<div style=margin-bottom:10px;>Notifikasi Whatsapp</div>
 							<div style=display:flex;>
-								<input value="${param.waNotif}">
+								<input value="${param.waNotif}" class=formc>
 							</div>
 						</div>
 						<div style=margin-bottom:15px;>
 							<div style=margin-bottom:10px;>Varian Produk</div>
 							<div style=display:flex;>
-								<input value="${param.varianName}">
+								<input value="${param.varianName}" class=formc>
 							</div>
 						</div>
 						<div style=margin-bottom:15px;>
 							<div style=margin-bottom:10px;>Harga Produk</div>
 							<div style=display:flex;>
-								<input value="Rp ${getPrice(param.price)}">
+								<input value="Rp ${getPrice(param.price)}" class=formc>
 							</div>
 						</div>
 						<div>
 							<div style=margin-bottom:10px;>Metode Pembayaran</div>
 							<div style=display:flex;>
-								<input value="${param.methodName}">
+								<input value="${param.methodName}" class=formc>
 							</div>
 						</div>
 					</div>
@@ -1203,8 +1202,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -1214,7 +1212,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -1230,7 +1227,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Produk E-Money</div>
+					<div class=bold>Produk E-Money</div>
 				</div>
 				<div id=menu style="
 					border:0;
@@ -1239,17 +1236,15 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 				">
-        	<div id=Pulsa><img src="./more/media/phone.png"></div>
-	        <div id=Data><img src=./more/media/smartphone.png></div>
-	        <div id=Games><img src=./more/media/joystick.png></div>
-	        <div id=PLN><img src=./more/media/electricity.png></div>
-        	<div id=History><img src=./more/media/history.png></div>
+        	<div id=Pulsa>Pulsa</div>
+	        <div id=Data>Data</div>
+	        <div id=Games>Games</div>
+	        <div id=PLN>Pln</div>
 	      </div>
 				<div style="
 					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				" id=pplace>
 				</div>
 			`,
@@ -1274,7 +1269,7 @@ const view = {
 				this.handleNav();
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateProducts();
@@ -1293,7 +1288,7 @@ const view = {
 					this.pplace.addChild(makeElement('div',{
 						style:'display:flex;gap:10px;',
 						onadded(){
-							for(let j=0;j<2;j++){
+							for(let j=0;j<3;j++){
 								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
 								let category = products[index]?products[index].data[0].category.toLowerCase():null;
 								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
@@ -1307,10 +1302,9 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											padding:20px;
-											border:1px solid gainsboro;
-											background:white;
+											${i==0 ? 'padding:20px;':''}
 											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
 										">
 											<div style="
 					              width:100%;
@@ -1319,22 +1313,20 @@ const view = {
 					              justify-content: center;
 					            ">
 					              <img src="${thumbnail}" style="
-					                width:64px;
-					                height:64px;
+					                width:90px;
+					                height:90px;
 					                object-fit: cover;
 					                border-radius:5px;
 					                margin-top:15px;
 					              ">
 					            </div>
 										</div>
-										<div class=goldbutton style="
+										<div style="
 											border:none;
 											border-radius:0 0 5px 5px;
 											margin-bottom:10px;cursor:unset;
-											background:whitesmoke;
-											color:black;
-											border:1px solid gainsboro;
 											border-top:0;
+											text-align:center;
 										">${' '+brand}</div>
 									`,
 									onclick(){
@@ -1357,8 +1349,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -1368,7 +1359,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -1384,7 +1374,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Produk Pulsa</div>
+					<div class=bold>Produk Pulsa</div>
 				</div>
 				<div id=menu style="
 					border:0;
@@ -1393,17 +1383,14 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 				">
-	        <div id=Data><img src=./more/media/smartphone.png></div>
-	        <div id=Games><img src=./more/media/joystick.png></div>
-	        <div id=PLN><img src=./more/media/electricity.png></div>
-        	<div id=Emoney><img src=./more/media/emoneyicon.png></div>
-        	<div id=History><img src=./more/media/history.png></div>
+	        <div id=Data>Data</div>
+	        <div id=Games>Games</div>
+	        <div id=PLN>Pln</div>
+        	<div id=Emoney>E-money</div>
 	      </div>
 				<div style="
-					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				" id=pplace>
 				</div>
 			`,
@@ -1428,7 +1415,7 @@ const view = {
 				this.handleNav();
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateProducts();
@@ -1447,7 +1434,7 @@ const view = {
 					this.pplace.addChild(makeElement('div',{
 						style:'display:flex;gap:10px;',
 						onadded(){
-							for(let j=0;j<2;j++){
+							for(let j=0;j<3;j++){
 								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
 								let category = products[index]?products[index].data[0].category.toLowerCase():null;
 								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
@@ -1461,10 +1448,9 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											padding:20px;
-											border:1px solid gainsboro;
-											background:white;
+											${i==0 ? 'padding:20px;':''}
 											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
 										">
 											<div style="
 					              width:100%;
@@ -1473,22 +1459,19 @@ const view = {
 					              justify-content: center;
 					            ">
 					              <img src="${thumbnail}" style="
-					                width:64px;
-					                height:64px;
+					                width:90px;
+					                height:90px;
 					                object-fit: cover;
 					                border-radius:5px;
 					                margin-top:15px;
 					              ">
 					            </div>
 										</div>
-										<div class=goldbutton style="
+										<div style="
 											border:none;
 											border-radius:0 0 5px 5px;
 											margin-bottom:10px;cursor:unset;
-											background:whitesmoke;
-											color:black;
-											border:1px solid gainsboro;
-											border-top:0;
+											text-align:center;
 										">${category+' '+brand}</div>
 									`,
 									onclick(){
@@ -1511,8 +1494,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -1522,7 +1504,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -1538,7 +1519,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Produk Data</div>
+					<div class=bold>Produk Data</div>
 				</div>
 				<div id=menu style="
 					border:0;
@@ -1547,17 +1528,15 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 				">
-        	<div id=Pulsa><img src="./more/media/phone.png"></div>
-	        <div id=Games><img src=./more/media/joystick.png></div>
-	        <div id=PLN><img src=./more/media/electricity.png></div>
-        	<div id=Emoney><img src=./more/media/emoneyicon.png></div>
-        	<div id=History><img src=./more/media/history.png></div>
+        	<div id=Pulsa>Pulsa</div>
+	        <div id=Games>Games</div>
+	        <div id=PLN>Pln</div>
+        	<div id=Emoney>E-money</div>
 	      </div>
 				<div style="
 					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				" id=pplace>
 					
 				</div>
@@ -1583,7 +1562,7 @@ const view = {
 				this.handleNav();
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateProducts();
@@ -1602,7 +1581,7 @@ const view = {
 					this.pplace.addChild(makeElement('div',{
 						style:'display:flex;gap:10px;',
 						onadded(){
-							for(let j=0;j<2;j++){
+							for(let j=0;j<3;j++){
 								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
 								let category = products[index]?products[index].data[0].category.toLowerCase():null;
 								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
@@ -1616,10 +1595,9 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											padding:20px;
-											border:1px solid gainsboro;
-											background:white;
+											${i===0?'padding:20px;':''}
 											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
 										">
 											<div style="
 					              width:100%;
@@ -1628,22 +1606,19 @@ const view = {
 					              justify-content: center;
 					            ">
 					              <img src="${thumbnail}" style="
-					                width:64px;
-					                height:64px;
+					                width:90px;
+					                height:90px;
 					                object-fit: cover;
 					                border-radius:5px;
 					                margin-top:15px;
 					              ">
 					            </div>
 										</div>
-										<div class=goldbutton style="
+										<div style="
 											border:none;
 											border-radius:0 0 5px 5px;
 											margin-bottom:10px;cursor:unset;
-											background:whitesmoke;
-											color:black;
-											border:1px solid gainsboro;
-											border-top:0;
+											text-align:center;
 										">${'Data '+brand}</div>
 									`,
 									onclick(){
@@ -1666,8 +1641,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -1677,7 +1651,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -1693,7 +1666,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Produk Games</div>
+					<div class=bold>Produk Games</div>
 				</div>
 				<div id=menu style="
 					border:0;
@@ -1702,17 +1675,15 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 				">
-        	<div id=Pulsa><img src="./more/media/phone.png"></div>
-        	<div id=Data><img src=./more/media/smartphone.png></div>
-	        <div id=PLN><img src=./more/media/electricity.png></div>
-        	<div id=Emoney><img src=./more/media/emoneyicon.png></div>
-        	<div id=History><img src=./more/media/history.png></div>
+        	<div id=Pulsa>Pulsa</div>
+        	<div id=Data>Data</div>
+	        <div id=PLN>Pln</div>
+        	<div id=Emoney>E-money</div>
 	      </div>
 				<div style="
 					height:100%;
 					overflow:auto;
 					padding:10px;
-					background:whitesmoke;
 				" id=pplace>
 				</div>
 			`,
@@ -1737,7 +1708,7 @@ const view = {
 				this.handleNav();
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateProducts();
@@ -1756,7 +1727,7 @@ const view = {
 					this.pplace.addChild(makeElement('div',{
 						style:'display:flex;gap:10px;',
 						onadded(){
-							for(let j=0;j<2;j++){
+							for(let j=0;j<3;j++){
 								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
 								let category = products[index]?products[index].data[0].category.toLowerCase():null;
 								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
@@ -1770,10 +1741,9 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											padding:20px;
-											border:1px solid gainsboro;
-											background:white;
+											${i===0?'padding:10px;':''}
 											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
 										">
 											<div style="
 					              width:100%;
@@ -1782,22 +1752,19 @@ const view = {
 					              justify-content: center;
 					            ">
 					              <img src="${thumbnail}" style="
-					                width:64px;
-					                height:64px;
+					                width:90px;
+					                height:90px;
 					                object-fit: cover;
 					                border-radius:5px;
 					                margin-top:15px;
 					              ">
 					            </div>
 										</div>
-										<div class=goldbutton style="
+										<div style="
 											border:none;
 											border-radius:0 0 5px 5px;
 											margin-bottom:10px;cursor:unset;
-											background:whitesmoke;
-											color:black;
-											border:1px solid gainsboro;
-											border-top:0;
+											text-align:center;
 										">${brand}</div>
 									`,
 									onclick(){
@@ -1820,8 +1787,7 @@ const view = {
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
-				background:white;
-				border:1px solid gainsboro;
+				background:#f5f5f9;
 				display:flex;
 				flex-direction:column;
 				overflow:hidden;
@@ -1831,7 +1797,6 @@ const view = {
 				<div style="
 					padding:10px;
 					height:48px;
-					border-bottom:1px solid gainsboro;
 					display:flex;
 					align-items:center;
 					justify-content:center;
@@ -1847,7 +1812,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Produk PLN</div>
+					<div class=bold>Produk PLN</div>
 				</div>
 				<div id=menu style="
 					border:0;
@@ -1856,11 +1821,10 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 				">
-        	<div id=Pulsa><img src="./more/media/phone.png"></div>
-        	<div id=Data><img src=./more/media/smartphone.png></div>
-        	<div id=Games><img src=./more/media/joystick.png></div>
-        	<div id=Emoney><img src=./more/media/emoneyicon.png></div>
-        	<div id=History><img src=./more/media/history.png></div>
+        	<div id=Pulsa>Pulsa</div>
+        	<div id=Data>Data</div>
+        	<div id=Games>Games</div>
+        	<div id=Emoney>E-money</div>
 	      </div>
 				<div style="
 					height:100%;
@@ -1891,7 +1855,7 @@ const view = {
 				this.handleNav();
 				this.anim({
 					targets:this,
-					height:['0','95%'],
+					height:['0','100%'],
 					duration:1000
 				})
 				this.generateProducts();
@@ -1910,7 +1874,7 @@ const view = {
 					this.pplace.addChild(makeElement('div',{
 						style:'display:flex;gap:10px;',
 						onadded(){
-							for(let j=0;j<2;j++){
+							for(let j=0;j<3;j++){
 								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
 								let category = products[index]?products[index].data[0].category.toLowerCase():null;
 								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
@@ -1924,10 +1888,9 @@ const view = {
 									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-											padding:20px;
-											border:1px solid gainsboro;
-											background:white;
+											${i===0?'padding:20px;':''}
 											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
 										">
 											<div style="
 					              width:100%;
@@ -1936,22 +1899,19 @@ const view = {
 					              justify-content: center;
 					            ">
 					              <img src="${thumbnail}" style="
-					                width:64px;
-					                height:64px;
+					                width:90px;
+					                height:90px;
 					                object-fit: cover;
 					                border-radius:5px;
 					                margin-top:15px;
 					              ">
 					            </div>
 										</div>
-										<div class=goldbutton style="
+										<div style="
 											border:none;
 											border-radius:0 0 5px 5px;
 											margin-bottom:10px;cursor:unset;
-											background:whitesmoke;
-											color:black;
-											border:1px solid gainsboro;
-											border-top:0;
+											text-align:center;
 										">${brand}</div>
 									`,
 									onclick(){
@@ -2882,11 +2842,11 @@ const view = {
 			`,
 			innerHTML:`
 				<div style="
-					background:white;
+					background:#f5f5f9;
 					width:50%;
 					height:100%;
 					background-clip: padding-box;
-    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+					transform: translate(-10px, 0);
 				">
 					<div style="
 						padding:15px;

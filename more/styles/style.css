@@ -8,6 +8,7 @@
 /* width */
 ::-webkit-scrollbar {
   width: 0;
+  height: 0;
 }
 
 /* Track */
@@ -145,7 +146,7 @@ textarea{
   margin-top: 10px;
   background: white;
   background-clip: padding-box;
-  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+/*  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);*/
   overflow: hidden;
 }
 #banner div{
@@ -192,20 +193,18 @@ textarea{
   display: flex;
   justify-content: space-between;
   gap: 10px;
-  top:10px;
-  padding:1rem !important;
-  background: white;
+  padding:1rem 0 !important;
+  background: #f5f5f9;
   z-index:12;
-  border-radius: 0.5rem !important;
+/*  border-radius: 0.5rem !important;*/
 /*  border:1px solid gainsboro;*/
   overflow: auto;
   background-clip: padding-box;
-  margin-top:10px;
-  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+/*  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);*/
   color:#303f9f;
   cursor:pointer;
   position:sticky;
-  top:10px;
+  top:0;
 }
 #notif div div{
   white-space: nowrap;
@@ -350,6 +349,7 @@ textarea{
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
 .blackHover{
+  background:white;
 }
 .blackHover:hover{
   color:black;
