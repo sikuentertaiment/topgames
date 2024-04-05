@@ -16,6 +16,7 @@ const app = {
 	menuButtons:findall('#menu div'),
 	topLayer:find('#toplayer'),
 	carouselParent:find('.owl-carousel'),
+	moremenu:find('#moremenu'),
 	async init(){
 		this.openInitLoading();
 		this.provideScurities();
@@ -23,6 +24,7 @@ const app = {
 		this.loginMenuEventInit();
 		this.menuButtonsInit();
 		this.bottomNavEventInit();
+		this.openMoreMenuInit();
 		let {products,paymentMethods,carousel,valid} = await this.getPriceList();
 		if(!valid){
 			const old = this.getOldList();
@@ -48,10 +50,10 @@ const app = {
 		const notifdiv = notif.find('#notif div div');
 		const charlen = notifdiv.innerText.length;
 		let shouldMove = true;
-		notif.onmouseover = ()=>{
+		notifdiv.parentElement.onmouseover = ()=>{
 			shouldMove = false;
 		}
-		notif.onmouseleave = ()=>{
+		notifdiv.parentElement.onmouseleave = ()=>{
 			shouldMove = true;
 		}
 		let margin = 0;
@@ -76,6 +78,7 @@ const app = {
 		this.menuButtons.forEach(btn=>{
 			btn.onclick = ()=>{
 				this.hideAndShow();
+				this.topLayerSetBackground();
 				this[`open${btn.id}`]();
 			}
 		})
@@ -345,6 +348,7 @@ const app = {
 		this.menuLogin.findall('div').forEach((div)=>{
 			div.onclick = ()=>{
 				this.hideAndShow();
+				this.topLayerSetBackground();
 				this[`open${div.id}`]();
 			}
 		})
@@ -362,9 +366,26 @@ const app = {
 		this.bottomNav.findall('div').forEach((div)=>{
 			div.onclick = ()=>{
 				this.hideAndShow();
+				this.topLayerSetBackground();
 				this[`open${div.id}`]();
 			}
 		})
+	},
+	topLayerSetTransparent(){
+		this.topLayer.style.background = 'none';
+	},
+	topLayerSetBackground(){
+		this.topLayer.style.background = 'rgb(245 245 249)';
+	},
+	openMoreMenuInit(){
+		this.moremenu.onclick = ()=>{
+			this.hideAndShow();
+			this.topLayerSetTransparent();
+			this.openMoreMenu();
+		}
+	},
+	openMoreMenu(){
+		this.topLayer.replaceChild(view.moreMenu());
 	}
 }
 

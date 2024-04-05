@@ -2909,5 +2909,32 @@ const view = {
 				</div>
 			`
 		})
+	},
+	moreMenu(){
+		return makeElement('div',{
+			className:'smartWidthMoreMenu',
+			style:`
+				height:100%;
+				background:#00000057;
+			`,
+			innerHTML:`
+				<div style="
+					background:white;
+					width:50%;
+					height:100%;
+					background-clip: padding-box;
+    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				">
+					<div style="
+						padding:10px;
+					">
+						<div>Menu Tambahan</div>
+						<div>
+							<img src=./more/media/close.png>
+						</div>
+					</div>
+				</div>
+			`
+		})
 	}
 }

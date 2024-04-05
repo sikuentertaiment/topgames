@@ -272,6 +272,9 @@ textarea{
 .smartWidth{
   width: 480px;
 }
+.smartWidthMoreMenu{
+  width: 480px;
+}
 .smartWidthFooter{
   width: 480px;
 }
@@ -328,5 +331,8 @@ textarea{
   }
   #banner{
 /*    height: 200px;*/
+  }
+  .smartWidthMoreMenu{
+    width: 100%;
   }
 }
