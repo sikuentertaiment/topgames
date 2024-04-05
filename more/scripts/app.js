@@ -395,6 +395,9 @@ const app = {
 		this.hideAndShow();
 		this.topLayerSetBackground();
 		this.topLayer.replaceChild(view.lupaPassPage());
+	},
+	openPriceList(){
+		this.topLayer.replaceChild(view.priceListPage());
 	}
 }
 

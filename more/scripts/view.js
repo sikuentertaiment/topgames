@@ -2985,5 +2985,67 @@ const view = {
 				})
 			}
 		})
+	},
+	priceListPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+				overflow:auto;
+			`,
+			innerHTML:`
+				<div style="
+					padding:20px;
+					margin-top:20px;
+					display:flex;
+					flex-direction:column;
+					gap:20px;
+					padding-bottom:150px;
+				" id=parent>
+					<div style="
+						text-align: center;
+				    font-size: 1.75rem;
+				    opacity: 1;
+				    transition: opacity 0.15s ease-in-out;
+				    color: #697a8d !important;
+				    font-weight: 900 !important;
+				    margin-bottom: 30px;
+					">Daftar Harga</div>
+				</div>
+			`,
+			onadded(){
+				this.define();
+				this.generateData();
+			},
+			define(){
+				this.parent = this.find('#parent');
+			},
+			generateData(){
+				for(let i in app.products){
+					for(let j in app.products[i]){
+						this.parent.addChild(makeElement('div',{
+							innerHTML:`
+								<div style=margin-bottom:10px; class=bold># ${j} (${app.products[i][j].data.length})</div>
+								<div class=card style=border-radius:10px;background:white;></div>
+							`,
+							onadded(){
+								this.card = this.find('.card');
+								app.products[i][j].data.forEach((data)=>{
+									this.card.addChild(makeElement('div',{
+										style:'display:flex;padding:20px;gap:20px;',
+										innerHTML:`
+											<div style=width:50%;overflow:hidden;white-space:nowrap;>${data.product_name}</div>
+											<div style=width:40%;overflow:hidden;white-space:nowrap;>Rp ${getPrice(data.price)}</div>
+											<div style=width:10%;overflow:hidden;white-space:nowrap;>${(data.seller_product_status && data.buyer_product_status)?'On':'Off'}</div>
+										`
+									}))
+								})
+							}
+						}))
+					}
+				}
+			}
+		})
 	}
 }
