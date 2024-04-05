@@ -208,7 +208,7 @@ const app = {
 			`,
 			innerHTML:`
 				<div>
-					<img src=./more/media/warningicon.png>
+					<img src=./more/media/warning.png>
 				</div>
 				<div>${message}</div>
 			`,
@@ -390,6 +390,11 @@ const app = {
 	},
 	openMoreMenu(){
 		this.topLayer.replaceChild(view.moreMenu());
+	},
+	openLupaPass(){
+		this.hideAndShow();
+		this.topLayerSetBackground();
+		this.topLayer.replaceChild(view.lupaPassPage());
 	}
 }
 

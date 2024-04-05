@@ -89,9 +89,11 @@ const view = {
 							<div style=display:flex;gap:10px;><input placeholder="${param.products[0].category !== 'Games' ? '08xxxxxxxxx' : 'user id/zone id'}" id=goalNumber type=number class=formc>
 								<div style="
 							    display: ${param.products[0].category !== 'Games' ? 'none' : 'flex'};
+							    font-size:11px;
 								" id=useridchecker class=goldbutton>Cek UserID</div>
 								<div style="
-							    display: ${param.products[0].category === 'Games' ? 'none' : 'flex'};;
+							    display: ${param.products[0].category === 'Games' ? 'none' : 'flex'};
+							    font-size:11px;
 								" id=findNumber class=goldbutton>Cari Nomor</div>
 							</div>
 							${param.products[0].category === 'Games' ? '<div style="margin-top:10px;background-color: #d7f5fc;padding:10px;border-radius:8px;border-color: #b3edf9;color: #03c3ec;"><span style="font-size:12px;">Jika games memiliki zona id, maka gunakan formula berikut:<br>"user id/zona id"</span></div>' : ''}
@@ -134,7 +136,7 @@ const view = {
 							<div style=display:flex;width:100%;>
 								<input placeholder="Masukan kode voucher anda" id=voucher type=number class=formc>
 							</div>
-							<div class=goldbutton id=checkvoucherstatus>
+							<div class=goldbutton id=checkvoucherstatus style=font-size:11px;>
 								Cek Voucher	
 							</div>
 						</div>
@@ -825,6 +827,7 @@ const view = {
 					padding:10px;
 					width:auto;
 					border-bottom:1px solid gainsboro;
+					height:54px;
 				">
 	        <div id=Pulsa>Pulsa</div>
 	        <div id=Data>Data</div>
@@ -836,6 +839,7 @@ const view = {
 					height:100%;
 					overflow:auto;
 					padding:10px;
+					padding-bottom:100px;
 				" id=itemsparent>
 				<div>
 						<div style="
@@ -854,7 +858,7 @@ const view = {
 								</div>
 							</div>
 							<div id=updatemysaldo class=goldbutton>
-								<img src=./more/media/refreshicon.png>
+								<img src=./more/media/refreshicon.png style=width:16px;>
 							</div>
 						</div>
 						<div style="margin:10px 10px;font-weight:9px;color:gray;text-decoration:underline;cursor:pointer;" id=reset>Reset SaldoId</div>
@@ -871,7 +875,7 @@ const view = {
 								<div style=display:flex;width:100%;>
 									<input placeholder="Masukan / Paste orderId anda!" id=pasteid>
 								</div>
-								<div id=forceCheckingButton class=goldbutton>Cek Pesanan</div>
+								<div id=forceCheckingButton class=goldbutton style=font-size:11px;>Cek Pesanan</div>
 							</div>
 						</div>
 					</div>
@@ -1188,6 +1192,7 @@ const view = {
 					padding:10px;
 					width:auto;
 					border-bottom:1px solid gainsboro;
+					height:54px;
 				">
         	<div id=Pulsa>Pulsa</div>
 	        <div id=Data>Data</div>
@@ -1335,6 +1340,7 @@ const view = {
 					padding:10px;
 					width:auto;
 					border-bottom:1px solid gainsboro;
+					height:54px;
 				">
 	        <div id=Data>Data</div>
 	        <div id=Games>Games</div>
@@ -1480,6 +1486,7 @@ const view = {
 					padding:10px;
 					width:auto;
 					border-bottom:1px solid gainsboro;
+					height:54px;
 				">
         	<div id=Pulsa>Pulsa</div>
 	        <div id=Games>Games</div>
@@ -1627,6 +1634,7 @@ const view = {
 					padding:10px;
 					width:auto;
 					border-bottom:1px solid gainsboro;
+					height:54px;
 				">
         	<div id=Pulsa>Pulsa</div>
         	<div id=Data>Data</div>
@@ -1773,6 +1781,7 @@ const view = {
 					padding:10px;
 					width:auto;
 					border-bottom:1px solid gainsboro;
+					height:54px;
 				">
         	<div id=Pulsa>Pulsa</div>
         	<div id=Data>Data</div>
@@ -1972,7 +1981,6 @@ const view = {
 			innerHTML:`
 				<div style="
 					background:white;
-					border:1px solid gainsboro;
 					border-radius:5px;
 					margin-top:20px;
 					display:flex;
@@ -1980,7 +1988,7 @@ const view = {
 					position:absolute;
 					top:0;
 					overflow:auto;
-				" class=smartWidth id=box>
+				" class="smartWidth card" id=box>
 					<div style="
 						padding:20px;
 						border-bottom:1px solid gainsboro;
@@ -2490,15 +2498,17 @@ const view = {
 				    cursor: pointer;
 				    color: #696cff;
 				    font-weight: bold;
-					">Lupa Password?</div>
+					" id=lupapass>Lupa Password?</div>
 				</div>
 			`,
 			onadded(){
 				this.define();
 				this.initPasswordMechanism();
+				this.lupaPassInit();
 			},
 			define(){
 				this.passparent = this.find('#passwordmechanism');
+				this.lupapass = this.find('#lupapass');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -2516,6 +2526,11 @@ const view = {
 						inputs[Number(input.id)].value = input.value;
 					}
 				})
+			},
+			lupaPassInit(){
+				this.lupapass.onclick = ()=>{
+					app.openLupaPass();
+				}
 			}
 		})
 	},
@@ -2577,7 +2592,7 @@ const view = {
 					">
 						<div>Nomor Whatsapp</div>
 						<div style=display:flex;align-items:center;>
-							<input type=password class=formc placeholder="Masukan No Whatsapp Anda..." style="
+							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." style="
 								border-radius:8px 0 0 8px;
 							">
 							<div style="
@@ -2818,7 +2833,7 @@ const view = {
 					" class="columnMenuParent">
 						<div class="bottomMenu blackHover" id=History>Histori</div>
 						<div class="bottomMenu blackHover" id=PriceList>Daftar Harga</div>
-						<div class="bottomMenu blackHover" id=TermOfUse>Term Of Use</div>
+						<div class="bottomMenu blackHover" id=TermOfUse>Terms Of Use</div>
 					</div>
 				</div>
 			`,
@@ -2839,6 +2854,133 @@ const view = {
 						app.hideAndShow();
 						app.topLayerSetBackground();
 						app[`open${div.id}`]();
+					}
+				})
+			}
+		})
+	},
+	lupaPassPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+			`,
+			innerHTML:`
+				<div style="
+					background:white;
+					padding:20px;
+					border-radius:0.5rem;
+					margin-top:20px;
+					background-clip: padding-box;
+    			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+				">
+					<div style="
+						text-align: center;
+				    font-size: 1.75rem;
+				    opacity: 1;
+				    transition: opacity 0.15s ease-in-out;
+				    color: #697a8d !important;
+				    font-weight: 900 !important;
+				    margin-bottom: 30px;
+					">Password Baru</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Nomor Whatsapp</div>
+						<div style=display:flex;align-items:center;>
+							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." style="
+								border-radius:8px 0 0 8px;
+							">
+							<div style="
+								color: #fff;
+						    background-color: #303f9f !important;
+						    border-color: #696cff;
+						    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
+						    white-space:nowrap;
+						    padding:9px;
+						    border-radius:0 8px 8px 0;
+						    cursor:pointer;
+							">Kirim Otp</div>
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>OTP</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Otp...">
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 20px;
+				    color:#566a7f;
+					">
+						<div>Password Baru</div>
+						<div id=passwordmechanism>
+							<div style=display:flex;gap:10px;>
+								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
+								<img src=./more/media/hide.png style="
+									object-fit:contain;
+									cursor:pointer;
+								" id=0_1>
+							</div>
+							<div style=display:flex;gap:10px;display:none;>
+								<input class=formc placeholder="Masukan Password Anda..." id=0>
+								<img src=./more/media/show.png style="
+									object-fit:contain;
+									cursor:pointer;
+									width:24px;
+								" id=1_0>
+							</div>
+						</div>
+					</div>
+					<div style="
+						padding: 10px;
+				    background: #303f9f !important;
+				    color: white;
+				    border-radius: 0.375rem;
+				    text-align: center;
+				    /* font-weight: 400; */
+				    font-size: 0.9375rem;
+				    font-weight: bold;
+				    cursor: pointer;
+				    border: 1px solid #696cff;
+					">Konfirmasi Perubahan</div>
+				</div>
+			`,
+			onadded(){
+				this.define();
+				this.initPasswordMechanism();
+			},
+			define(){
+				this.passparent = this.find('#passwordmechanism');
+			},
+			initPasswordMechanism(){
+				const divs = this.passparent.findall('div');
+				const inputs = this.passparent.findall('input');
+				this.passparent.findall('img').forEach(img=>{
+					img.onclick = ()=>{
+						const cmd = img.id.split('_');
+						divs[Number(cmd[0])].hide();
+						divs[Number(cmd[1])].show('flex');
+						divs[Number(cmd[1])].find('input').focus();
+					}
+				})
+				inputs.forEach((input)=>{
+					input.oninput = ()=>{
+						inputs[Number(input.id)].value = input.value;
 					}
 				})
 			}
