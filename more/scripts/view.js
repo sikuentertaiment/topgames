@@ -3090,7 +3090,7 @@ const view = {
 					<div style=margin-top:30px;display:flex;gap:10px;flex-direction:column;>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Saldo Qris</div>
-							<div style=font-size:11px;>Rp 20.000</div>
+							<div style=font-size:11px;display:flex;align-items:center;>Rp 20.000</div>
 						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Riwayat Transaksi</div>
