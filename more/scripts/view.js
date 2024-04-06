@@ -249,10 +249,9 @@ const view = {
 				})
 				let valid = true;
 				for(let i in this.data){
-					if(!this.data[i] && i !== 'voucheer')
+					if(!this.data[i] && i !== 'voucher')
 						valid = false;
 				}
-				console.log(this.data);
 				if(!valid)
 					return app.showWarnings('Mohon periksa kembali data anda!');
 				app.confirmAction(this.data);
@@ -603,6 +602,10 @@ const view = {
 						border-radius:5px;
 					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:20px;font-weight:bold;">Detail Pesanan</div>
+						<div style=margin-bottom:20px;>
+							<div style=margin-bottom:10px;>Order Id</div>
+							<div style=display:flex;><input placeholder=08-xxx-xxx-xxx value="${param.payments.orderId}"></div>
+						</div>
 						<div style=margin-bottom:20px;>
 							<div style=margin-bottom:10px;>Hp Tujuan</div>
 							<div style=display:flex;><input placeholder=08-xxx-xxx-xxx value="${param.products.goalNumber}"></div>
