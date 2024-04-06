@@ -398,6 +398,9 @@ const app = {
 	},
 	openPriceList(){
 		this.topLayer.replaceChild(view.priceListPage());
+	},
+	openProfile(){
+		this.topLayer.replaceChild(view.profilePage());
 	}
 }
 

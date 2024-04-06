@@ -3050,5 +3050,121 @@ const view = {
 				}
 			}
 		})
+	},
+	profilePage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+				overflow:auto;
+			`,
+			innerHTML:`
+				<div class="card bold" style="padding:20px;background:white;border-radius:0 0 10px 10px;position:sticky;top:0;text-align:center;">Profile</div>
+				<div style=padding:20px;margin-top:10px;>
+					<div style=display:flex;gap:10px;align-items:center;flex-direction:column;>
+						<div style=display:flex;align-items:center;>
+							<img src=https://vip-reseller.co.id/library/assets/images/profile/avatar.png width=128>
+						</div>
+						<div style=display:flex;flex-direction:column;gap:5px;align-items:center;width:100%;>
+							<div>Gemasajaa</div>
+							<div style="
+								font-size: 11px;
+						    background: #303f9f;
+						    color: white;
+						    padding: 5px;
+						    text-align: center;
+						    border-radius: 10px;
+							">Active</div>
+						</div>
+					</div>
+					<div class=card style="padding:10px 20px;background:#303f9f;margin-top:30px;border-radius:10px;color:white;display:flex;align-items:center;justify-content:space-between;">
+						<div style=display:flex;flex-direction:column;gap:5px;>
+							<div>Saldo</div>
+							<div style=font-size:11px;display:flex;align-items:center;>Rp 10.000</div>
+						</div>
+						<div style=display:flex;align-items:center;>
+							<img src="https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/add.png" width=24 style=cursor:pointer;>
+						</div>
+					</div>
+					<div style=margin-top:30px;display:flex;gap:10px;flex-direction:column;>
+						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
+							<div>Saldo Qris</div>
+							<div style=font-size:11px;>Rp 20.000</div>
+						</div>
+						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
+							<div>Riwayat Transaksi</div>
+							<div style=display:flex;align-items:center;cursor:pointer;>
+								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
+							</div>
+						</div>
+						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
+							<div>Riwayat Topup</div>
+							<div style=display:flex;align-items:center;cursor:pointer;>
+								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
+							</div>
+						</div>
+						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
+							<div>Pengaturan Pin</div>
+							<div style=display:flex;align-items:center;cursor:pointer;>
+								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
+							</div>
+						</div>
+						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
+							<div>Reset Password</div>
+							<div style=display:flex;align-items:center;cursor:pointer;>
+								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
+							</div>
+						</div>
+					</div>
+					<div class=card style=background:white;margin-top:40px;border-radius:8px;display:flex;flex-direction:column;gap:10px;>
+						<div style="padding:20px 20px;">
+							<div style=margin-bottom:5px;>Email</div>
+							<div style=font-size:11px;>Gemasajaa@gmail.com</div>
+						</div>
+						<div style="padding:20px 20px;">
+							<div style=margin-bottom:5px;>Hp</div>
+							<div style=font-size:11px;>082289582776</div>
+						</div>
+						<div style="padding:20px 20px;">
+							<div style=margin-bottom:5px;>Bergabung Pada</div>
+							<div style=font-size:11px;>12/02/2024</div>
+						</div>
+					</div>
+					<div class=goldbutton style="margin-bottom:150px;margin-top:30px;">Logout</div>
+				</div>
+			`,
+			onadded(){
+				// this.define();
+				// this.initPasswordMechanism();
+				// this.lupaPassInit();
+			},
+			define(){
+				this.passparent = this.find('#passwordmechanism');
+				this.lupapass = this.find('#lupapass');
+			},
+			initPasswordMechanism(){
+				const divs = this.passparent.findall('div');
+				const inputs = this.passparent.findall('input');
+				this.passparent.findall('img').forEach(img=>{
+					img.onclick = ()=>{
+						const cmd = img.id.split('_');
+						divs[Number(cmd[0])].hide();
+						divs[Number(cmd[1])].show('flex');
+						divs[Number(cmd[1])].find('input').focus();
+					}
+				})
+				inputs.forEach((input)=>{
+					input.oninput = ()=>{
+						inputs[Number(input.id)].value = input.value;
+					}
+				})
+			},
+			lupaPassInit(){
+				this.lupapass.onclick = ()=>{
+					app.openLupaPass();
+				}
+			}
+		})
 	}
 }
