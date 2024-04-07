@@ -128,7 +128,7 @@ textarea{
   justify-content: center;
   position: relative;
   text-align: center;
-  display: none;
+  color:#303f9f;
 }
 #bottomNav{
   display:flex;
@@ -321,7 +321,6 @@ textarea{
   }
 .bigtitle{
   font-weight: bold;
-  color:#8973df;
 }
 .theslogan{
   font-size:11px;
