@@ -2439,13 +2439,12 @@ const view = {
 				">
 					<div style="
 						text-align: center;
-				    font-size: 1.75rem;
 				    opacity: 1;
 				    transition: opacity 0.15s ease-in-out;
 				    color: #697a8d !important;
 				    font-weight: 900 !important;
 				    margin-bottom: 30px;
-					">Login member</div>
+					">Login Member</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -2555,7 +2554,6 @@ const view = {
 				">
 					<div style="
 						text-align: center;
-				    font-size: 1.75rem;
 				    opacity: 1;
 				    transition: opacity 0.15s ease-in-out;
 				    color: #697a8d !important;
@@ -2706,7 +2704,6 @@ const view = {
 				">
 					<div style="
 						text-align: center;
-				    font-size: 1.75rem;
 				    opacity: 1;
 				    transition: opacity 0.15s ease-in-out;
 				    color: #697a8d !important;
@@ -2759,7 +2756,6 @@ const view = {
 				">
 					<div style="
 						text-align: center;
-				    font-size: 1.75rem;
 				    opacity: 1;
 				    transition: opacity 0.15s ease-in-out;
 				    color: #697a8d !important;
@@ -3008,35 +3004,79 @@ const view = {
 				" id=parent>
 					<div style="
 						text-align: center;
-				    font-size: 1.75rem;
 				    opacity: 1;
 				    transition: opacity 0.15s ease-in-out;
 				    color: #697a8d !important;
 				    font-weight: 900 !important;
 				    margin-bottom: 30px;
 					">Daftar Harga</div>
+					<div class=card style="
+						background:white;
+						border-radius:8px;
+						padding:15px;
+						position:sticky;
+						top:10px;
+						margin-bottom:10px;
+					">
+						<div class=bold style=margin-bottom:5px;>Filter</div>
+						<div>
+							<select>
+								<option value=all>Semua</option>
+							</select>
+						</div>
+					</div>
 				</div>
 			`,
 			onadded(){
 				this.define();
 				this.generateData();
+				this.initSelectEvent();
 			},
 			define(){
 				this.parent = this.find('#parent');
+				this.select = this.parent.find('select');
+			},
+			generateOption(param){
+				// working on select
+				this.select.addChild(makeElement('option',{
+					innerHTML:param,
+					value:param
+				}))
+			},
+			initSelectEvent(){
+				this.itemcs = this.findall('.itemcontainer');
+				this.select.onchange = ()=>{
+					this.itemcs.forEach((item)=>{
+						item.show();
+						if(this.select.value === 'all')
+							return;
+						if(item.id !== this.select.value)
+							item.hide();
+					})
+				}
 			},
 			generateData(){
 				for(let i in app.products){
 					for(let j in app.products[i]){
+						this.generateOption(j);
 						this.parent.addChild(makeElement('div',{
+							id:j,
+							className:'itemcontainer',
 							innerHTML:`
-								<div style=margin-bottom:10px; class=bold># ${j} (${app.products[i][j].data.length})</div>
-								<div class=card style=border-radius:10px;background:white;></div>
+								<div style=margin-bottom:10px; class=bold># ${j} (${app.products[i][j].data.length} item)</div>
+								<div class=card style=border-radius:10px;background:white;overflow:hidden;>
+									<div style="display:flex;padding:20px;gap:20px;background:#303f9f;border-bottom:1px solid gainsboro;font-weight:bold;color:white;">
+										<div style=width:50%;overflow:hidden;white-space:nowrap;>Produk</div>
+										<div style=width:40%;overflow:hidden;white-space:nowrap;>Harga</div>
+										<div style=width:10%;overflow:hidden;white-space:nowrap;>Status</div>
+									</div>
+								</div>
 							`,
 							onadded(){
 								this.card = this.find('.card');
-								app.products[i][j].data.forEach((data)=>{
+								app.products[i][j].data.forEach((data,x)=>{
 									this.card.addChild(makeElement('div',{
-										style:'display:flex;padding:20px;gap:20px;',
+										style:`display:flex;padding:20px;gap:20px;${app.products[i][j].data.length > 1 ? x < app.products[i][j].data.length - 1 ? 'border-bottom:1px solid gainsboro;' : '' : ''}`,
 										innerHTML:`
 											<div style=width:50%;overflow:hidden;white-space:nowrap;>${data.product_name}</div>
 											<div style=width:40%;overflow:hidden;white-space:nowrap;>Rp ${getPrice(data.price)}</div>
