@@ -3063,7 +3063,7 @@ const view = {
 							className:'itemcontainer',
 							innerHTML:`
 								<div style=margin-bottom:10px; class=bold># ${j} (${app.products[i][j].data.length} item)</div>
-								<div class=card style=border-radius:10px;background:white;overflow:hidden;>
+								<div class=card style=border-radius:10px;background:white;overflow:hidden;font-size:12px;>
 									<div style="display:flex;padding:20px;gap:20px;background:#303f9f;border-bottom:1px solid gainsboro;font-weight:bold;color:white;">
 										<div style=width:50%;overflow:hidden;white-space:nowrap;>Produk</div>
 										<div style=width:40%;overflow:hidden;white-space:nowrap;>Harga</div>
@@ -3503,6 +3503,57 @@ const view = {
 						inputs[Number(input.id)].value = input.value;
 					}
 				})
+			}
+		})
+	},
+	homeTools(){
+		return makeElement('div',{
+			id:'menulogin',
+			innerHTML:`
+				<div id=saldo style="background:white;border:1px solid #303f9f;font-size:11px;color:black;flex-direction: column;">
+          <!-- <img src=./more/media/smartphone.png> -->
+          <span>Saldo Merchant</span>
+          <span>Rp 10.000</span>
+        </div>
+        <div id=topup style="border:1px solid #303f9f;font-size:11px;color:white;width:24px;flex-direction: column;padding-top: 0;padding-bottom:0;">
+          <img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/add-black.png style=padding:10px;background:white;width:16px;border-radius:8px;>
+          Topup
+        </div>
+        <div id=transfer style="border:1px solid #303f9f;font-size:11px;color:white;width:24px;flex-direction: column;padding-top: 0;padding-bottom:0;">
+          <img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/paper-plane.png style=padding:10px;background:white;width:16px;border-radius:8px;>
+          Transfer
+        </div>
+        <div id=qris style="border:1px solid #303f9f;font-size:11px;color:white;width:24px;flex-direction: column;padding-top: 0;padding-bottom:0;">
+          <img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/qris-2.jpg style=padding:10px;background:white;width:16px;border-radius:8px;>
+          Qris
+        </div>
+			`,
+			style:'margin-bottom:20px;background:#303f9f;font-size:11px;',
+			onadded(){
+				this.define();
+				this.buttonInit();
+			},
+			define(){
+
+			},
+			buttonInit(){
+				this.findall('div').forEach((div)=>{
+					div.onclick = ()=>{
+						if(!this[`open${div.id}`])
+							return
+						this[`open${div.id}`]();
+					}
+				})
+			},
+			// define the function
+			opentopup(){
+				console.log('opening topup...');
+			},
+			opentransfer(){
+				console.log('opening transfer...');
+			},
+			openqris(){
+				console.log('opening qris...');
 			}
 		})
 	}

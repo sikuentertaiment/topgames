@@ -17,6 +17,7 @@ const app = {
 	topLayer:find('#toplayer'),
 	carouselParent:find('.owl-carousel'),
 	moremenu:find('#moremenu'),
+	toolsparent:find('#toolsparent'),
 	async init(){
 		this.openInitLoading();
 		this.provideScurities();
@@ -44,6 +45,8 @@ const app = {
 		await this.handleVisitor();
 		this.removeInitLoading();
 		this.startNotifMovement();
+
+		this.generateTools();
 	},
 	startNotifMovement(){
 		const notif = find('#notif');
@@ -401,6 +404,9 @@ const app = {
 	},
 	openProfile(){
 		this.topLayer.replaceChild(view.profilePage());
+	},
+	generateTools(){
+		this.toolsparent.addChild(view.homeTools());
 	}
 }
 
