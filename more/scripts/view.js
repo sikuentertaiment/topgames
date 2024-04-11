@@ -3261,11 +3261,15 @@ const view = {
 				    font-weight: bold;
 				    cursor: pointer;
 				    border: 1px solid #696cff;
-					">Topup Sekarang</div>
+					" id=topupnow>Topup Sekarang</div>
 				</div>
 			`,
 			onadded(){
 				this.generateChooseButton();
+
+				this.topupnow.onclick = ()=>{
+					this.processTopup();
+				}
 			},
 			generateChooseButton(){
 				for(let i=0;i<5;i++){
@@ -3282,7 +3286,35 @@ const view = {
 					}))
 				}
 			},
-			autoDefine:true
+			autoDefine:true,
+			processTopup(){
+				// simple algorithm
+				// make sure the data is filled correctly
+				// memastikan kalo datanya itu diisi dengan benar
+				if(this.eval()){
+					// now make the request
+					
+				}
+			},
+			eval(){
+				let valid = true;
+				let message = 'Mohon cek kembali data anda!';
+				if(typeof this.nominal.value !== number){
+					valid = false;
+				}else if(this.nominal.value < 0){
+					valid = false;
+					message = 'Nominal topup tidak boleh negatif!';
+				}else if(this.nominal.value < 10000){
+					valid = false;
+					message = 'Minimal topup Rp 10.000!';
+				}else if(this.nominal.value > 500000){
+					valid = false;
+					message = 'Maksimal topup Rp 500.000!';
+				}
+				if(!valid)
+					app.showWarnings(message);
+				return valid;
+			}
 		})
 	},
 	transferPage(){
