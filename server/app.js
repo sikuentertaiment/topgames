@@ -802,7 +802,7 @@ app.get('/saldoclaim',async (req,res)=>{
 	if(orderData.payments.status != 'Success'){
 		return res.json({valid:false,message:'Order tidak mendapat garansi!'});
 	}
-	if(orderData.products.status === 'Sukses'){
+	if(orderData.products.status !== 'Gagal'){
 		return res.json({valid:false,message:'Order tidak mendapat garansi!'});
 	}
 	if((await db.ref(`claimedsaldo/${req.query.orderId}`).get()).val())

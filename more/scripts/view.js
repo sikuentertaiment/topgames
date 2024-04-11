@@ -3229,7 +3229,7 @@ const view = {
 				    color: #697a8d !important;
 				    font-weight: 900 !important;
 				    margin-bottom: 30px;
-					">New Member</div>
+					">Topup</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -3237,9 +3237,9 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Nama Lengkap</div>
+						<div>Nominal Topup</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Nama Anda...">
+							<input class=formc placeholder="Masukan Nominal..." type=number id=nominal>
 						</div>
 					</div>
 					<div style="
@@ -3248,73 +3248,7 @@ const view = {
 				    gap: 10px;
 				    margin-bottom: 10px;
 				    color:#566a7f;
-					">
-						<div>Email Atau Username</div>
-						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Email Anda...">
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 10px;
-				    color:#566a7f;
-					">
-						<div>Nomor Whatsapp</div>
-						<div style=display:flex;align-items:center;>
-							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." style="
-								border-radius:8px 0 0 8px;
-							">
-							<div style="
-								color: #fff;
-						    background-color: #303f9f !important;
-						    border-color: #696cff;
-						    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
-						    white-space:nowrap;
-						    padding:9px;
-						    border-radius:0 8px 8px 0;
-						    cursor:pointer;
-							">Kirim Otp</div>
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 10px;
-				    color:#566a7f;
-					">
-						<div>Kode Otp</div>
-						<div style=display:flex;>
-							<input type=number class=formc placeholder="Masukan Kode Otp...">
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 20px;
-				    color:#566a7f;
-					">
-						<div>Password</div>
-						<div id=passwordmechanism>
-							<div style=display:flex;gap:10px;>
-								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
-								<img src=./more/media/hide.png style="
-									object-fit:contain;
-									cursor:pointer;
-								" id=0_1>
-							</div>
-							<div style=display:flex;gap:10px;display:none;>
-								<input class=formc placeholder="Masukan Password Anda..." id=0>
-								<img src=./more/media/show.png style="
-									object-fit:contain;
-									cursor:pointer;
-									width:24px;
-								" id=1_0>
-							</div>
-						</div>
+					" id=choosebutton>
 					</div>
 					<div style="
 						padding: 10px;
@@ -3327,33 +3261,28 @@ const view = {
 				    font-weight: bold;
 				    cursor: pointer;
 				    border: 1px solid #696cff;
-					">Daftar Sekarang</div>
+					">Topup Sekarang</div>
 				</div>
 			`,
 			onadded(){
-				this.define();
-				this.initPasswordMechanism();
+				this.generateChooseButton();
 			},
-			define(){
-				this.passparent = this.find('#passwordmechanism');
+			generateChooseButton(){
+				for(let i=0;i<5;i++){
+					this.choosebutton.addChild(makeElement('div',{
+						parent:this,
+						id:`${i + 1}000`,
+						style:`
+							cursor:pointer;
+						`,
+						innerHTML:`Rp ${getPrice(Number(`${i + 1}000`))}`,
+						onclick(){
+							this.parent.nominal.value = Number(this.id);
+						}
+					}))
+				}
 			},
-			initPasswordMechanism(){
-				const divs = this.passparent.findall('div');
-				const inputs = this.passparent.findall('input');
-				this.passparent.findall('img').forEach(img=>{
-					img.onclick = ()=>{
-						const cmd = img.id.split('_');
-						divs[Number(cmd[0])].hide();
-						divs[Number(cmd[1])].show('flex');
-						divs[Number(cmd[1])].find('input').focus();
-					}
-				})
-				inputs.forEach((input)=>{
-					input.oninput = ()=>{
-						inputs[Number(input.id)].value = input.value;
-					}
-				})
-			}
+			autoDefine:true
 		})
 	},
 	transferPage(){
