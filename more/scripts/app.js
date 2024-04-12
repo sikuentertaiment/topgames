@@ -407,6 +407,9 @@ const app = {
 	},
 	generateTools(){
 		this.toolsparent.addChild(view.homeTools());
+	},
+	openTopup(){
+		this.topLayer.replaceChild(view.topupPage());
 	}
 }
 

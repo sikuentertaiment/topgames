@@ -152,7 +152,6 @@ const objlen = function(obj){
 
 const toInject = {
 		anim:anime,
-		autoDefine:false,
 		find(p){
 			const el = this.querySelector(p);
 			if(!el)return null;
@@ -172,7 +171,7 @@ const toInject = {
 			this.appendChild(child);
 			flex.components.push(child);
 			// working on define
-			if(this.autoDefine)child.define();
+			if(child.autoDefine)child.define();
 			if(child.onadded)child.onadded();
 			return child;
 		},
@@ -182,7 +181,7 @@ const toInject = {
 
 			// div
 			this.findall('div').forEach((div)=>{
-				if(!div.classList.includes('dontdefine')){
+				if(!div.classList.contains('dontdefine')){
 					if(div.id.length !== 0)
 						this[div.id] = div;
 				}
@@ -190,7 +189,7 @@ const toInject = {
 
 			// input
 			this.findall('input').forEach((div)=>{
-				if(!div.classList.includes('dontdefine')){
+				if(!div.classList.contains('dontdefine')){
 					if(div.id.length !== 0)
 						this[div.id] = div;
 				}

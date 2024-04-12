@@ -3244,11 +3244,39 @@ const view = {
 					</div>
 					<div style="
 						display: flex;
+				    /* flex-direction: column; */
+				    gap: 5px;
+				    margin-bottom: 10px;
+				    color: #566a7f;
+				    justify-content: space-between;
+				    overflow:auto;
+				    padding: 20px 0;
+					" id=choosebutton>
+					</div>
+					<div style="
+						display: flex;
 				    flex-direction: column;
 				    gap: 10px;
-				    margin-bottom: 10px;
+				    margin-bottom: 30px;
 				    color:#566a7f;
-					" id=choosebutton>
+					">
+						<div>Metode Pembayaran</div>
+						<div id=payments style="
+							height:200px;
+							padding:10px;
+							background:#f5f5f9;
+							overflow:auto;
+							border-radius:8px;
+						" class=card>
+							<div style="
+								font-size:12px;
+								height:100%;
+								width:100%;
+								display:flex;
+								align-items:center;
+								justify-content:center;
+							">Memuat Metode Pembayaran...</div>
+						</div>
 					</div>
 					<div style="
 						padding: 10px;
@@ -3266,22 +3294,83 @@ const view = {
 			`,
 			onadded(){
 				this.generateChooseButton();
+				this.generatePaymentMethod(0);
 
 				this.topupnow.onclick = ()=>{
 					this.processTopup();
 				}
 			},
+			async generatePaymentMethod(price){
+				const availMethods = await new Promise((resolve,reject)=>{
+					cOn.get({url:`${app.baseUrl}/getpayment?price=${price}`,onload(){
+						const results = this.getJSONResponse();
+						console.log(results);
+						if(results.ok)
+							return resolve(results.results.paymentFee);
+						resolve(false);
+					}})
+				})
+				this.payments.clear();
+				let activeVarian;
+				// this.generateSaldoGuaranteeMethod(price,activeVarian);
+				if(availMethods){
+					availMethods.forEach(method=>{
+						this.payments.addChild(makeElement('div',{
+							parent:this,
+							className:'card',
+							style:`
+								border-radius:5px;
+								display:flex;
+								padding:20px;
+								cursor:pointer;
+								margin-top:15px;
+								gap:15px;
+								align-items:center;
+								flex-wrap:wrap;
+								background:white;
+							`,
+							innerHTML:`
+								<div><img src="${method.paymentImage}" style="background:white;width:54px;height:54px;object-fit:contain;border-radius:5px;"></div>
+								<div style=display:flex;gap:10px;flex-direction:column;>
+									<div style=font-size:14px;>${method.paymentName}</div>
+									<div style=font-size:12px;>Rp ${getPrice(Number(method.totalFee) + price)}</div>
+								</div>
+							`,
+							onclick(){
+								console.log(this.parent);
+								if(this.parent.data.productVarian){
+									if(activeVarian)
+										activeVarian.classList.remove('varianselected');
+									this.classList.add('varianselected');
+									activeVarian = this;
+									this.parent.data.paymentMethod = method.paymentMethod;
+									this.parent.data.methodName = method.paymentName;
+								}else app.showWarnings('Silahkan memilih produk terlebih dahulu!');
+							}
+						}))
+					})
+				}else{
+					this.payments.addChild(makeElement('div',{
+						innerHTML:'Metode pembayaran tidak ditemukan!'
+					}))
+				}
+			},
 			generateChooseButton(){
+				const nominal = this.nominal;
+				const generatePaymentMethod = this.generatePaymentMethod;
 				for(let i=0;i<5;i++){
 					this.choosebutton.addChild(makeElement('div',{
-						parent:this,
-						id:`${i + 1}000`,
+						className:'goldbutton',
+						id:`${i + 1}00000`,
 						style:`
 							cursor:pointer;
+							padding:10px;
+							width:100%;
 						`,
-						innerHTML:`Rp ${getPrice(Number(`${i + 1}000`))}`,
+						innerHTML:`Rp ${getPrice(Number(`${i + 1}00000`))}`,
 						onclick(){
-							this.parent.nominal.value = Number(this.id);
+							nominal.value = Number(this.id);
+							generatePaymentMethod(Number(this.id));
 						}
 					}))
 				}
@@ -3299,9 +3388,7 @@ const view = {
 			eval(){
 				let valid = true;
 				let message = 'Mohon cek kembali data anda!';
-				if(typeof this.nominal.value !== number){
-					valid = false;
-				}else if(this.nominal.value < 0){
+				if(this.nominal.value < 0){
 					valid = false;
 					message = 'Nominal topup tidak boleh negatif!';
 				}else if(this.nominal.value < 10000){
@@ -3502,13 +3589,15 @@ const view = {
 					div.onclick = ()=>{
 						if(!this[`open${div.id}`])
 							return
+						app.hideAndShow();
+						app.topLayerSetBackground();
 						this[`open${div.id}`]();
 					}
 				})
 			},
 			// define the function
 			opentopup(){
-				console.log('opening topup...');
+				app.openTopup();
 			},
 			opentransfer(){
 				console.log('opening transfer...');
