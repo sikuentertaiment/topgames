@@ -145,10 +145,10 @@ const view = {
 					<div style="
 						margin-bottom:150px;
 						display:flex;
-						gap:20px;
+						gap:10px;
 					">
-						<div title="Masukan Keranjang" style="display:flex;align-items:center;justify-content:center;background:white;border:1px solid gainsboro;" class=goldbutton>
-							<img src=./more/media/cart.png width=30>
+						<div title="Masukan Keranjang" style="display:flex;align-items:center;justify-content:center;" class=goldbutton>
+							<img src=./more/media/carticonnewwhite.png width=24>
 						</div>
 						<div class=goldbutton style=border-radius:5px;width:100%; id=buybutton>Proses Pembelian</div>
 					</div>
@@ -3131,7 +3131,7 @@ const view = {
 							<div>Saldo</div>
 							<div style=font-size:11px;display:flex;align-items:center;>Rp 10.000</div>
 						</div>
-						<div style=display:flex;align-items:center;>
+						<div style=display:flex;align-items:center; class=child id=topup>
 							<img src="https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/add.png" width=24 style=cursor:pointer;>
 						</div>
 					</div>
@@ -3139,6 +3139,12 @@ const view = {
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Saldo Qris</div>
 							<div style=font-size:11px;display:flex;align-items:center;>Rp 20.000</div>
+						</div>
+						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
+							<div>Buka Keranjang</div>
+							<div style=display:flex;align-items:center;cursor:pointer;>
+								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
+							</div>
 						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Riwayat Transaksi</div>
@@ -3159,7 +3165,7 @@ const view = {
 							</div>
 						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
-							<div>Reset Password</div>
+							<div>Ubah Password</div>
 							<div style=display:flex;align-items:center;cursor:pointer;>
 								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
 							</div>
@@ -3183,36 +3189,11 @@ const view = {
 				</div>
 			`,
 			onadded(){
-				// this.define();
-				// this.initPasswordMechanism();
-				// this.lupaPassInit();
-			},
-			define(){
-				this.passparent = this.find('#passwordmechanism');
-				this.lupapass = this.find('#lupapass');
-			},
-			initPasswordMechanism(){
-				const divs = this.passparent.findall('div');
-				const inputs = this.passparent.findall('input');
-				this.passparent.findall('img').forEach(img=>{
-					img.onclick = ()=>{
-						const cmd = img.id.split('_');
-						divs[Number(cmd[0])].hide();
-						divs[Number(cmd[1])].show('flex');
-						divs[Number(cmd[1])].find('input').focus();
-					}
-				})
-				inputs.forEach((input)=>{
-					input.oninput = ()=>{
-						inputs[Number(input.id)].value = input.value;
-					}
-				})
-			},
-			lupaPassInit(){
-				this.lupapass.onclick = ()=>{
-					app.openLupaPass();
+				this.topup.onclick = ()=>{
+					app.openTopup();
 				}
-			}
+			},
+			autoDefine:true
 		})
 	},
 	topupPage(){
@@ -3388,6 +3369,7 @@ const view = {
 							cursor:pointer;
 							padding:10px;
 							width:100%;
+							border-radius:10px;
 						`,
 						innerHTML:`Rp ${getPrice(Number(`${i + 1}00000`))}`,
 						onclick(){
@@ -3681,6 +3663,7 @@ const view = {
 	cart(){
 		return makeElement('div',{
 			className:'smartWidth',
+			selected:{},
 			style:`
 				height:100%;
 				background:#f5f5f9;
@@ -3703,23 +3686,33 @@ const view = {
 						display:flex;
 						flex-direction:column;
 						gap:5px;
-						width:100%;
+						width:80%;
 					">
-						<div style=font-size:11px;>1 Dipilih</div>
-						<div class=bold>Total: Rp 20.000</div>
+						<div style=font-size:11px; id=counter>0 Dipilih</div>
+						<div class=bold id=counterprice>Total: Rp 0.000</div>
 					</div>
 					<div class=goldbutton>Beli</div>
+					<div class=goldbutton style=width:24px;height:24px;background:none;border:none; id=putTrash>
+						<img src=./more/media/trash.png class=fitimage>
+					</div>
 				</div>
 				<div id=cart style=margin-bottom:150px;>
 				</div>
 			`,
-			onadded(){
+			async onadded(){
+				// getting the cart data
+				await this.getCartData();
 				this.generateItems();
+
+				this.putTrash.onclick = ()=>{
+					this.delete();
+				}
 			},
 			autoDefine:true,
 			generateItems(){
-				for(let i=0;i<10;i++){
+				this.cartData.forEach((item)=>{
 					this.cart.addChild(makeElement('div',{
+						price:item.price,
 						style:`
 							padding:20px;
 							margin-bottom:10px;
@@ -3739,13 +3732,14 @@ const view = {
 									background:white;
 									border:1px solid;
 									cursor:pointer;
+									border-radius:50%;
 								" id=selector></div>
-								<div style=width:80%;>Pulsa TSEL Rp 40.000</div>
+								<div style=width:80%;>${item.product_name}</div>
 								<div style="
-									width:24px;height:24px;
+									width:20px;height:20px;
 									cursor:pointer;
 								">
-									<img src=./more/media/expand.png class="child fitimage" id=expander>
+									<img src=./more/media/expand.png class="child fitimage" id=expander style=opacity:.5;>
 								</div>
 							</div>
 							<style>
@@ -3766,11 +3760,11 @@ const view = {
 							" id=moredetails>
 								<div class=inlineItem>
 									<div>Produk</div>
-									<div>Pulsa TSEL Rp 40.000</div>
+									<div>${item.product_name}</div>
 								</div>
 								<div class=inlineItem>
 									<div>Harga</div>
-									<div>Rp 40.000</div>
+									<div>Rp ${getPrice(item.price)}</div>
 								</div>
 								<div class=inlineItem>
 									<div>Tujuan</div>
@@ -3810,16 +3804,56 @@ const view = {
 									this.selector.updateStyle({
 										background:'#303f9f'
 									})
-									return
+									// save the data to the bucket
+									if(!this.bucketId){
+										this.bucketId = getTime();
+									}
+									this.parentElement.parentElement.selected[this.bucketId] = this;
+								}else{
+									this.selector.state = 0;
+									this.selector.updateStyle({
+										background:'white'
+									})
+									delete this.parentElement.parentElement.selected[this.bucketId];
+									delete this.bucketId;
 								}
-								this.selector.state = 0;
-								this.selector.updateStyle({
-									background:'white'
-								})
+								this.parentElement.parentElement.showInfo();
 							}
 						}
 					}))
+				})
+			},
+			showInfo(){
+				let priceTotal = 0;
+				for(let i in this.selected){
+					priceTotal += Number(this.selected[i].price);
 				}
+				this.counter.innerText = `${objlen(this.selected)} Dipilih`;
+				this.counterprice.innerText = `Total: Rp ${getPrice(priceTotal)}`;
+			},
+			getCartData(){
+				return new Promise((resolve,reject)=>{
+					// now make it like it work
+					this.cartData = this.getRandomCartProduct();
+					resolve(true);
+				})
+			},
+			delete(){
+				for(let i in this.selected){
+					this.selected[i].remove();
+					delete this.selected[i];
+				}
+			},
+			// for testing only
+			getRandomCartProduct(){
+				// [ the data is arr, item is obj ]
+				let productArrs = [];
+				for(let i in app.products){
+					for(let j in app.products[i]){
+						productArrs = productArrs.concat(app.products[i][j].data);
+					}
+				}
+				return productArrs;
 			}
 		})
 	}
