@@ -17,6 +17,7 @@ const app = {
 	topLayer:find('#toplayer'),
 	carouselParent:find('.owl-carousel'),
 	moremenu:find('#moremenu'),
+	cart:find('#cart'),
 	toolsparent:find('#toolsparent'),
 	async init(){
 		this.openInitLoading();
@@ -390,9 +391,17 @@ const app = {
 			this.topLayerSetTransparent();
 			this.openMoreMenu();
 		}
+		this.cart.onclick = ()=>{
+			this.hideAndShow();
+			this.topLayerSetBackground();
+			this.openCart();
+		}
 	},
 	openMoreMenu(){
 		this.topLayer.replaceChild(view.moreMenu());
+	},
+	openCart(){
+		this.topLayer.replaceChild(view.cart());
 	},
 	openLupaPass(){
 		this.hideAndShow();
@@ -410,6 +419,9 @@ const app = {
 	},
 	openTopup(){
 		this.topLayer.replaceChild(view.topupPage());
+	},
+	openTransfer(){
+		this.topLayer.replaceChild(view.transferPage());
 	}
 }
 

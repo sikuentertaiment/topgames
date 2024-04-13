@@ -137,12 +137,21 @@ const view = {
 								<input placeholder="Masukan kode voucher anda" id=voucher type=number class=formc>
 							</div>
 							<div class=goldbutton id=checkvoucherstatus style=font-size:11px;>
-								Cek Voucher	
+								Cek Voucher
 							</div>
 						</div>
 					</div>
 					<div style="margin:20px 0;" class=smallimportan>*Dengan melanjutkan berarti anda setuju dengan semua persyaratan kami.</div>
-					<div class=goldbutton style=margin-bottom:100px;border-radius:5px; id=buybutton>Proses Pembelian</div>
+					<div style="
+						margin-bottom:150px;
+						display:flex;
+						gap:20px;
+					">
+						<div title="Masukan Keranjang" style="display:flex;align-items:center;justify-content:center;background:white;border:1px solid gainsboro;" class=goldbutton>
+							<img src=./more/media/cart.png width=30>
+						</div>
+						<div class=goldbutton style=border-radius:5px;width:100%; id=buybutton>Proses Pembelian</div>
+					</div>
 				</div>
 			`,
 			close(){
@@ -2504,11 +2513,11 @@ const view = {
 				</div>
 			`,
 			onadded(){
-				this.define();
+				this.customDefine();
 				this.initPasswordMechanism();
 				this.lupaPassInit();
 			},
-			define(){
+			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 				this.lupapass = this.find('#lupapass');
 			},
@@ -2661,10 +2670,10 @@ const view = {
 				</div>
 			`,
 			onadded(){
-				this.define();
+				this.customDefine();
 				this.initPasswordMechanism();
 			},
-			define(){
+			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 			},
 			initPasswordMechanism(){
@@ -2837,10 +2846,10 @@ const view = {
 				</div>
 			`,
 			onadded(){
-				this.define();
+				this.customDefine();
 				this.itemsClickInit();
 			},
-			define(){
+			customDefine(){
 				this.clmnParent = this.find('.columnMenuParent');
 				this.closeButton = this.find('#close');
 				this.closeButton.onclick = ()=>{
@@ -2959,10 +2968,10 @@ const view = {
 				</div>
 			`,
 			onadded(){
-				this.define();
+				this.customDefine();
 				this.initPasswordMechanism();
 			},
-			define(){
+			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 			},
 			initPasswordMechanism(){
@@ -3027,11 +3036,11 @@ const view = {
 				</div>
 			`,
 			onadded(){
-				this.define();
+				this.customDefine();
 				this.generateData();
 				this.initSelectEvent();
 			},
-			define(){
+			customDefine(){
 				this.parent = this.find('#parent');
 				this.select = this.parent.find('select');
 			},
@@ -3212,8 +3221,20 @@ const view = {
 			style:`
 				height:100%;
 				background:#f5f5f9;
+				overflow:auto;
 			`,
 			innerHTML:`
+				<div style="
+					background: white;
+			    border-radius: 0 0 10px 10px;
+			    text-align: center;
+			    font-weight: bold;
+			    padding: 20px 0;
+			    position: sticky;
+			    top: 0;
+				" class=card>
+					Topup
+				</div>
 				<div style="
 					background:white;
 					padding:20px;
@@ -3221,15 +3242,8 @@ const view = {
 					margin-top:20px;
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+    			margin-bottom:200px;
 				">
-					<div style="
-						text-align: center;
-				    opacity: 1;
-				    transition: opacity 0.15s ease-in-out;
-				    color: #697a8d !important;
-				    font-weight: 900 !important;
-				    margin-bottom: 30px;
-					">Topup</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -3297,6 +3311,8 @@ const view = {
 				this.generatePaymentMethod(0);
 
 				this.topupnow.onclick = ()=>{
+					if(!this.topupnow.valid)
+						return app.showWarnings('Maaf, request tidak dapat diproses. Mohon coba lagi nanti!');
 					this.processTopup();
 				}
 			},
@@ -3304,7 +3320,6 @@ const view = {
 				const availMethods = await new Promise((resolve,reject)=>{
 					cOn.get({url:`${app.baseUrl}/getpayment?price=${price}`,onload(){
 						const results = this.getJSONResponse();
-						console.log(results);
 						if(results.ok)
 							return resolve(results.results.paymentFee);
 						resolve(false);
@@ -3351,8 +3366,15 @@ const view = {
 					})
 				}else{
 					this.payments.addChild(makeElement('div',{
-						innerHTML:'Metode pembayaran tidak ditemukan!'
+						innerHTML:'Metode pembayaran tidak ditemukan!',
+						style:'width:100%;height:100%;font-size:12px;display:flex;align-items:center;justify-content:center;'
 					}))
+					this.topupnow.updateStyle({
+						cursor:'not-allowed',
+						background:'gray',
+						borderColor:'gray'
+					})
+					this.topupnow.valid = false;
 				}
 			},
 			generateChooseButton(){
@@ -3382,7 +3404,7 @@ const view = {
 				// memastikan kalo datanya itu diisi dengan benar
 				if(this.eval()){
 					// now make the request
-					
+					app.showWarnings('processing the request');
 				}
 			},
 			eval(){
@@ -3410,8 +3432,20 @@ const view = {
 			style:`
 				height:100%;
 				background:#f5f5f9;
+				overflow:auto;
 			`,
 			innerHTML:`
+				<div style="
+					background: white;
+			    border-radius: 0 0 10px 10px;
+			    text-align: center;
+			    font-weight: bold;
+			    padding: 20px 0;
+			    position: sticky;
+			    top: 0;
+				" class=card>
+					Transfer Saldo
+				</div>
 				<div style="
 					background:white;
 					padding:20px;
@@ -3419,25 +3453,18 @@ const view = {
 					margin-top:20px;
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+    			margin-bottom:200px;
 				">
 					<div style="
-						text-align: center;
-				    opacity: 1;
-				    transition: opacity 0.15s ease-in-out;
-				    color: #697a8d !important;
-				    font-weight: 900 !important;
-				    margin-bottom: 30px;
-					">New Member</div>
-					<div style="
 						display: flex;
 				    flex-direction: column;
 				    gap: 10px;
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Nama Lengkap</div>
+						<div>ID Tujuan</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Nama Anda...">
+							<input class=formc placeholder="Masukan ID Tujuan..." type=number id=accountid>
 						</div>
 					</div>
 					<div style="
@@ -3447,72 +3474,23 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Email Atau Username</div>
+						<div>Nominal Transfer</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Email Anda...">
+							<input class=formc placeholder="Masukan Nominal..." type=number id=nominal>
 						</div>
 					</div>
 					<div style="
 						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
+				    /* flex-direction: column; */
+				    gap: 5px;
 				    margin-bottom: 10px;
-				    color:#566a7f;
-					">
-						<div>Nomor Whatsapp</div>
-						<div style=display:flex;align-items:center;>
-							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." style="
-								border-radius:8px 0 0 8px;
-							">
-							<div style="
-								color: #fff;
-						    background-color: #303f9f !important;
-						    border-color: #696cff;
-						    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
-						    white-space:nowrap;
-						    padding:9px;
-						    border-radius:0 8px 8px 0;
-						    cursor:pointer;
-							">Kirim Otp</div>
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 10px;
-				    color:#566a7f;
-					">
-						<div>Kode Otp</div>
-						<div style=display:flex;>
-							<input type=number class=formc placeholder="Masukan Kode Otp...">
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 20px;
-				    color:#566a7f;
-					">
-						<div>Password</div>
-						<div id=passwordmechanism>
-							<div style=display:flex;gap:10px;>
-								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
-								<img src=./more/media/hide.png style="
-									object-fit:contain;
-									cursor:pointer;
-								" id=0_1>
-							</div>
-							<div style=display:flex;gap:10px;display:none;>
-								<input class=formc placeholder="Masukan Password Anda..." id=0>
-								<img src=./more/media/show.png style="
-									object-fit:contain;
-									cursor:pointer;
-									width:24px;
-								" id=1_0>
-							</div>
-						</div>
+				    color: #566a7f;
+				    justify-content: space-between;
+				    overflow:auto;
+				    padding: 20px 0;
+				    padding-bottom:30px;
+				    padding-top:10px;
+					" id=choosebutton>
 					</div>
 					<div style="
 						padding: 10px;
@@ -3525,32 +3503,126 @@ const view = {
 				    font-weight: bold;
 				    cursor: pointer;
 				    border: 1px solid #696cff;
-					">Daftar Sekarang</div>
+					" id=topupnow>Proses Transfer</div>
 				</div>
 			`,
 			onadded(){
-				this.define();
-				this.initPasswordMechanism();
+				this.generateChooseButton();
+				// this.generatePaymentMethod(0);
+
+				this.topupnow.onclick = ()=>{
+					if(!this.topupnow.valid)
+						return app.showWarnings('Maaf, request tidak dapat diproses. Mohon coba lagi nanti!');
+					this.processTopup();
+				}
 			},
-			define(){
-				this.passparent = this.find('#passwordmechanism');
+			async generatePaymentMethod(price){
+				const availMethods = await new Promise((resolve,reject)=>{
+					cOn.get({url:`${app.baseUrl}/getpayment?price=${price}`,onload(){
+						const results = this.getJSONResponse();
+						if(results.ok)
+							return resolve(results.results.paymentFee);
+						resolve(false);
+					}})
+				})
+				this.payments.clear();
+				let activeVarian;
+				// this.generateSaldoGuaranteeMethod(price,activeVarian);
+				if(availMethods){
+					availMethods.forEach(method=>{
+						this.payments.addChild(makeElement('div',{
+							parent:this,
+							className:'card',
+							style:`
+								border-radius:5px;
+								display:flex;
+								padding:20px;
+								cursor:pointer;
+								margin-top:15px;
+								gap:15px;
+								align-items:center;
+								flex-wrap:wrap;
+								background:white;
+							`,
+							innerHTML:`
+								<div><img src="${method.paymentImage}" style="background:white;width:54px;height:54px;object-fit:contain;border-radius:5px;"></div>
+								<div style=display:flex;gap:10px;flex-direction:column;>
+									<div style=font-size:14px;>${method.paymentName}</div>
+									<div style=font-size:12px;>Rp ${getPrice(Number(method.totalFee) + price)}</div>
+								</div>
+							`,
+							onclick(){
+								console.log(this.parent);
+								if(this.parent.data.productVarian){
+									if(activeVarian)
+										activeVarian.classList.remove('varianselected');
+									this.classList.add('varianselected');
+									activeVarian = this;
+									this.parent.data.paymentMethod = method.paymentMethod;
+									this.parent.data.methodName = method.paymentName;
+								}else app.showWarnings('Silahkan memilih produk terlebih dahulu!');
+							}
+						}))
+					})
+				}else{
+					this.payments.addChild(makeElement('div',{
+						innerHTML:'Metode pembayaran tidak ditemukan!',
+						style:'width:100%;height:100%;font-size:12px;display:flex;align-items:center;justify-content:center;'
+					}))
+					this.topupnow.updateStyle({
+						cursor:'not-allowed',
+						background:'gray',
+						borderColor:'gray'
+					})
+					this.topupnow.valid = false;
+				}
 			},
-			initPasswordMechanism(){
-				const divs = this.passparent.findall('div');
-				const inputs = this.passparent.findall('input');
-				this.passparent.findall('img').forEach(img=>{
-					img.onclick = ()=>{
-						const cmd = img.id.split('_');
-						divs[Number(cmd[0])].hide();
-						divs[Number(cmd[1])].show('flex');
-						divs[Number(cmd[1])].find('input').focus();
-					}
-				})
-				inputs.forEach((input)=>{
-					input.oninput = ()=>{
-						inputs[Number(input.id)].value = input.value;
-					}
-				})
+			generateChooseButton(){
+				const nominal = this.nominal;
+				const generatePaymentMethod = this.generatePaymentMethod;
+				for(let i=0;i<5;i++){
+					this.choosebutton.addChild(makeElement('div',{
+						className:'goldbutton',
+						id:`${i + 1}00000`,
+						style:`
+							cursor:pointer;
+							padding:10px;
+							width:100%;
+						`,
+						innerHTML:`Rp ${getPrice(Number(`${i + 1}00000`))}`,
+						onclick(){
+							nominal.value = Number(this.id);
+							generatePaymentMethod(Number(this.id));
+						}
+					}))
+				}
+			},
+			autoDefine:true,
+			processTopup(){
+				// simple algorithm
+				// make sure the data is filled correctly
+				// memastikan kalo datanya itu diisi dengan benar
+				if(this.eval()){
+					// now make the request
+					app.showWarnings('processing the request');
+				}
+			},
+			eval(){
+				let valid = true;
+				let message = 'Mohon cek kembali data anda!';
+				if(this.nominal.value < 0){
+					valid = false;
+					message = 'Nominal topup tidak boleh negatif!';
+				}else if(this.nominal.value < 10000){
+					valid = false;
+					message = 'Minimal topup Rp 10.000!';
+				}else if(this.nominal.value > 500000){
+					valid = false;
+					message = 'Maksimal topup Rp 500.000!';
+				}
+				if(!valid)
+					app.showWarnings(message);
+				return valid;
 			}
 		})
 	},
@@ -3578,32 +3650,176 @@ const view = {
 			`,
 			style:'margin-bottom:20px;background:#303f9f;font-size:11px;',
 			onadded(){
-				this.define();
 				this.buttonInit();
-			},
-			define(){
-
 			},
 			buttonInit(){
 				this.findall('div').forEach((div)=>{
 					div.onclick = ()=>{
 						if(!this[`open${div.id}`])
 							return
-						app.hideAndShow();
-						app.topLayerSetBackground();
-						this[`open${div.id}`]();
+						if(this[`open${div.id}`]()){
+							app.hideAndShow();
+							app.topLayerSetBackground();
+						}
 					}
 				})
 			},
 			// define the function
 			opentopup(){
 				app.openTopup();
+				return true;
 			},
 			opentransfer(){
-				console.log('opening transfer...');
+				app.openTransfer();
+				return true;
 			},
 			openqris(){
-				console.log('opening qris...');
+				app.showWarnings('Fitur belum tersedia!');
+			}
+		})
+	},
+	cart(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				height:100%;
+				background:#f5f5f9;
+				overflow:auto;
+			`,
+			innerHTML:`
+				<div class="bold" style="padding:20px;text-align:center;">Keranjang</div>
+				<div style="
+					display: flex;
+			    gap: 10px;
+			    padding: 15px;
+			    background: white;
+			    border-radius: 8px;
+			    position:sticky;
+			    top:10px;
+			    margin-bottom:20px;
+			    z-index:1;
+				" class=card>
+					<div style="
+						display:flex;
+						flex-direction:column;
+						gap:5px;
+						width:100%;
+					">
+						<div style=font-size:11px;>1 Dipilih</div>
+						<div class=bold>Total: Rp 20.000</div>
+					</div>
+					<div class=goldbutton>Beli</div>
+				</div>
+				<div id=cart style=margin-bottom:150px;>
+				</div>
+			`,
+			onadded(){
+				this.generateItems();
+			},
+			autoDefine:true,
+			generateItems(){
+				for(let i=0;i<10;i++){
+					this.cart.addChild(makeElement('div',{
+						style:`
+							padding:20px;
+							margin-bottom:10px;
+							background:white;
+							border-radius:8px;
+						`,
+						className:'card',
+						innerHTML:`
+							<div style="
+								display: flex;
+						    gap: 20px;
+						    align-items: center;
+						    justify-content: space-between
+							">
+								<div style="
+									width:16px;height:16px;
+									background:white;
+									border:1px solid;
+									cursor:pointer;
+								" id=selector></div>
+								<div style=width:80%;>Pulsa TSEL Rp 40.000</div>
+								<div style="
+									width:24px;height:24px;
+									cursor:pointer;
+								">
+									<img src=./more/media/expand.png class="child fitimage" id=expander>
+								</div>
+							</div>
+							<style>
+								.inlineItem{
+									display:flex;
+									justify-content:space-between;
+									gap:10px;
+									flex-wrap:wrap;
+								}
+							</style>
+							<div style="
+								padding:20px;
+								display:none;
+						    flex-direction: column;
+						    gap: 20px;
+						    border-top: 1px solid whitesmoke;
+						    margin-top: 20px;
+							" id=moredetails>
+								<div class=inlineItem>
+									<div>Produk</div>
+									<div>Pulsa TSEL Rp 40.000</div>
+								</div>
+								<div class=inlineItem>
+									<div>Harga</div>
+									<div>Rp 40.000</div>
+								</div>
+								<div class=inlineItem>
+									<div>Tujuan</div>
+									<div>082289582776</div>
+								</div>
+							</div>
+						`,
+						autoDefine:true,
+						onadded(){
+							this.initRotateControll();
+							this.initSelector();
+						},
+						initRotateControll(){
+							this.expander.state = 0;
+							this.expander.onclick = ()=>{
+								if(!this.expander.state){
+									this.expander.state = 1;
+									this.expander.updateStyle({
+										transform:'rotate(180deg)'
+									})
+									// showing the more details
+									this.moredetails.show('flex');
+									return
+								}
+								this.expander.state = 0;
+								this.expander.updateStyle({
+									transform:'rotate(0deg)'
+								})
+								this.moredetails.hide();
+							}
+						},
+						initSelector(){
+							this.selector.state = 0;
+							this.selector.onclick = ()=>{
+								if(!this.selector.state){
+									this.selector.state = 1;
+									this.selector.updateStyle({
+										background:'#303f9f'
+									})
+									return
+								}
+								this.selector.state = 0;
+								this.selector.updateStyle({
+									background:'white'
+								})
+							}
+						}
+					}))
+				}
 			}
 		})
 	}

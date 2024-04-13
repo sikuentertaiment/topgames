@@ -194,6 +194,12 @@ const toInject = {
 						this[div.id] = div;
 				}
 			})
+
+			// classes
+			this.findall('.child').forEach(div=>{
+				if(div.id.length !== 0)
+					this[div.id] = div;
+			})
 			
 		},
 		addBefore(child,oldChild){
@@ -237,6 +243,9 @@ const toInject = {
 			setTimeout(()=>{
 				after(this);
 			},timeout)
+		},
+		updateStyle(object={}){
+			Object.assign(this.style,object);
 		}
 	}
 
