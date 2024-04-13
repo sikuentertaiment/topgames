@@ -47,7 +47,7 @@ const app = {
 		this.removeInitLoading();
 		this.startNotifMovement();
 
-		this.generateTools();
+		// this.generateTools();
 	},
 	startNotifMovement(){
 		const notif = find('#notif');
