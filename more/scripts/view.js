@@ -829,6 +829,7 @@ const view = {
 				    width: 24px;
 				    height: 24px;
 				    cursor:pointer;
+				    display:none;
 					" id=opensettingsbutton>
 						<img src=./more/media/settings.png style=width:100%;height:24px;>
 					</div>
@@ -840,6 +841,7 @@ const view = {
 					width:auto;
 					border-bottom:1px solid gainsboro;
 					height:54px;
+					display:none;
 				">
 	        <div id=Pulsa>Pulsa</div>
 	        <div id=Data>Data</div>
@@ -853,7 +855,7 @@ const view = {
 					padding:10px;
 					padding-bottom:100px;
 				" id=itemsparent>
-				<div>
+					<div style=display:none;>
 						<div style="
 							padding:20px;
 							background:white;
@@ -2439,6 +2441,15 @@ const view = {
 			`,
 			innerHTML:`
 				<div style="
+					text-align: center;
+			    opacity: 1;
+			    transition: opacity 0.15s ease-in-out;
+			    color: #697a8d !important;
+			    font-weight: 900 !important;
+			    margin-bottom: 30px;
+			    margin-top:20px;
+				">Login Member</div>
+				<div style="
 					background:white;
 					padding:20px;
 					border-radius:0.5rem;
@@ -2446,14 +2457,6 @@ const view = {
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 				">
-					<div style="
-						text-align: center;
-				    opacity: 1;
-				    transition: opacity 0.15s ease-in-out;
-				    color: #697a8d !important;
-				    font-weight: 900 !important;
-				    margin-bottom: 30px;
-					">Login Member</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -2554,6 +2557,15 @@ const view = {
 			`,
 			innerHTML:`
 				<div style="
+					text-align: center;
+			    opacity: 1;
+			    transition: opacity 0.15s ease-in-out;
+			    color: #697a8d !important;
+			    font-weight: 900 !important;
+			    margin-bottom: 30px;
+			    margin-top:20px;
+				">New Member</div>
+				<div style="
 					background:white;
 					padding:20px;
 					border-radius:0.5rem;
@@ -2561,14 +2573,6 @@ const view = {
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 				">
-					<div style="
-						text-align: center;
-				    opacity: 1;
-				    transition: opacity 0.15s ease-in-out;
-				    color: #697a8d !important;
-				    font-weight: 900 !important;
-				    margin-bottom: 30px;
-					">New Member</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -2704,6 +2708,15 @@ const view = {
 			`,
 			innerHTML:`
 				<div style="
+					text-align: center;
+			    opacity: 1;
+			    transition: opacity 0.15s ease-in-out;
+			    color: #697a8d !important;
+			    font-weight: 900 !important;
+			    margin-bottom: 30px;
+			    margin-top:20px;
+				">Cek Pesanan</div>
+				<div style="
 					background:white;
 					padding:20px;
 					border-radius:0.5rem;
@@ -2711,14 +2724,6 @@ const view = {
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 				">
-					<div style="
-						text-align: center;
-				    opacity: 1;
-				    transition: opacity 0.15s ease-in-out;
-				    color: #697a8d !important;
-				    font-weight: 900 !important;
-				    margin-bottom: 30px;
-					">Cek Pesanan</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -2876,6 +2881,15 @@ const view = {
 			`,
 			innerHTML:`
 				<div style="
+					text-align: center;
+			    opacity: 1;
+			    transition: opacity 0.15s ease-in-out;
+			    color: #697a8d !important;
+			    font-weight: 900 !important;
+			    margin-bottom: 30px;
+			    margin-top:20px;
+				">Password Baru</div>
+				<div style="
 					background:white;
 					padding:20px;
 					border-radius:0.5rem;
@@ -2883,14 +2897,6 @@ const view = {
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 				">
-					<div style="
-						text-align: center;
-				    opacity: 1;
-				    transition: opacity 0.15s ease-in-out;
-				    color: #697a8d !important;
-				    font-weight: 900 !important;
-				    margin-bottom: 30px;
-					">Password Baru</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -3136,10 +3142,6 @@ const view = {
 						</div>
 					</div>
 					<div style=margin-top:30px;display:flex;gap:10px;flex-direction:column;>
-						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
-							<div>Saldo Qris</div>
-							<div style=font-size:11px;display:flex;align-items:center;>Rp 20.000</div>
-						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Buka Keranjang</div>
 							<div style=display:flex;align-items:center;cursor:pointer;>
@@ -3691,7 +3693,7 @@ const view = {
 						<div style=font-size:11px; id=counter>0 Dipilih</div>
 						<div class=bold id=counterprice>Total: Rp 0.000</div>
 					</div>
-					<div class=goldbutton>Beli</div>
+					<div class=goldbutton id=buyButton>Beli</div>
 					<div class=goldbutton style=width:24px;height:24px;background:none;border:none; id=putTrash>
 						<img src=./more/media/trash.png class=fitimage>
 					</div>
@@ -3706,6 +3708,9 @@ const view = {
 
 				this.putTrash.onclick = ()=>{
 					this.delete();
+				}
+				this.buyButton.onclick = ()=>{
+					this.buy();
 				}
 			},
 			autoDefine:true,
@@ -3839,10 +3844,17 @@ const view = {
 				})
 			},
 			delete(){
+				if(!objlen(this.selected))
+					return app.showWarnings('Tidak ada produk dipilih!');
 				for(let i in this.selected){
 					this.selected[i].remove();
 					delete this.selected[i];
 				}
+			},
+			buy(){
+				if(!objlen(this.selected))
+					return app.showWarnings('Tidak ada produk dipilih!');
+				app.showWarnings(`Membeli ${objlen(this.selected)} produk`);
 			},
 			// for testing only
 			getRandomCartProduct(){
@@ -3854,6 +3866,106 @@ const view = {
 					}
 				}
 				return productArrs;
+			}
+		})
+	},
+	searchPage(param){
+		return makeElement('div',{
+			className:'smartWidth',
+			selected:{},
+			style:`
+				height:100%;
+				background:#f5f5f9;
+				overflow:auto;
+			`,
+			innerHTML:`
+				<div id=menu style="padding:0;gap:0;margin-top:20px;margin-bottom:10px;position:sticky;top:10px;border:1px solid gainsboro;">
+	        <img src=./more/media/findicon.png style="
+	          padding:10px;
+	          padding-right:0;
+	          object-fit: contain;
+	          width: 24px;
+	        ">
+	        <input placeholder="Mau topup apa?" style="
+	          border-color:white;background:white;
+	        " id=finderInput>
+	      </div>
+	      <div id=parentItems style=padding-bottom:150px;padding-top:20px;>
+
+	      </div>
+			`,
+			autoDefine:true,fitems:[],datas:[],
+			onadded(){
+				this.getFitems();
+				this.filterData();
+				this.generateItems();
+				this.finderInput.focus();
+				this.finderInput.oninput = ()=>{
+					this.filterData();
+					this.clearData();
+					this.generateItems();
+				}
+			},
+			clearData(){
+				this.parentItems.clear();
+			},
+			getFitems(){
+				// [ the data is arr, item is obj ]
+				for(let i in app.products){
+					for(let j in app.products[i]){
+						this.datas = this.datas.concat(app.products[i][j]);
+					}
+				}
+			},
+			filterData(){
+				this.fitems = this.datas.filter((item)=>{
+					// handle empty value: first init
+					if(!this.finderInput.value.length)
+						return true;
+					if(
+							item.data[0].product_name.toLowerCase().search(this.finderInput.value.toLowerCase()) !== -1 ||
+							item.data[0].brand.toLowerCase().search(this.finderInput.value.toLowerCase()) !== -1 ||
+							item.data[0].category.toLowerCase().search(this.finderInput.value.toLowerCase()) !== -1
+						)
+						return true;
+					return false;
+				})
+			},
+			generateItems(){
+				this.fitems.forEach((item)=>{
+					let title = item.data[0].category + ' ' + item.data[0].brand[0].toUpperCase()+item.data[0].brand.toLowerCase().slice(1);
+					this.parentItems.addChild(makeElement('div',{
+						style:`
+							padding:10px;
+							display:flex;
+							gap:10px;
+							align-items:center;
+							background:white;
+							border-radius:8px;
+							margin-bottom:5px;
+							cursor:pointer;
+						`,className:'card',
+						innerHTML:`
+							<div style=width:32px;height:32px;>
+								<img src="${item.data[0].thumbnail}" class=fitimage style=border-radius:8px;>
+							</div>
+							<div>${title}</div>
+						`,
+						onadded(){
+							item.products = item.data;
+							item.title = title;
+							this.data = item;
+						},
+						onclick(){
+							app.openDetailsProduct(this.data);
+						}
+					}))
+				})
+				if(!this.fitems.length)
+					this.parentItems.addChild(makeElement('div',{
+						style:'text-align:center;',
+						innerHTML:'Maaf produk tidak ditemukan!'
+					}))
 			}
 		})
 	}

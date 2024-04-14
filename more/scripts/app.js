@@ -19,6 +19,7 @@ const app = {
 	moremenu:find('#moremenu'),
 	cart:find('#cart'),
 	toolsparent:find('#toolsparent'),
+	finderInput:find('#finderInput'),
 	async init(){
 		this.openInitLoading();
 		this.provideScurities();
@@ -46,6 +47,7 @@ const app = {
 		await this.handleVisitor();
 		this.removeInitLoading();
 		this.startNotifMovement();
+		this.initSearchInput()
 
 		// this.generateTools();
 	},
@@ -145,6 +147,7 @@ const app = {
 		this.body.style.overflow = 'auto';
 	},
 	openDetailsProduct(productId='defaultid'){
+		console.log(productId);
 		this.hideAndShow();
 		this.topLayerSetBackground();
 		this.topLayer.replaceChild(view.productDetails(productId));
@@ -422,6 +425,16 @@ const app = {
 	},
 	openTransfer(){
 		this.topLayer.replaceChild(view.transferPage());
+	},
+	initSearchInput(){
+		this.finderInput.onclick = ()=>{
+			this.openSearchPage();
+		}
+	},
+	openSearchPage(){
+		this.hideAndShow();
+		this.topLayerSetBackground();
+		this.topLayer.replaceChild(view.searchPage());
 	}
 }
 
