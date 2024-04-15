@@ -2464,9 +2464,9 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Username</div>
+						<div>Email</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Username Anda...">
+							<input class=formc placeholder="Masukan Username Anda..." type=email require>
 						</div>
 					</div>
 					<div style="
@@ -2509,10 +2509,14 @@ const view = {
 					">Login Sekarang</div>
 					<div style="
 						margin-top: 15px;
-				    cursor: pointer;
 				    color: #696cff;
 				    font-weight: bold;
-					" id=lupapass>Lupa Password?</div>
+					" id=lupapass><span style=cursor:pointer;>Lupa Password?</span></div>
+					<div style="
+						margin-top: 15px;
+				    color: #696cff;
+				    font-weight: bold;
+					" id=signup><span style=cursor:pointer;>Buat akun?</span></div>
 				</div>
 			`,
 			onadded(){
@@ -2523,6 +2527,7 @@ const view = {
 			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 				this.lupapass = this.find('#lupapass');
+				this.signup = this.find('#signup');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -2544,6 +2549,9 @@ const view = {
 			lupaPassInit(){
 				this.lupapass.onclick = ()=>{
 					app.openLupaPass();
+				}
+				this.signup.onclick = ()=>{
+					app.openRegis();
 				}
 			}
 		})
@@ -2671,14 +2679,24 @@ const view = {
 				    cursor: pointer;
 				    border: 1px solid #696cff;
 					">Daftar Sekarang</div>
+					<div style="
+						margin-top: 15px;
+				    color: #696cff;
+				    font-weight: bold;
+					" id=login><span style=cursor:pointer;>Login?</span></div>
 				</div>
 			`,
 			onadded(){
 				this.customDefine();
 				this.initPasswordMechanism();
+
+				this.login.onclick = ()=>{
+					app.openLogin();
+				}
 			},
 			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
+				this.login = this.find('#login');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');

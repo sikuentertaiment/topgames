@@ -415,7 +415,9 @@ const app = {
 		this.topLayer.replaceChild(view.priceListPage());
 	},
 	openProfile(){
-		this.topLayer.replaceChild(view.profilePage());
+		if(app.isLogin)
+			return this.topLayer.replaceChild(view.profilePage());
+		this.openLogin();
 	},
 	generateTools(){
 		this.toolsparent.addChild(view.homeTools());
