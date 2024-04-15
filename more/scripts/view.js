@@ -3869,7 +3869,7 @@ const view = {
 			}
 		})
 	},
-	searchPage(param){
+	searchPage(){
 		return makeElement('div',{
 			className:'smartWidth',
 			selected:{},
@@ -3968,5 +3968,5 @@ const view = {
 					}))
 			}
 		})
-	}
+	},
 }

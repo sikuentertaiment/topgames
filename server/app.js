@@ -822,6 +822,14 @@ app.get('/guaranteesaldo',async (req,res)=>{
 	res.json({valid:true,price});
 })
 
+app.post('/login',async (req,res)=>{
+
+})
+
+app.post('/regis',async (req,res)=>{
+	
+})
+
 //functions
 
 const productRechecker = (buyyerProductCode) => {
