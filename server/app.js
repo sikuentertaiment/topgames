@@ -838,7 +838,9 @@ app.post('/login',async (req,res)=>{
 	if(user){
 		if(user.password === req.fields.password){
 			delete user.password;
-			return res.json({valid:true,message:'Login success',user});
+			if(!user.saldo)
+				user.saldo = 0;
+			return res.json({valid:true,message:'Login success!',user});
 		}
 		return res.json({valid:false,message:'Invalid password!'});
 	}

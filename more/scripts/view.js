@@ -318,35 +318,25 @@ const view = {
 						flex-wrap:wrap;
 					`,
 					innerHTML:`
-						<div><img src="./more/media/guaranteeicon.png" style="background:white;object-fit:contain;border-radius:5px;padding:10px;"></div>
+						<div><img src="./more/media/wallet.png" style="background:white;object-fit:contain;border-radius:5px;padding:10px;width:32px;height:32px;"></div>
 						<div style=display:flex;gap:10px;flex-direction:column;>
 							<div style=font-size:14px;>
-								<div>Saldo Garansi</div>
+								<div>Saldo</div>
 								<div id=saldolabel style="font-size:10px;">-</div>
 							</div>
 							<div style=font-size:12px;>Rp ${getPrice(Number(price))}</div>
 						</div>
 					`,
 					async onadded(){
-						this.saldovalue = await new Promise((resolve,reject)=>{
-							cOn.get({
-								url:`${app.baseUrl}/guaranteesaldo?saldoId=${localStorage.getItem('saldoId')}`,
-								onload(){
-									resolve(this.getJSONResponse());
-								}
-							})
-						});
-						if(this.saldovalue.valid)
-							this.find('#saldolabel').innerText = `Anda memiliki Rp. ${getPrice(this.saldovalue.price)} saldo garansi.`;
-						else this.find('#saldolabel').innerText = 'Anda tidak memiliki saldo garansi.';
+						if(app.isLogin)
+							this.find('#saldolabel').innerText = `Anda memiliki saldo Rp. ${getPrice(app.isLogin.saldo)}`;
+						else this.find('#saldolabel').innerText = 'Mohon login terlebih dahulu.';
 					},
 					onclick(){
-						if(!this.saldovalue)
-							return app.showWarnings('Mohon tunggu sebentar sedang memproses data anda!');
-						if(!this.saldovalue.valid)
-							return app.showWarnings('Anda tidak memiliki saldo garansi');
-						if(this.saldovalue.price < price)
-							return app.showWarnings('Saldo garansi tidak mencukupi!');
+						if(!app.isLogin)
+							return app.showWarnings('Mohon login terlebih dahulu');
+						if(app.isLogin.saldo < price)
+							return app.showWarnings('Saldo anda tidak mencukupi!');
 						if(this.parent.data.productVarian){
 							if(activeVarian)
 								activeVarian.classList.remove('varianselected');
@@ -2588,12 +2578,12 @@ const view = {
 						}
 					})
 				})
-				if(!response.valid)
-					return app.showWarnings(response.message);
-				this.processData(response.user);
+				app.showWarnings(response.message);
+				if(response.valid)
+					this.processData(response.user);
 			},
 			processData(param){
-				app.isLogin = param;
+				app.saveLoginData(param);
 				app.openProfile();
 			}
 		})
@@ -2633,6 +2623,18 @@ const view = {
 						<div>Nama Lengkap</div>
 						<div style=display:flex;>
 							<input class=formc placeholder="Masukan Nama Anda..." id=fullname>
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Username</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Email Anda..." id=username>
 						</div>
 					</div>
 					<div style="
@@ -2773,7 +2775,7 @@ const view = {
 				return data;
 			},
 			dataStatus(param){
-				let valid = false;
+				let valid = true;
 				let message;
 				for(let i in param){
 					if(!param[i].length){
@@ -3222,6 +3224,7 @@ const view = {
 		})
 	},
 	profilePage(){
+		//prefix the data
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
@@ -3231,13 +3234,13 @@ const view = {
 			`,
 			innerHTML:`
 				<div class="card bold" style="padding:20px;background:white;border-radius:0 0 10px 10px;position:sticky;top:0;text-align:center;">Profile</div>
-				<div style=padding:20px;margin-top:10px;>
-					<div style=display:flex;gap:10px;align-items:center;flex-direction:column;>
+				<div style=margin-top:10px;>
+					<div style=display:flex;gap:10px;align-items:center;flex-direction:column;padding-top:20px;>
 						<div style=display:flex;align-items:center;>
 							<img src=https://vip-reseller.co.id/library/assets/images/profile/avatar.png width=128>
 						</div>
 						<div style=display:flex;flex-direction:column;gap:5px;align-items:center;width:100%;>
-							<div>Gemasajaa</div>
+							<div>${app.isLogin.username}</div>
 							<div style="
 								font-size: 11px;
 						    background: #303f9f;
@@ -3251,7 +3254,7 @@ const view = {
 					<div class=card style="padding:10px 20px;background:#303f9f;margin-top:30px;border-radius:10px;color:white;display:flex;align-items:center;justify-content:space-between;">
 						<div style=display:flex;flex-direction:column;gap:5px;>
 							<div>Saldo</div>
-							<div style=font-size:11px;display:flex;align-items:center;>Rp 10.000</div>
+							<div style=font-size:11px;display:flex;align-items:center;>Rp ${getPrice(app.isLogin.saldo ? apps.isLogin.saldo : 0)}</div>
 						</div>
 						<div style=display:flex;align-items:center; class=child id=topup>
 							<img src="https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/add.png" width=24 style=cursor:pointer;>
@@ -3260,31 +3263,25 @@ const view = {
 					<div style=margin-top:30px;display:flex;gap:10px;flex-direction:column;>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Buka Keranjang</div>
-							<div style=display:flex;align-items:center;cursor:pointer;>
+							<div style=display:flex;align-items:center;cursor:pointer; id=cart>
 								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
 							</div>
 						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Riwayat Transaksi</div>
-							<div style=display:flex;align-items:center;cursor:pointer;>
+							<div style=display:flex;align-items:center;cursor:pointer; id=transactionhistory>
 								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
 							</div>
 						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Riwayat Topup</div>
-							<div style=display:flex;align-items:center;cursor:pointer;>
-								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
-							</div>
-						</div>
-						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
-							<div>Pengaturan Pin</div>
-							<div style=display:flex;align-items:center;cursor:pointer;>
+							<div style=display:flex;align-items:center;cursor:pointer; id=topuphistory>
 								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
 							</div>
 						</div>
 						<div class=card style=background:white;border-radius:8px;padding:20px;display:flex;justify-content:space-between;>
 							<div>Ubah Password</div>
-							<div style=display:flex;align-items:center;cursor:pointer;>
+							<div style=display:flex;align-items:center;cursor:pointer; id=changepass>
 								<img src=https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/arrow-small-right.png width=24>
 							</div>
 						</div>
@@ -3292,26 +3289,47 @@ const view = {
 					<div class=card style=background:white;margin-top:40px;border-radius:8px;display:flex;flex-direction:column;>
 						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
 							<div style=margin-bottom:5px;>Email</div>
-							<div style=font-size:11px;>Gemasajaa@gmail.com</div>
+							<div style=font-size:11px;>${app.isLogin.email}</div>
 						</div>
 						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
 							<div style=margin-bottom:5px;>Hp</div>
-							<div style=font-size:11px;>082289582776</div>
+							<div style=font-size:11px;>${app.isLogin.phonenumber}</div>
 						</div>
 						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
 							<div style=margin-bottom:5px;>Bergabung Pada</div>
-							<div style=font-size:11px;>12/02/2024</div>
+							<div style=font-size:11px;>${app.isLogin.regisdate}</div>
 						</div>
 					</div>
-					<div class=goldbutton style="margin-bottom:150px;margin-top:30px;">Logout</div>
+					<div class=goldbutton style="margin-bottom:150px;margin-top:30px;" id=logout>Logout</div>
 				</div>
 			`,
 			onadded(){
 				this.topup.onclick = ()=>{
 					app.openTopup();
 				}
+				this.logout.onclick = ()=>{
+					this.logOut();
+				}
+				this.cart.onclick = ()=>{
+					app.openCart();
+				}
+				this.changepass.onclick = ()=>{
+					app.openLupaPass();
+				}
+				this.topuphistory.onclick = ()=>{
+					app.openTopupHistory();
+				}
+				this.transactionhistory.onclick = ()=>{
+					app.openHistory();
+				}
 			},
-			autoDefine:true
+			autoDefine:true,
+			logOut(){
+				delete app.isLogin;
+				localStorage.removeItem('logdata');
+				app.showWarnings('Logout berhasil!');
+				app.openHome();
+			}
 		})
 	},
 	topupPage(){

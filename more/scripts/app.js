@@ -1,6 +1,6 @@
 const app = {
-	// baseUrl:'http://localhost:8080',
-	baseUrl:'https://aware-blue-rooster.cyclic.app',
+	baseUrl:'http://localhost:8080',
+	// baseUrl:'https://aware-blue-rooster.cyclic.app',
 	usernameCheckerUrl:'https://api.kitadigital.my.id/api/game',
 	webtitle:find('title'),
 	headertitle:find('.bigtitle'),
@@ -51,6 +51,7 @@ const app = {
 		this.initSearchInput()
 
 		// this.generateTools();
+		this.getLogData();
 	},
 	startNotifMovement(){
 		const notif = find('#notif');
@@ -216,7 +217,7 @@ const app = {
 			`,
 			innerHTML:`
 				<div>
-					<img src=./more/media/warning.png>
+					<img src=./more/media/warning.png width=24>
 				</div>
 				<div>${message}</div>
 			`,
@@ -438,6 +439,31 @@ const app = {
 		this.hideAndShow();
 		this.topLayerSetBackground();
 		this.topLayer.replaceChild(view.searchPage());
+	},
+	saveLoginData(param){
+		// adding time valid login
+		// valid 10 minute for reload
+		param.valid = new Date().getTime() + 600000;
+		// save the login data to ls
+		localStorage.setItem('logdata',jsonstr(param));
+		this.isLogin = param;
+	},
+	isLoginValid(){
+		const logdata = JSON.parse(localStorage.getItem('logdata'));
+		if(!logdata || logdata.valid <= new Date().getTime()){
+			return {valid:false};
+		}
+		if(new Date().getTime() >= logdata.valid / 2){
+			// updating the valid value
+			logdata.valid += 600000;
+		}
+		return {valid:true,logdata};
+	},
+	getLogData(){
+		const result = this.isLoginValid();
+		if(result.valid){
+			this.isLogin = result.logdata;
+		}
 	}
 }
 

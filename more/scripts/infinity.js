@@ -343,6 +343,8 @@ const readFile = function(src,readMode,callback){
 }
 
 const getPrice = function(value){
+	if(!value)
+		value = 0;
 	value = String(value);
 	let result = '';
 	while(true){
