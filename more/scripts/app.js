@@ -1,5 +1,6 @@
 const app = {
-	baseUrl:'http://localhost:8080',//https://aware-blue-rooster.cyclic.app',
+	// baseUrl:'http://localhost:8080',
+	baseUrl:'https://aware-blue-rooster.cyclic.app',
 	usernameCheckerUrl:'https://api.kitadigital.my.id/api/game',
 	webtitle:find('title'),
 	headertitle:find('.bigtitle'),

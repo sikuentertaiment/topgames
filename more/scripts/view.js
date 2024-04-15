@@ -2506,7 +2506,7 @@ const view = {
 				    font-weight: bold;
 				    cursor: pointer;
 				    border: 1px solid #696cff;
-					">Login Sekarang</div>
+					" id=dologin>Login Sekarang</div>
 					<div style="
 						margin-top: 15px;
 				    color: #696cff;
@@ -2522,12 +2522,13 @@ const view = {
 			onadded(){
 				this.customDefine();
 				this.initPasswordMechanism();
-				this.lupaPassInit();
+				this.buttonInit();
 			},
 			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 				this.lupapass = this.find('#lupapass');
 				this.signup = this.find('#signup');
+				this.dologin = this.find('#dologin');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -2546,13 +2547,54 @@ const view = {
 					}
 				})
 			},
-			lupaPassInit(){
+			buttonInit(){
 				this.lupapass.onclick = ()=>{
 					app.openLupaPass();
 				}
 				this.signup.onclick = ()=>{
 					app.openRegis();
 				}
+				this.dologin.onclick = ()=>{
+					this.doLogin();
+				}
+			},
+			collectData(){
+				const inputs = this.findall('input');
+				return {email:inputs[0].value,password:inputs[1].value};
+			},
+			dataStatus(data){
+				const minpassdigit = 6;
+				if(!data.email.length)
+					return {valid:false,message:'Email tidak boleh kosong!'}
+				if(data.email.indexOf('@') === -1)
+					return {valid:false,message:'Email tidak valid!'}
+				if(!data.password.length || data.password.length < minpassdigit)
+					return {valid:false,message:`Minimal password ${minpassdigit} digits`}
+				return {valid:true}
+			},
+			async doLogin(){
+				const logindata = this.collectData();
+				const dataStatus = this.dataStatus(logindata);
+				if(!dataStatus.valid)
+					return app.showWarnings(dataStatus.message);
+				// now request login
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						url:`${app.baseUrl}/login`,
+						data:jsonstr(logindata),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(!response.valid)
+					return app.showWarnings(response.message);
+				this.processData(response.user);
+			},
+			processData(param){
+				app.isLogin = param;
+				app.openProfile();
 			}
 		})
 	},
@@ -2590,7 +2632,7 @@ const view = {
 					">
 						<div>Nama Lengkap</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Nama Anda...">
+							<input class=formc placeholder="Masukan Nama Anda..." id=fullname>
 						</div>
 					</div>
 					<div style="
@@ -2600,9 +2642,9 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Email Atau Username</div>
+						<div>Email</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Email Anda...">
+							<input class=formc placeholder="Masukan Email Anda..." id=email>
 						</div>
 					</div>
 					<div style="
@@ -2614,7 +2656,7 @@ const view = {
 					">
 						<div>Nomor Whatsapp</div>
 						<div style=display:flex;align-items:center;>
-							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." style="
+							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." id=phonenumber style="
 								border-radius:8px 0 0 8px;
 							">
 							<div style="
@@ -2638,7 +2680,7 @@ const view = {
 					">
 						<div>Kode Otp</div>
 						<div style=display:flex;>
-							<input type=number class=formc placeholder="Masukan Kode Otp...">
+							<input type=number class=formc placeholder="Masukan Kode Otp..." id=otp>
 						</div>
 					</div>
 					<div style="
@@ -2678,7 +2720,7 @@ const view = {
 				    font-weight: bold;
 				    cursor: pointer;
 				    border: 1px solid #696cff;
-					">Daftar Sekarang</div>
+					" id=doregis>Daftar Sekarang</div>
 					<div style="
 						margin-top: 15px;
 				    color: #696cff;
@@ -2693,10 +2735,14 @@ const view = {
 				this.login.onclick = ()=>{
 					app.openLogin();
 				}
+				this.doregis.onclick = ()=>{
+					this.doRegistration();
+				}
 			},
 			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 				this.login = this.find('#login');
+				this.doregis = this.find('#doregis');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -2714,6 +2760,58 @@ const view = {
 						inputs[Number(input.id)].value = input.value;
 					}
 				})
+			},
+			collectData(){
+				const data = {};
+				this.findall('input').forEach((input)=>{
+					if(input.id === '1')
+						return data['password'] = input.value;
+					if(input.id === '0')
+						return
+					data[input.id] = input.value;
+				})
+				return data;
+			},
+			dataStatus(param){
+				let valid = false;
+				let message;
+				for(let i in param){
+					if(!param[i].length){
+						valid = false;
+						message = `${i.toUpperCase()} tidak boleh kosong!`;
+						break;
+					}
+					if(i === 'password' && param[i].length < 6){
+						valid = false;
+						message = 'Password minimal 6 digits';
+						break;
+					}
+					if(i === 'email' && param[i].indexOf('@') === -1){
+						valid = false;
+						message = 'Email tidak valid!';
+						break;
+					}
+				}
+				return {valid,message};
+			},
+			async doRegistration(){
+				const regisdata = this.collectData();
+				const dataStatus = this.dataStatus(regisdata);
+				if(!dataStatus.valid)
+					return app.showWarnings(dataStatus.message);
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						url:`${app.baseUrl}/regis`,
+						data:jsonstr(regisdata),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(!response.valid)
+					return app.showWarnings(response.message);
+				app.showWarnings('Registrasi berhasil! silahkan login terlebih dahulu!');
 			}
 		})
 	},
