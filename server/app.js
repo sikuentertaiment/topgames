@@ -823,11 +823,57 @@ app.get('/guaranteesaldo',async (req,res)=>{
 })
 
 app.post('/login',async (req,res)=>{
+	let valid = true;
+	let mptyfields = [];
+	['email','password'].forEach((fields)=>{
+		if(!req.fields[fields]){
+			valid = false;
+			mptyfields.push(fields);
+		}
+	})
+	if(!valid)
+		return res.json({valid:false,message:`The data given isnt valid, please check again! (${mptyfields.toString()})`})
+	// we need email and password
+	const user = (await db.ref(`users/${req.fields.email.replace('@','_').replaceAll('.','')}`).get()).val(); 
+	if(user){
+		if(user.password === req.fields.password){
+			delete user.password;
+			return res.json({valid:true,message:'Login success',user});
+		}
+		return res.json({valid:false,message:'Invalid password!'});
+	}
+	res.json({valid:false,message:'User not found!'});
+})
 
+app.get('/users',async (req,res)=>{
+	res.json((await db.ref('users').get()).val());
 })
 
 app.post('/regis',async (req,res)=>{
-	
+	let valid = true;
+	let mptyfields = [];
+	['fullname','username','phonenumber','email','password'].forEach((fields)=>{
+		if(!req.fields[fields]){
+			valid = false;
+			mptyfields.push(fields);
+		}
+	})
+	if(!valid)
+		return res.json({valid:false,message:`The data given isnt valid, please check again! (${mptyfields.toString()})`})
+	// do email checking
+	// if the email is already exist
+	if((await db.ref(`users/${req.fields.email.replace('@','_').replaceAll('.','')}`).get()).val())
+		return res.json({valid:false,message:`Email: ${req.fields.email} already exist!`});
+
+	// we need to get the time this user sign up
+	const schecmaUser = {
+		regisdate:new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+		ucid: new Date().getTime(),
+		refCode:new Date().getTime()
+	}
+	// now saving the data
+	await db.ref(`users/${req.fields.email.replace('@','_').replaceAll('.','')}`).set(Object.assign(req.fields,schecmaUser));
+	res.json({valid:true,message:'Registrastion success!'});
 })
 
 //functions
