@@ -3984,6 +3984,7 @@ const view = {
 					this.selected[i].remove();
 					delete this.selected[i];
 				}
+				this.showInfo();
 			},
 			buy(){
 				if(!objlen(this.selected))
