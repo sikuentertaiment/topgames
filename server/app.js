@@ -770,7 +770,7 @@ app.post('/diginotify',async (req,res)=>{
     	orderData.digiresponse = post_data.data;
     	await db.ref(`order/${post_data.data.ref_id}`).set(orderData);
     	//sending fonnte notification
-    	await fonnte.sendMessage(orderData,'digiStatusChanged');
+    	await fonnte.sendMessage(orderData,'digiStatusChanged',orderData.products.waNotif);
     }
     res.status(200).send('Webhook received successfully');
   } else {
@@ -864,7 +864,8 @@ app.post('/regis',async (req,res)=>{
 		return res.json({valid:false,message:`The data given isnt valid, please check again! (${mptyfields.toString()})`})
 	// do email checking
 	// if the email is already exist
-	if((await db.ref(`users/${req.fields.email.replace('@','_').replaceAll('.','')}`).get()).val())
+	const emailId = req.fields.email.replace('@','_').replaceAll('.','');
+	if((await db.ref(`users/${emailId}`).get()).val())
 		return res.json({valid:false,message:`Email: ${req.fields.email} already exist!`});
 
 	// we need to get the time this user sign up
@@ -873,15 +874,35 @@ app.post('/regis',async (req,res)=>{
 		ucid: new Date().getTime(),
 		refCode:new Date().getTime()
 	}
+	// ref the email id with the wa number
+	await db.ref(`wanumbers/${req.fields.phonenumber}`).set(emailId);
 	// now saving the data
-	await db.ref(`users/${req.fields.email.replace('@','_').replaceAll('.','')}`).set(Object.assign(req.fields,schecmaUser));
+	await db.ref(`users/${emailId}`).set(Object.assign(req.fields,schecmaUser));
 	res.json({valid:true,message:'Registrastion success!'});
 })
 
 app.get('/sendotp',async (req,res)=>{
 	if(!req.query.number)
 		return res.json({valid:false,message:'Number isnt valid!'});
-	const response = await fonnte.sendMessage({otp:getOtp()},'sendotp');
+	if(req.query.lp){
+		if(!(await db.ref(`wanumbers/${req.query.number}`).get()).val())
+			return res.json({valid:false,message:'Nomor tidak terdaftar!'});	
+	}
+	const otp = getOtp();
+	const response = await fonnte.sendMessage({otp},'sendotp',req.query.number);
+	res.json({valid:response.data.status,otp});
+})
+
+app.post('/changepass',async (req,res)=>{
+	if(!req.fields.number || !req.fields.password)
+		return res.json({message:'Mohon cek kembali data anda!'});
+	if(req.fields.password.length < 6)
+		return res.json({message:'Password minimal 6 digit'});
+	const waemail = (await db.ref(`wanumbers/${req.fields.number}`).get()).val();
+	if(!waemail)
+		return res.json({message:'Nomor tidak terdaftar!'});
+	await db.ref(`users/${waemail}`).update({password:req.fields.password});
+	res.json({message:'Password berhasil diubah!'});
 })
 
 //functions
@@ -941,14 +962,16 @@ const getOtp = ()=>{
 //object app
 const fonnte = {
 	apiUrl:'https://api.fonnte.com/send',
-	sendMessage(commands,templateId){
+	sendMessage(commands,templateId,target){
 		return new Promise(async (resolve,reject)=>{
 			const fonnteData = (await db.ref('fonnteData').get()).val();
 			/*
 				token, ownerNumber, messageTemplate
 			*/
+			if(!target)
+				target = fonnteData.ownerNumber;
 		  const requestData = {
-		    target: fonnteData.ownerNumber,
+		    target,
 		    message: this.getMessage(commands,fonnteData.messageTemplate[templateId])
 		  };
 		  const response = await axios.post(this.apiUrl, requestData, {

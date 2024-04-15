@@ -2594,6 +2594,7 @@ const view = {
 			style:`
 				height:100%;
 				background:#f5f5f9;
+				overflow:auto;
 			`,
 			innerHTML:`
 				<div style="
@@ -2612,6 +2613,7 @@ const view = {
 					margin-top:20px;
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+    			margin-bottom:120px;
 				">
 					<div style="
 						display: flex;
@@ -2670,7 +2672,7 @@ const view = {
 						    padding:9px;
 						    border-radius:0 8px 8px 0;
 						    cursor:pointer;
-							">Kirim Otp</div>
+							" id=sendotp>Kirim Otp</div>
 						</div>
 					</div>
 					<div style="
@@ -2740,11 +2742,16 @@ const view = {
 				this.doregis.onclick = ()=>{
 					this.doRegistration();
 				}
+				this.sendotp.onclick = ()=>{
+					this.sendOTP();
+				}
 			},
 			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
 				this.login = this.find('#login');
 				this.doregis = this.find('#doregis');
+				this.sendotp = this.find('#sendotp');
+				this.phonenumber = this.find('#phonenumber');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -2793,6 +2800,11 @@ const view = {
 						message = 'Email tidak valid!';
 						break;
 					}
+					if(i === 'otp' && param[i] !== this.otp){
+						valid = false;
+						message = 'OTP salah!';
+						break;
+					}
 				}
 				return {valid,message};
 			},
@@ -2815,8 +2827,19 @@ const view = {
 					return app.showWarnings(response.message);
 				app.showWarnings('Registrasi berhasil! silahkan login terlebih dahulu!');
 			},
-			sendOTP(){
-				
+			async sendOTP(){
+				const response = await new Promise((resolve,reject)=>{
+					cOn.get({
+						url:`${app.baseUrl}/sendotp?number=${this.phonenumber.value}`,
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(!response.valid)
+					return app.showWarnings(response.message || 'Otp tidak berhasil dikirim!');
+				app.showWarnings('Otp berhasil dikirim!');
+				this.otp = response.otp;
 			}
 		})
 	},
@@ -3029,7 +3052,7 @@ const view = {
 						<div style=display:flex;align-items:center;>
 							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." style="
 								border-radius:8px 0 0 8px;
-							">
+							" id=phonenumber>
 							<div style="
 								color: #fff;
 						    background-color: #303f9f !important;
@@ -3039,7 +3062,7 @@ const view = {
 						    padding:9px;
 						    border-radius:0 8px 8px 0;
 						    cursor:pointer;
-							">Kirim Otp</div>
+							" id=sendotp>Kirim Otp</div>
 						</div>
 					</div>
 					<div style="
@@ -3051,7 +3074,7 @@ const view = {
 					">
 						<div>OTP</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Otp...">
+							<input class=formc placeholder="Masukan Otp..." id=otp>
 						</div>
 					</div>
 					<div style="
@@ -3091,15 +3114,26 @@ const view = {
 				    font-weight: bold;
 				    cursor: pointer;
 				    border: 1px solid #696cff;
-					">Konfirmasi Perubahan</div>
+					" id=savechange>Konfirmasi Perubahan</div>
 				</div>
 			`,
 			onadded(){
 				this.customDefine();
 				this.initPasswordMechanism();
+
+				this.savechange.onclick = ()=>{
+					this.changeThePass();
+				}
+				this.sendotp.onclick = ()=>{
+					this.sendOTP();
+				}
 			},
 			customDefine(){
 				this.passparent = this.find('#passwordmechanism');
+				this.savechange = this.find('#savechange');
+				this.sendotp = this.find('#sendotp');
+				this.otp = this.find('#otp');
+				this.phonenumber = this.find('#phonenumber');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -3117,6 +3151,40 @@ const view = {
 						inputs[Number(input.id)].value = input.value;
 					}
 				})
+				this.password = inputs[0];
+			},
+			async changeThePass(){
+				if(!this.phonenumber.value.length)
+					return app.showWarnings('Nomor WA tidak boleh kosong!');
+				if(!this.otp.value.length || this.otp.value !== this.otpSession)
+					return app.showWarnings('Otp tidak boleh kosong dan harus sama!');
+				if(!this.password.value.length || this.password.value.length < 6)
+					return app.showWarnings('Password tidak boleh kosong, dan minimal 6 digits');
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						url:`${app.baseUrl}/changepass`,
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						data:jsonstr({number:this.phonenumber.value,password:this.password.value}),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				app.showWarnings(response.message);
+			},
+			async sendOTP(){
+				const response = await new Promise((resolve,reject)=>{
+					cOn.get({
+						url:`${app.baseUrl}/sendotp?number=${this.phonenumber.value}&&lp=1`,
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(!response.valid)
+					return app.showWarnings(response.message || 'Otp tidak berhasil dikirim!');
+				app.showWarnings('Otp berhasil dikirim!');
+				this.otpSession = response.otp;
 			}
 		})
 	},
