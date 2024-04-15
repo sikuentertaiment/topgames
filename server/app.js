@@ -878,6 +878,12 @@ app.post('/regis',async (req,res)=>{
 	res.json({valid:true,message:'Registrastion success!'});
 })
 
+app.get('/sendotp',async (req,res)=>{
+	if(!req.query.number)
+		return res.json({valid:false,message:'Number isnt valid!'});
+	const response = await fonnte.sendMessage({otp:getOtp()},'sendotp');
+})
+
 //functions
 
 const productRechecker = (buyyerProductCode) => {
@@ -926,6 +932,10 @@ const getDigiSaldo = () => {
 		})
 		resolve(response);	
 	})
+}
+const getOtp = ()=>{
+	let otp = new Date().getTime().toString();
+	return otp.slice(otp.length - 6);
 }
 
 //object app

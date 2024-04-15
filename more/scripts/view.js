@@ -2814,6 +2814,9 @@ const view = {
 				if(!response.valid)
 					return app.showWarnings(response.message);
 				app.showWarnings('Registrasi berhasil! silahkan login terlebih dahulu!');
+			},
+			sendOTP(){
+				
 			}
 		})
 	},
