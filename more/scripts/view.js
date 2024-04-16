@@ -147,7 +147,7 @@ const view = {
 						display:flex;
 						gap:10px;
 					">
-						<div title="Masukan Keranjang" style="display:flex;align-items:center;justify-content:center;" class=goldbutton>
+						<div title="Masukan Keranjang" style="display:flex;align-items:center;justify-content:center;" class=goldbutton id=carting>
 							<img src=./more/media/carticonnewwhite.png width=24>
 						</div>
 						<div class=goldbutton style=border-radius:5px;width:100%; id=buybutton>Proses Pembelian</div>
@@ -155,9 +155,7 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				app.openHome();
 			},
 			async forceUserIdChecker(){
 				let userInputs = this.find('#goalNumber').value.split('/');
@@ -230,6 +228,9 @@ const view = {
 				this.find('#findNumber').onclick = ()=>{
 					this.openContact();
 				}
+				this.find('#carting').onclick = ()=>{
+					this.collectData(false);
+				}
 				this.payments = this.find('#payments');
 				this.variansdiv = this.find('#productvarians');
 				this.anim({
@@ -250,7 +251,7 @@ const view = {
 				price:null,
 				voucher:null
 			},
-			collectData(){
+			collectData(confirm=true){
 				this.findall('input').forEach(input=>{
 					if(input.value.length > 0){
 						this.data[input.id] = input.value;
@@ -261,8 +262,11 @@ const view = {
 					if(!this.data[i] && i !== 'voucher')
 						valid = false;
 				}
+				console.log(this.data);
 				if(!valid)
 					return app.showWarnings('Mohon periksa kembali data anda!');
+				if(!confirm)
+					return this.keranjangin();
 				app.confirmAction(this.data);
 			},
 			generateVarians(){
@@ -343,8 +347,7 @@ const view = {
 							this.classList.add('varianselected');
 							activeVarian = this;
 							this.parent.data.paymentMethod = 'gs';
-							this.parent.data.methodName = 'Saldo Garansi';
-							this.parent.data.saldoId = localStorage.getItem('saldoId');
+							this.parent.data.methodName = 'Saldo Akun';
 						}else app.showWarnings('Silahkan memilih produk terlebih dahulu!');
 					}
 				}))
@@ -396,6 +399,23 @@ const view = {
 							}
 						}))
 					})
+				}
+			},
+			async keranjangin(){
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						url:`${app.baseUrl}/cartnewitem`,
+						data:jsonstr({cartItem:this.data,number:app.isLogin.phonenumber}),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				app.showWarnings(response.message);
+				if(response.valid){
+					app.isLogin.cart = response.cart;
+					app.updateLoginSavedData();
 				}
 			}
 		})
@@ -2454,9 +2474,9 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Email</div>
+						<div>Hp / Whatsapp</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Username Anda..." type=email require>
+							<input class=formc placeholder="Masukan Username Anda..." type=number require>
 						</div>
 					</div>
 					<div style="
@@ -2550,14 +2570,12 @@ const view = {
 			},
 			collectData(){
 				const inputs = this.findall('input');
-				return {email:inputs[0].value,password:inputs[1].value};
+				return {number:inputs[0].value,password:inputs[1].value};
 			},
 			dataStatus(data){
 				const minpassdigit = 6;
-				if(!data.email.length)
+				if(!data.number.length)
 					return {valid:false,message:'Email tidak boleh kosong!'}
-				if(data.email.indexOf('@') === -1)
-					return {valid:false,message:'Email tidak valid!'}
 				if(!data.password.length || data.password.length < minpassdigit)
 					return {valid:false,message:`Minimal password ${minpassdigit} digits`}
 				return {valid:true}
@@ -2634,30 +2652,6 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Username</div>
-						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Email Anda..." id=username>
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 10px;
-				    color:#566a7f;
-					">
-						<div>Email</div>
-						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Email Anda..." id=email>
-						</div>
-					</div>
-					<div style="
-						display: flex;
-				    flex-direction: column;
-				    gap: 10px;
-				    margin-bottom: 10px;
-				    color:#566a7f;
-					">
 						<div>Nomor Whatsapp</div>
 						<div style=display:flex;align-items:center;>
 							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." id=phonenumber style="
@@ -2685,6 +2679,18 @@ const view = {
 						<div>Kode Otp</div>
 						<div style=display:flex;>
 							<input type=number class=formc placeholder="Masukan Kode Otp..." id=otp>
+						</div>
+					</div>
+					<div style="
+						display: flex;
+				    flex-direction: column;
+				    gap: 10px;
+				    margin-bottom: 10px;
+				    color:#566a7f;
+					">
+						<div>Email</div>
+						<div style=display:flex;>
+							<input class=formc placeholder="Masukan Email Anda..." id=email>
 						</div>
 					</div>
 					<div style="
@@ -2826,6 +2832,7 @@ const view = {
 				if(!response.valid)
 					return app.showWarnings(response.message);
 				app.showWarnings('Registrasi berhasil! silahkan login terlebih dahulu!');
+				app.openRegis();
 			},
 			async sendOTP(){
 				const response = await new Promise((resolve,reject)=>{
@@ -3171,6 +3178,7 @@ const view = {
 					})
 				})
 				app.showWarnings(response.message);
+				app.openLupaPass();
 			},
 			async sendOTP(){
 				const response = await new Promise((resolve,reject)=>{
@@ -3311,7 +3319,7 @@ const view = {
 							<img src=https://vip-reseller.co.id/library/assets/images/profile/avatar.png width=128>
 						</div>
 						<div style=display:flex;flex-direction:column;gap:5px;align-items:center;width:100%;>
-							<div>${app.isLogin.username}</div>
+							<div>${app.isLogin.fullname}</div>
 							<div style="
 								font-size: 11px;
 						    background: #303f9f;
@@ -3319,13 +3327,14 @@ const view = {
 						    padding: 5px;
 						    text-align: center;
 						    border-radius: 10px;
+						    display:none;
 							">Active</div>
 						</div>
 					</div>
 					<div class=card style="padding:10px 20px;background:#303f9f;margin-top:30px;border-radius:10px;color:white;display:flex;align-items:center;justify-content:space-between;">
 						<div style=display:flex;flex-direction:column;gap:5px;>
 							<div>Saldo</div>
-							<div style=font-size:11px;display:flex;align-items:center;>Rp ${getPrice(app.isLogin.saldo ? apps.isLogin.saldo : 0)}</div>
+							<div style=font-size:11px;display:flex;align-items:center;>Rp ${getPrice(app.isLogin.saldo ? app.isLogin.saldo : 0)}</div>
 						</div>
 						<div style=display:flex;align-items:center; class=child id=topup>
 							<img src="https://v3.kiosmoba.com/vendor/assets/img/icons/unicons/add.png" width=24 style=cursor:pointer;>
@@ -3359,15 +3368,19 @@ const view = {
 					</div>
 					<div class=card style=background:white;margin-top:40px;border-radius:8px;display:flex;flex-direction:column;>
 						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
+							<div style=margin-bottom:5px;>Nama Lengkap</div>
+							<div style=font-size:11px;>${app.isLogin.fullname}</div>
+						</div>
+						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
 							<div style=margin-bottom:5px;>Email</div>
 							<div style=font-size:11px;>${app.isLogin.email}</div>
 						</div>
 						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
-							<div style=margin-bottom:5px;>Hp</div>
+							<div style=margin-bottom:5px;>Hp / Whatsapp</div>
 							<div style=font-size:11px;>${app.isLogin.phonenumber}</div>
 						</div>
 						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
-							<div style=margin-bottom:5px;>Bergabung Pada</div>
+							<div style=margin-bottom:5px;>Tanggal Bergabung</div>
 							<div style=font-size:11px;>${app.isLogin.regisdate}</div>
 						</div>
 					</div>
@@ -3908,7 +3921,6 @@ const view = {
 			`,
 			async onadded(){
 				// getting the cart data
-				await this.getCartData();
 				this.generateItems();
 
 				this.putTrash.onclick = ()=>{
@@ -3920,9 +3932,13 @@ const view = {
 			},
 			autoDefine:true,
 			generateItems(){
-				this.cartData.forEach((item)=>{
+				let len = 0;
+				for(let i in app.isLogin.cart){
+					len += 1;
+					const item = app.isLogin.cart[i];
 					this.cart.addChild(makeElement('div',{
 						price:item.price,
+						itemId:i,
 						style:`
 							padding:20px;
 							margin-bottom:10px;
@@ -3944,7 +3960,7 @@ const view = {
 									cursor:pointer;
 									border-radius:50%;
 								" id=selector></div>
-								<div style=width:80%;>${item.product_name}</div>
+								<div style=width:80%;>${item.varianName}</div>
 								<div style="
 									width:20px;height:20px;
 									cursor:pointer;
@@ -3970,7 +3986,7 @@ const view = {
 							" id=moredetails>
 								<div class=inlineItem>
 									<div>Produk</div>
-									<div>${item.product_name}</div>
+									<div>${item.varianName}</div>
 								</div>
 								<div class=inlineItem>
 									<div>Harga</div>
@@ -3978,7 +3994,7 @@ const view = {
 								</div>
 								<div class=inlineItem>
 									<div>Tujuan</div>
-									<div>082289582776</div>
+									<div>${item.goalNumber}</div>
 								</div>
 							</div>
 						`,
@@ -4031,7 +4047,12 @@ const view = {
 							}
 						}
 					}))
-				})
+				}
+				if(!len)
+					this.cart.addChild(makeElement('div',{
+						innerHTML:'Keranjang masih kosong!',
+						style:'text-align:center;margin-top:150px;'
+					}))
 			},
 			showInfo(){
 				let priceTotal = 0;
@@ -4041,37 +4062,66 @@ const view = {
 				this.counter.innerText = `${objlen(this.selected)} Dipilih`;
 				this.counterprice.innerText = `Total: Rp ${getPrice(priceTotal)}`;
 			},
-			getCartData(){
-				return new Promise((resolve,reject)=>{
-					// now make it like it work
-					this.cartData = this.getRandomCartProduct();
-					resolve(true);
-				})
-			},
-			delete(){
-				if(!objlen(this.selected))
-					return app.showWarnings('Tidak ada produk dipilih!');
+			getArrItems(){
+				const todelete = [];
 				for(let i in this.selected){
-					this.selected[i].remove();
-					delete this.selected[i];
+					todelete.push(this.selected[i].itemId);
 				}
-				this.showInfo();
+				return todelete;
 			},
-			buy(){
-				if(!objlen(this.selected))
+			async delete(){
+				const todelete = this.getArrItems();
+				if(!todelete.length)
 					return app.showWarnings('Tidak ada produk dipilih!');
-				app.showWarnings(`Membeli ${objlen(this.selected)} produk`);
-			},
-			// for testing only
-			getRandomCartProduct(){
-				// [ the data is arr, item is obj ]
-				let productArrs = [];
-				for(let i in app.products){
-					for(let j in app.products[i]){
-						productArrs = productArrs.concat(app.products[i][j].data);
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						url:`${app.baseUrl}/cartdeleteitem`,
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						data:jsonstr({number:app.isLogin.phonenumber,todelete}),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(response.valid){
+					for(let i in this.selected){
+						this.selected[i].remove();
+						delete app.isLogin.cart[this.selected[i].itemId];
+						delete this.selected[i];
 					}
 				}
-				return productArrs;
+				app.showWarnings(response.message);
+				app.updateLoginSavedData();
+				this.showInfo();
+			},
+			async buy(){
+				const toco = this.getArrItems();
+				if(!toco.length)
+					return app.showWarnings('Tidak ada produk dipilih!');
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						url:`${app.baseUrl}/cartco`,
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						data:jsonstr({number:app.isLogin.phonenumber,toco}),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				// if(response.valid){
+				// 	for(let i in this.selected){
+				// 		this.selected[i].remove();
+				// 		delete app.isLogin.cart[this.selected[i].itemId];
+				// 		delete this.selected[i];
+				// 	}
+				// }
+				app.showWarnings(response.message);
+				console.log(response);
+				if(response.valid){
+					app.isLogin.saldo = response.saldoleft;
+					app.updateLoginSavedData();
+					app.showCoDetails(response.docolen);
+				}
 			}
 		})
 	},
@@ -4175,4 +4225,57 @@ const view = {
 			}
 		})
 	},
+	coDetails(param){
+		return makeElement('div',{
+			className:'smartWidth',
+			selected:{},
+			style:`
+				height:100%;
+				background:#f5f5f9;
+				overflow:auto;
+			`,
+			innerHTML:`
+				<div class=bold style=text-align:center;padding:20px;>Checkout Details</div>
+				<div id=parent style=padding:10px;margin-bottom:150px;></div>
+			`,
+			autoDefine:true,
+			onadded(){
+				this.generateDetails();
+			},
+			generateDetails(){
+				param.forEach(detail=>{
+					this.parent.addChild(makeElement('div',{
+						style:'padding:10px 20px;background:white;margin-bottom:10px;border-radius:10px;',
+						className:'card',
+						innerHTML:`
+							<div style=margin-bottom:10px;>
+								<div class=bold style=margin-bottom:5px;>OrderId</div>
+								<div style=display:flex;>
+									<input value="${detail.orderId||'-'}" readonly>
+								</div>
+							</div>
+							<div style=margin-bottom:10px;>
+								<div class=bold style=margin-bottom:5px;>Produk</div>
+								<div style=display:flex;>
+									<input value="${detail.product||'-'}" readonly>
+								</div>
+							</div>
+							<div style=margin-bottom:10px;>
+								<div class=bold style=margin-bottom:5px;>Status</div>
+								<div style=display:flex;>
+									<input value="${detail.status||'-'}" readonly>
+								</div>
+							</div>
+							<div style=margin-bottom:10px;>
+								<div class=bold style=margin-bottom:5px;>Keterangan</div>
+								<div style=display:flex;>
+									<input value="${detail.message||'-'}" readonly>
+								</div>
+							</div>
+						`
+					}))
+				})
+			}
+		})
+	}
 }

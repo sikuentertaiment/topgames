@@ -898,7 +898,7 @@ const view = {
 				    name: 'order',
 				    data: []
 				  }],
-				  colors:['#8973df','#8973df'],
+				  colors:['#303f9f','#303f9f'],
 				  xaxis: {
 				    categories: []
 				  }
@@ -947,7 +947,7 @@ const view = {
 				    name: 'visitor',
 				    data: []
 				  }],
-				  colors:['#8973df','#8973df'],
+				  colors:['#303f9f','#303f9f'],
 				  xaxis: {
 				    categories: []
 				  }
@@ -993,7 +993,7 @@ const view = {
 				    name: 'profit',
 				    data: []
 				  }],
-				  colors:['#8973df','#8973df'],
+				  colors:['#303f9f','#303f9f'],
 				  xaxis: {
 				    categories: []
 				  }

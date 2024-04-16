@@ -1,7 +1,7 @@
 const app = {
-	// baseUrl:'http://localhost:8080',
+	baseUrl:'http://localhost:8080',
 	// baseUrl:'https://aware-blue-rooster.cyclic.app',
-	baseUrl:'https://cooperative-tux-worm.cyclic.app',
+	// baseUrl:'https://cooperative-tux-worm.cyclic.app',
 	usernameCheckerUrl:'https://api.kitadigital.my.id/api/game',
 	webtitle:find('title'),
 	headertitle:find('.bigtitle'),
@@ -53,6 +53,7 @@ const app = {
 
 		// this.generateTools();
 		this.getLogData();
+		this.updateCartData();
 	},
 	startNotifMovement(){
 		const notif = find('#notif');
@@ -371,6 +372,7 @@ const app = {
 		this.topLayer.replaceChild(view.callCsPage());
 	},
 	openHome(){
+		this.updateCartData();
 		this.topLayerClose();
 	},
 	openCekpesanan(){
@@ -407,6 +409,10 @@ const app = {
 		this.topLayer.replaceChild(view.moreMenu());
 	},
 	openCart(){
+		if(!this.isLogin){
+			app.showWarnings('Mohon login terlebih dahulu!');
+			return this.openLogin();
+		}
 		this.topLayer.replaceChild(view.cart());
 	},
 	openLupaPass(){
@@ -445,9 +451,14 @@ const app = {
 		// adding time valid login
 		// valid 10 minute for reload
 		param.valid = new Date().getTime() + 600000;
+		if(!param.cart)
+			param.cart = {};
 		// save the login data to ls
 		localStorage.setItem('logdata',jsonstr(param));
 		this.isLogin = param;
+	},
+	updateLoginSavedData(){
+		localStorage.setItem('logdata',jsonstr(this.isLogin));
 	},
 	isLoginValid(){
 		const logdata = JSON.parse(localStorage.getItem('logdata'));
@@ -465,6 +476,16 @@ const app = {
 		if(result.valid){
 			this.isLogin = result.logdata;
 		}
+	},
+	updateCartData(){
+		if(!this.isLogin || !this.isLogin.cart)
+			return this.cart.find('#num').innerText = 0;
+		this.cart.find('#num').innerText = objlen(this.isLogin.cart);
+	},
+	showCoDetails(param){
+		this.hideAndShow();
+		this.topLayerSetBackground();
+		this.topLayer.replaceChild(view.coDetails(param));
 	}
 }
 

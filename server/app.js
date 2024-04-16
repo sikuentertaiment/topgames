@@ -825,7 +825,7 @@ app.get('/guaranteesaldo',async (req,res)=>{
 app.post('/login',async (req,res)=>{
 	let valid = true;
 	let mptyfields = [];
-	['email','password'].forEach((fields)=>{
+	['number','password'].forEach((fields)=>{
 		if(!req.fields[fields]){
 			valid = false;
 			mptyfields.push(fields);
@@ -834,7 +834,7 @@ app.post('/login',async (req,res)=>{
 	if(!valid)
 		return res.json({valid:false,message:`The data given isnt valid, please check again! (${mptyfields.toString()})`})
 	// we need email and password
-	const user = (await db.ref(`users/${req.fields.email.replace('@','_').replaceAll('.','')}`).get()).val(); 
+	const user = (await db.ref(`users/${req.fields.number}`).get()).val(); 
 	if(user){
 		if(user.password === req.fields.password){
 			delete user.password;
@@ -854,7 +854,7 @@ app.get('/users',async (req,res)=>{
 app.post('/regis',async (req,res)=>{
 	let valid = true;
 	let mptyfields = [];
-	['fullname','username','phonenumber','email','password'].forEach((fields)=>{
+	['fullname','phonenumber','email','password'].forEach((fields)=>{
 		if(!req.fields[fields]){
 			valid = false;
 			mptyfields.push(fields);
@@ -864,9 +864,9 @@ app.post('/regis',async (req,res)=>{
 		return res.json({valid:false,message:`The data given isnt valid, please check again! (${mptyfields.toString()})`})
 	// do email checking
 	// if the email is already exist
-	const emailId = req.fields.email.replace('@','_').replaceAll('.','');
+	const emailId = req.fields.phonenumber;
 	if((await db.ref(`users/${emailId}`).get()).val())
-		return res.json({valid:false,message:`Email: ${req.fields.email} already exist!`});
+		return res.json({valid:false,message:`Number: ${req.fields.phonenumber} already exist!`});
 
 	// we need to get the time this user sign up
 	const schecmaUser = {
@@ -875,7 +875,6 @@ app.post('/regis',async (req,res)=>{
 		refCode:new Date().getTime()
 	}
 	// ref the email id with the wa number
-	await db.ref(`wanumbers/${req.fields.phonenumber}`).set(emailId);
 	// now saving the data
 	await db.ref(`users/${emailId}`).set(Object.assign(req.fields,schecmaUser));
 	res.json({valid:true,message:'Registrastion success!'});
@@ -885,7 +884,7 @@ app.get('/sendotp',async (req,res)=>{
 	if(!req.query.number)
 		return res.json({valid:false,message:'Number isnt valid!'});
 	if(req.query.lp){
-		if(!(await db.ref(`wanumbers/${req.query.number}`).get()).val())
+		if(!(await db.ref(`users/${req.query.number}`).get()).val())
 			return res.json({valid:false,message:'Nomor tidak terdaftar!'});	
 	}
 	const otp = getOtp();
@@ -898,13 +897,72 @@ app.post('/changepass',async (req,res)=>{
 		return res.json({message:'Mohon cek kembali data anda!'});
 	if(req.fields.password.length < 6)
 		return res.json({message:'Password minimal 6 digit'});
-	const waemail = (await db.ref(`wanumbers/${req.fields.number}`).get()).val();
-	if(!waemail)
+	if(!(await db.ref(`users/${req.fields.number}`).get()).val())
 		return res.json({message:'Nomor tidak terdaftar!'});
-	await db.ref(`users/${waemail}`).update({password:req.fields.password});
+	await db.ref(`users/${req.fields.number}`).update({password:req.fields.password});
 	res.json({message:'Password berhasil diubah!'});
 })
 
+app.post('/cartnewitem',async (req,res)=>{
+	// validating the item
+	// const consents = ['products',''];
+	await db.ref(`users/${req.fields.number}/cart/${new Date().getTime()}`).set(req.fields.cartItem);
+	res.json({valid:true,message:'Produk berhasil ditambahkan ke-keranjang!',cart:(await db.ref(`users/${req.fields.number}/cart`).get()).val()});
+})
+
+app.post('/cartdeleteitem',async (req,res)=>{
+	try{
+		for(let item of req.fields.todelete){
+			await db.ref(`users/${req.fields.number}/cart/${item}`).remove();
+		}
+		res.json({valid:true,message:`${req.fields.todelete.length > 1 ? 'items' : 'item'} berhasil dihapus!`});
+	}catch(e){
+		res.json({valid:false,message:'Terjadi kesalahan!'});
+	}
+})
+
+app.post('/cartco',async (req,res)=>{
+	if(req.fields.toco.length > 5)
+		return res.json({valid:false,message:'Maksimal Checkout 5 item!'});
+	const docolen = [];
+	let usersaldo;
+	for(let itemId of req.fields.toco){
+		const item = (await db.ref(`users/${req.fields.number}/cart/${itemId}`).get()).val();
+		const statusItem = await productRechecker(item.productVarian);
+		if(statusItem.buyer_product_status && statusItem.seller_product_status){
+			usersaldo = (await db.ref(`users/${req.fields.number}/saldo`).get()).val()||0;
+			if(usersaldo >= statusItem.price){
+				try{
+					usersaldo -= statusItem.price;
+					await db.ref(`users/${req.fields.number}/saldo`).set(usersaldo);
+					const dateCreate = new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+					const orderId = Date.parse(dateCreate).toString();
+					const orderData = {payments:{
+						dateCreate,
+						orderId,
+						status:'Success'
+					},products:item}
+					const responseorder = await digiOrder(orderData,{sku:orderData.products.productVarian,nocustomer:orderData.products.goalNumber,refid:orderId});
+					orderData.products.status = responseorder.data.data.status;
+					if(orderData.products.status === 'Gagal'){
+						usersaldo += statusItem.price;
+						await db.ref(`users/${req.fields.number}/saldo`).set(usersaldo);
+					}
+					orderData.digiresponse = responseorder.data.data;
+					await db.ref(`orders/${orderId}`).set(orderData);
+					docolen.push({orderId,product:item.varianName,status:orderData.products.status,message:'Produk berhasil diorder!'});
+				}catch(e){
+					res.json({valid:false,message:'Terjadi kesalahan!'});
+				}
+			}else docolen.push({product:item.varianName,status:'Canceled',message:'Produk gagal diorder! Saldo tidak cukup!'});
+		}
+	}
+	res.json({valid:true,docolen,message:'Checkout berhasil!',saldoleft:usersaldo});
+})
+
+app.get('/checkproduct',async (req,res)=>{
+	res.json(await productRechecker(req.query.sku));
+})
 //functions
 
 const productRechecker = (buyyerProductCode) => {
