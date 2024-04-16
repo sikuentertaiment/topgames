@@ -825,6 +825,29 @@ app.get('/guaranteesaldo',async (req,res)=>{
 app.post('/login',async (req,res)=>{
 	let valid = true;
 	let mptyfields = [];
+	if(req.fields.isOtp){
+		['number','otp'].forEach((fields)=>{
+			if(!req.fields[fields]){
+				valid = false;
+				mptyfields.push(fields);
+			}
+		})
+		if(!valid)
+			return res.json({valid:false,message:`The data given isnt valid, please check again! (${mptyfields.toString()})`})
+		// we need email and password
+		const user = (await db.ref(`users/${req.fields.number}`).get()).val(); 
+		if(user){
+			if(user.otplogin && user.otplogin.valid >= new Date().getTime() && user.otplogin.otp === req.fields.otp){
+				delete user.password;
+				delete user.otplogin;
+				if(!user.saldo)
+					user.saldo = 0;
+				return res.json({valid:true,message:'Login success!',user});
+			}
+			return res.json({valid:false,message:'Invalid otp!'});
+		}
+		return res.json({valid:false,message:'User not found!'});	
+	}
 	['number','password'].forEach((fields)=>{
 		if(!req.fields[fields]){
 			valid = false;
@@ -845,6 +868,19 @@ app.post('/login',async (req,res)=>{
 		return res.json({valid:false,message:'Invalid password!'});
 	}
 	res.json({valid:false,message:'User not found!'});
+	
+})
+
+app.get('/requestloginotp',async (req,res)=>{
+	if(!req.query.number)
+		return res.json({valid:false,message:'Invalid data given!'});
+	const otp = getOtp();
+	const response = await fonnte.sendMessage({otp},'sendotp',req.query.number);
+	if(response.data.status){
+		await db.ref(`users/${req.query.number}/otplogin`).set({otp,valid:new Date().getTime() + 600000});
+		return res.json({valid:true,message:'OTP berhasil dikirim!'});
+	}
+	res.json({valid:false,message:'Terjadi kesalahan! Gagal mengirim otp!'});
 })
 
 app.get('/users',async (req,res)=>{

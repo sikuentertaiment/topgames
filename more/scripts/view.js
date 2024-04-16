@@ -2467,6 +2467,38 @@ const view = {
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 				">
+					<div style=margin-bottom:30px;>
+						<div style="
+							display: flex;
+					    justify-content: space-around;
+					    background: white;
+					    color: white;
+					    font-weight: bold;
+					    border-radius: 0.375rem;
+					    gap: 2px;
+					    overflow: hidden;
+					    padding:0;
+						">
+							<div style="
+								width: 100%;
+						    background: #303f9f;
+						    height: 100%;
+						    padding: 10px;
+						    text-align: center;
+						    cursor:pointer;
+						    border-radius:0;
+							" class=goldbutton>Password</div>
+							<div style="
+								width: 100%;
+						    background: #303f9f;
+						    height: 100%;
+						    padding: 10px;
+						    text-align: center;
+						    cursor:pointer;
+						    border-radius:0;
+							" class=goldbutton>Otp</div>
+						</div>
+					</div>
 					<div style="
 						display: flex;
 				    flex-direction: column;
@@ -2476,7 +2508,7 @@ const view = {
 					">
 						<div>Hp / Whatsapp</div>
 						<div style=display:flex;>
-							<input class=formc placeholder="Masukan Username Anda..." type=number require>
+							<input class=formc placeholder="Masukan HP/Whatsapp Anda..." type=number require>
 						</div>
 					</div>
 					<div style="
@@ -2486,7 +2518,7 @@ const view = {
 				    margin-bottom: 20px;
 				    color:#566a7f;
 					">
-						<div>Password</div>
+						<div>Password / Otp</div>
 						<div id=passwordmechanism>
 							<div style=display:flex;gap:10px;>
 								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
@@ -2504,7 +2536,16 @@ const view = {
 								" id=1_0>
 							</div>
 						</div>
+						<div style=display:flex;display:none;>
+							<input class=formc placeholder="Masukan Kode otp..." type=number require>
+						</div>
 					</div>
+					<div style="
+						margin-top: 5px;
+				    color: gray;
+				    font-weight: bold;
+				    margin-bottom:30px;
+					" id=lupapass><span style=cursor:pointer;>Lupa Password?</span></div>
 					<div style="
 						padding: 10px;
 				    background: #303f9f !important;
@@ -2517,16 +2558,13 @@ const view = {
 				    cursor: pointer;
 				    border: 1px solid #696cff;
 					" id=dologin>Login Sekarang</div>
+				</div>
+				<div style=display:flex;justify-content:center;>
 					<div style="
 						margin-top: 15px;
-				    color: #696cff;
+				    color: gray;
 				    font-weight: bold;
-					" id=lupapass><span style=cursor:pointer;>Lupa Password?</span></div>
-					<div style="
-						margin-top: 15px;
-				    color: #696cff;
-				    font-weight: bold;
-					" id=signup><span style=cursor:pointer;>Buat akun?</span></div>
+					" id=signup>Belum punya akun? <span style=cursor:pointer;color:#303f9f;>Buat akun</span></div>
 				</div>
 			`,
 			onadded(){
@@ -2631,7 +2669,6 @@ const view = {
 					margin-top:20px;
 					background-clip: padding-box;
     			box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
-    			margin-bottom:120px;
 				">
 					<div style="
 						display: flex;
@@ -2731,11 +2768,13 @@ const view = {
 				    cursor: pointer;
 				    border: 1px solid #696cff;
 					" id=doregis>Daftar Sekarang</div>
+				</div>
+				<div style=display:flex;justify-content:center;margin-bottom:150px;>
 					<div style="
 						margin-top: 15px;
-				    color: #696cff;
+				    color: gray;
 				    font-weight: bold;
-					" id=login><span style=cursor:pointer;>Login?</span></div>
+					" id=login>Sudah punya akun? <span style=cursor:pointer;color:#303f9f;>Login</span></div>
 				</div>
 			`,
 			onadded(){
@@ -2819,6 +2858,7 @@ const view = {
 				const dataStatus = this.dataStatus(regisdata);
 				if(!dataStatus.valid)
 					return app.showWarnings(dataStatus.message);
+				delete regisdata.otp;
 				const response = await new Promise((resolve,reject)=>{
 					cOn.post({
 						someSettings:[['setRequestHeader','Content-type','application/json']],
