@@ -511,7 +511,8 @@ const app = {
 		'#Games':'openGames',
 		'#Pulsa':'openPulsa',
 		'#Data':'openData',
-		'#Details':'openProductDetails'
+		'#Details':'openProductDetails',
+		'#Lupapassword':'openLupaPass'
 	},
 	navigationInitiator(global){
 		window.onhashchange = ()=>{

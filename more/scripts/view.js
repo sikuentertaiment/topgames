@@ -2580,7 +2580,7 @@ const view = {
 			},
 			buttonInit(){
 				this.lupapass.onclick = ()=>{
-					app.openLupaPass();
+					location.hash = 'Lupapassword';
 				}
 				this.signup.onclick = ()=>{
 					location.hash = 'Regis';
