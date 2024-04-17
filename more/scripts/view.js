@@ -2502,16 +2502,16 @@ const view = {
 				    color:#566a7f;
 					">
 						<div>Password / Otp</div>
-						<div id=passwordmechanism>
-							<div style=display:flex;gap:10px;>
-								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
+						<div id=passwordmechanism style=display:flex;>
+							<div style=display:flex;gap:10px; class=formc>
+								<input type=password class=formc placeholder="Masukan Password Anda..." id=1 style=padding:0;border:0;>
 								<img src=./more/media/hide.png style="
 									object-fit:contain;
 									cursor:pointer;
 								" id=0_1>
 							</div>
-							<div style=display:flex;gap:10px;display:none;>
-								<input class=formc placeholder="Masukan Password Anda..." id=0>
+							<div style=display:flex;gap:10px;display:none; class=formc>
+								<input class=formc placeholder="Masukan Password Anda..." id=0 style=padding:0;border:0;>
 								<img src=./more/media/show.png style="
 									object-fit:contain;
 									cursor:pointer;
@@ -2623,7 +2623,7 @@ const view = {
 			},
 			processData(param){
 				app.saveLoginData(param);
-				app.openProfile();
+				location.hash = 'Profile';
 			}
 		})
 	},
@@ -2721,16 +2721,16 @@ const view = {
 				    color:#566a7f;
 					">
 						<div>Password</div>
-						<div id=passwordmechanism>
-							<div style=display:flex;gap:10px;>
-								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
+						<div id=passwordmechanism style=display:flex;>
+							<div style=display:flex;gap:10px; class=formc>
+								<input type=password class=formc placeholder="Masukan Password Anda..." id=1 style=padding:0;border:0;>
 								<img src=./more/media/hide.png style="
 									object-fit:contain;
 									cursor:pointer;
 								" id=0_1>
 							</div>
-							<div style=display:flex;gap:10px;display:none;>
-								<input class=formc placeholder="Masukan Password Anda..." id=0>
+							<div style=display:flex;gap:10px;display:none; class=formc>
+								<input class=formc placeholder="Masukan Password Anda..." id=0 style=padding:0;border:0;>
 								<img src=./more/media/show.png style="
 									object-fit:contain;
 									cursor:pointer;
@@ -3116,16 +3116,16 @@ const view = {
 				    color:#566a7f;
 					">
 						<div>Password Baru</div>
-						<div id=passwordmechanism>
-							<div style=display:flex;gap:10px;>
-								<input type=password class=formc placeholder="Masukan Password Anda..." id=1>
+						<div id=passwordmechanism style=display:flex;>
+							<div style=display:flex;gap:10px; class=formc>
+								<input type=password class=formc placeholder="Masukan Password Anda..." id=1 style=padding:0;border:0;>
 								<img src=./more/media/hide.png style="
 									object-fit:contain;
 									cursor:pointer;
 								" id=0_1>
 							</div>
-							<div style=display:flex;gap:10px;display:none;>
-								<input class=formc placeholder="Masukan Password Anda..." id=0>
+							<div style=display:flex;gap:10px;display:none; class=formc>
+								<input class=formc placeholder="Masukan Password Anda..." id=0 style=padding:0;border:0;>
 								<img src=./more/media/show.png style="
 									object-fit:contain;
 									cursor:pointer;
@@ -3434,22 +3434,22 @@ const view = {
 			`,
 			onadded(){
 				this.topup.onclick = ()=>{
-					app.openTopup();
+					location.hash = 'Topup';
 				}
 				this.logout.onclick = ()=>{
 					this.logOut();
 				}
 				this.cart.onclick = ()=>{
-					app.openCart();
+					location.hash = 'Cart';
 				}
 				this.changepass.onclick = ()=>{
-					app.openLupaPass();
+					location.hash = 'Lupapassword';
 				}
 				this.topuphistory.onclick = ()=>{
 					app.openTopupHistory();
 				}
 				this.transactionhistory.onclick = ()=>{
-					app.openHistory();
+					location.hash = 'History';
 				}
 				this.backbutton.onclick = ()=>{
 					history.back();
@@ -3474,15 +3474,26 @@ const view = {
 			`,
 			innerHTML:`
 				<div style="
-					background: white;
-			    border-radius: 0 0 10px 10px;
-			    text-align: center;
-			    font-weight: bold;
-			    padding: 20px 0;
-			    position: sticky;
-			    top: 0;
-				" class=card>
-					Topup
+					padding:10px;
+					height:48px;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					position:sticky;
+					background:#f5f5f9;
+					top:0;
+				">
+					<div style="
+						position: absolute;
+				    left: 10px;
+				    padding: 10px;
+				    width: 32px;
+				    height: 32px;
+				    cursor:pointer;
+					" id=backbutton>
+						<img src=./more/media/back.png>
+					</div>
+					<div class=bold>Topup</div>
 				</div>
 				<div style="
 					background:white;
@@ -3563,6 +3574,9 @@ const view = {
 					if(!this.topupnow.valid)
 						return app.showWarnings('Maaf, request tidak dapat diproses. Mohon coba lagi nanti!');
 					this.processTopup();
+				}
+				this.backbutton.onclick = ()=>{
+					history.back();
 				}
 			},
 			async generatePaymentMethod(price){
@@ -3964,6 +3978,19 @@ const view = {
 						<img src=./more/media/trash.png class=fitimage>
 					</div>
 				</div>
+				<div class=card style="
+					background: white;
+			    border-radius: 8px;
+			    height: 64px;
+			    margin-bottom: 20px;
+			    display:flex;
+			    align-items:center;
+			    gap:10px;
+			    padding:0 20px;
+				">
+					<div style="width:16px;height:16px;border-radius:50%;background:white;border:1px solid gray;cursor:pointer;" id=selectall></div>
+					<div>Pilih Semua</div>
+				</div>
 				<div id=cart style=margin-bottom:150px;>
 				</div>
 			`,
@@ -3976,6 +4003,10 @@ const view = {
 				}
 				this.buyButton.onclick = ()=>{
 					this.buy();
+				}
+				this.selectall.onclick = ()=>{
+					this.handleSelectAll();
+					console.log(this.selected);
 				}
 			},
 			autoDefine:true,
@@ -3993,6 +4024,7 @@ const view = {
 							background:white;
 							border-radius:8px;
 						`,
+						id:'cartItem',
 						className:'card',
 						innerHTML:`
 							<div style="
@@ -4045,6 +4077,24 @@ const view = {
 									<div>${item.goalNumber}</div>
 								</div>
 							</div>
+							<div style="
+								margin-top: 30px;
+						    display: flex;
+						    justify-content: flex-end;
+						    align-items: center;
+						    padding-top: 20px;
+						    border-top: 1px solid whitesmoke;
+						    gap:10px;
+							">
+								<div>Jumlah</div>
+								<div style="
+									display: flex;
+							    gap: 10px;
+							    align-items: center;
+								">
+									<div style=display:flex;><input type=number class=formc style=width:32px min=1 value=1></div>
+								</div>
+							</div>
 						`,
 						autoDefine:true,
 						onadded(){
@@ -4072,7 +4122,7 @@ const view = {
 						},
 						initSelector(){
 							this.selector.state = 0;
-							this.selector.onclick = ()=>{
+							this.selector.onclick = (e,uniq=0)=>{
 								if(!this.selector.state){
 									this.selector.state = 1;
 									this.selector.updateStyle({
@@ -4080,9 +4130,10 @@ const view = {
 									})
 									// save the data to the bucket
 									if(!this.bucketId){
-										this.bucketId = getTime();
+										this.bucketId = getTime() + uniq;
 									}
 									this.parentElement.parentElement.selected[this.bucketId] = this;
+									console.log('selecting');
 								}else{
 									this.selector.state = 0;
 									this.selector.updateStyle({
@@ -4090,8 +4141,10 @@ const view = {
 									})
 									delete this.parentElement.parentElement.selected[this.bucketId];
 									delete this.bucketId;
+									console.log('unselecting');
 								}
 								this.parentElement.parentElement.showInfo();
+								console.log(this.parentElement.parentElement.selected);
 							}
 						}
 					}))
@@ -4137,6 +4190,11 @@ const view = {
 						delete app.isLogin.cart[this.selected[i].itemId];
 						delete this.selected[i];
 					}
+					if(!this.cart.children.length)
+						this.cart.addChild(makeElement('div',{
+							innerHTML:'Keranjang masih kosong!',
+							style:'text-align:center;margin-top:150px;'
+						}))
 				}
 				app.showWarnings(response.message);
 				app.updateLoginSavedData();
@@ -4170,6 +4228,23 @@ const view = {
 					app.updateLoginSavedData();
 					app.showCoDetails(response.docolen);
 				}
+			},
+			selectAllState:0,
+			handleSelectAll(){
+				if(!this.selectAllState){
+					this.selectAllState = 1;
+					// hufft, undefined error.
+					// turn on state
+					return this.cart.findall('#cartItem').forEach((item,i)=>{
+						if(!item.selector.state)
+							item.selector.click(i+1);
+					})
+				}
+				this.selectAllState = 0;
+				this.cart.findall('#cartItem').forEach((item,i)=>{
+					if(item.selector.state)
+						item.selector.click(i+1);
+				})
 			}
 		})
 	},
