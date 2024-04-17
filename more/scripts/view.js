@@ -2470,7 +2470,7 @@ const view = {
 						    text-align: center;
 						    cursor:pointer;
 						    border-radius:0;
-							" class=goldbutton>Password</div>
+							" class=goldbutton id=usepassword>Password</div>
 							<div style="
 								width: 100%;
 						    background: #303f9f;
@@ -2479,7 +2479,7 @@ const view = {
 						    text-align: center;
 						    cursor:pointer;
 						    border-radius:0;
-							" class=goldbutton>Otp</div>
+							" class=goldbutton id=useotp>Otp</div>
 						</div>
 					</div>
 					<div style="
@@ -2489,9 +2489,20 @@ const view = {
 				    margin-bottom: 10px;
 				    color:#566a7f;
 					">
-						<div>Hp / Whatsapp</div>
-						<div style=display:flex;>
-							<input class=formc placeholder="Masukan HP/Whatsapp Anda..." type=number require>
+						<div>Whatsapp</div>
+						<div style=display:flex;align-items:center;>
+							<input class=formc placeholder="Masukan Nomor Whatsapp Anda..." type=number require id=wanumber>
+							<div style="
+								color: #fff;
+						    background-color: #303f9f !important;
+						    border-color: #696cff;
+						    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
+						    white-space:nowrap;
+						    padding:9px;
+						    border-radius:0 0.375rem 0.375rem 0;
+						    cursor:pointer;
+						    display:none;
+							" id=sendotp>Kirim Otp</div>
 						</div>
 					</div>
 					<div style="
@@ -2501,34 +2512,46 @@ const view = {
 				    margin-bottom: 20px;
 				    color:#566a7f;
 					">
-						<div>Password / Otp</div>
-						<div id=passwordmechanism style=display:flex;>
-							<div style=display:flex;gap:10px; class=formc>
-								<input type=password class=formc placeholder="Masukan Password Anda..." id=1 style=padding:0;border:0;>
-								<img src=./more/media/hide.png style="
-									object-fit:contain;
-									cursor:pointer;
-								" id=0_1>
+						<div style="
+							display: flex;
+					    flex-direction: column;
+					    gap: 10px;
+						" id=passwordslot>
+							<div>Password</div>
+							<div id=passwordmechanism style=display:flex;>
+								<div style=display:flex;gap:10px; class=formc>
+									<input type=password class=formc placeholder="Masukan Password Anda..." id=1 style=padding:0;border:0;>
+									<img src=./more/media/hide.png style="
+										object-fit:contain;
+										cursor:pointer;
+									" id=0_1>
+								</div>
+								<div style=display:flex;gap:10px;display:none; class=formc>
+									<input class=formc placeholder="Masukan Password Anda..." id=0 style=padding:0;border:0;>
+									<img src=./more/media/show.png style="
+										object-fit:contain;
+										cursor:pointer;
+										width:24px;
+									" id=1_0>
+								</div>
 							</div>
-							<div style=display:flex;gap:10px;display:none; class=formc>
-								<input class=formc placeholder="Masukan Password Anda..." id=0 style=padding:0;border:0;>
-								<img src=./more/media/show.png style="
-									object-fit:contain;
-									cursor:pointer;
-									width:24px;
-								" id=1_0>
-							</div>
+							<div style="
+								margin-top: 5px;
+						    color: gray;
+						    font-weight: bold;
+							" id=lupapass><span style=cursor:pointer;>Lupa Password?</span></div>
 						</div>
-						<div style=display:flex;display:none;>
-							<input class=formc placeholder="Masukan Kode otp..." type=number require>
+						<div style="
+							display: none;
+					    flex-direction: column;
+					    gap: 10px;
+						" id=otpslot>
+							<div>Otp</div>
+							<div style=display:flex;>
+								<input class=formc placeholder="Masukan Kode otp..." type=number require>
+							</div>
 						</div>
 					</div>
-					<div style="
-						margin-top: 5px;
-				    color: gray;
-				    font-weight: bold;
-				    margin-bottom:30px;
-					" id=lupapass><span style=cursor:pointer;>Lupa Password?</span></div>
 					<div style="
 						padding: 10px;
 				    background: #303f9f !important;
@@ -2560,6 +2583,12 @@ const view = {
 				this.lupapass = this.find('#lupapass');
 				this.signup = this.find('#signup');
 				this.dologin = this.find('#dologin');
+				this.usepassword = this.find('#usepassword');
+				this.useotp = this.find('#useotp');
+				this.otpslot = this.find('#otpslot');
+				this.passwordslot = this.find('#passwordslot');
+				this.sendotp = this.find('#sendotp');
+				this.wanumber = this.find('#wanumber');
 			},
 			initPasswordMechanism(){
 				const divs = this.passparent.findall('div');
@@ -2588,16 +2617,33 @@ const view = {
 				this.dologin.onclick = ()=>{
 					this.doLogin();
 				}
+				this.useotp.onclick = ()=>{
+					this.isOtp = true;
+					this.passwordslot.hide();
+					this.otpslot.show('flex');
+					this.sendotp.show('block');
+					this.wanumber.style.borderRadius = '0.375rem 0 0 0.375rem';
+				}
+				this.usepassword.onclick = ()=>{
+					this.isOtp = false;
+					this.passwordslot.show('flex');
+					this.otpslot.hide();
+					this.sendotp.hide();
+					this.wanumber.style.borderRadius = '0.375rem';
+				}
+				this.sendotp.onclick = ()=>{
+					this.sendOTP();
+				}
 			},
 			collectData(){
 				const inputs = this.findall('input');
-				return {number:inputs[0].value,password:inputs[1].value};
+				return {number:inputs[0].value,password:inputs[1].value,isOtp:this.isOtp,otp:inputs[3].value};
 			},
 			dataStatus(data){
 				const minpassdigit = 6;
 				if(!data.number.length)
-					return {valid:false,message:'Email tidak boleh kosong!'}
-				if(!data.password.length || data.password.length < minpassdigit)
+					return {valid:false,message:'Nomor whatsapp tidak boleh kosong!'}
+				if(!this.isOtp && (!data.password.length || data.password.length < minpassdigit))
 					return {valid:false,message:`Minimal password ${minpassdigit} digits`}
 				return {valid:true}
 			},
@@ -2624,6 +2670,20 @@ const view = {
 			processData(param){
 				app.saveLoginData(param);
 				location.hash = 'Profile';
+			},
+			async sendOTP(){
+				const response = await new Promise((resolve,reject)=>{
+					cOn.get({
+						url:`${app.baseUrl}/requestloginotp?number=${this.wanumber.value}`,
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(!response.valid)
+					return app.showWarnings(response.message || 'Otp tidak berhasil dikirim!');
+				app.showWarnings('Otp berhasil dikirim!');
+				console.log(this.response);
 			}
 		})
 	},
@@ -2675,7 +2735,7 @@ const view = {
 						<div>Nomor Whatsapp</div>
 						<div style=display:flex;align-items:center;>
 							<input type=number class=formc placeholder="Masukan No Whatsapp Anda..." id=phonenumber style="
-								border-radius:8px 0 0 8px;
+								border-radius:0.375rem 0 0 0.375rem;
 							">
 							<div style="
 								color: #fff;
@@ -2684,7 +2744,7 @@ const view = {
 						    box-shadow: 0 0.125rem 0.25rem 0 rgba(105, 108, 255, 0.4);
 						    white-space:nowrap;
 						    padding:9px;
-						    border-radius:0 8px 8px 0;
+						    border-radius:0 0.375rem 0.375rem 0;
 						    cursor:pointer;
 							" id=sendotp>Kirim Otp</div>
 						</div>
@@ -4006,7 +4066,6 @@ const view = {
 				}
 				this.selectall.onclick = ()=>{
 					this.handleSelectAll();
-					console.log(this.selected);
 				}
 			},
 			autoDefine:true,
@@ -4092,7 +4151,7 @@ const view = {
 							    gap: 10px;
 							    align-items: center;
 								">
-									<div style=display:flex;><input type=number class=formc style=width:32px min=1 value=1></div>
+									<div style=display:flex;><input type=number class=formc style=width:32px min=1 value=1 id=quantity></div>
 								</div>
 							</div>
 						`,
@@ -4100,6 +4159,9 @@ const view = {
 						onadded(){
 							this.initRotateControll();
 							this.initSelector();
+							this.quantity.onchange = ()=>{
+								this.parentElement.parentElement.showInfo();
+							}
 						},
 						initRotateControll(){
 							this.expander.state = 0;
@@ -4122,7 +4184,7 @@ const view = {
 						},
 						initSelector(){
 							this.selector.state = 0;
-							this.selector.onclick = (e,uniq=0)=>{
+							this.selector.onclick = (e)=>{
 								if(!this.selector.state){
 									this.selector.state = 1;
 									this.selector.updateStyle({
@@ -4130,10 +4192,9 @@ const view = {
 									})
 									// save the data to the bucket
 									if(!this.bucketId){
-										this.bucketId = getTime() + uniq;
+										this.bucketId = getTime() + this.selector.uniq;
 									}
 									this.parentElement.parentElement.selected[this.bucketId] = this;
-									console.log('selecting');
 								}else{
 									this.selector.state = 0;
 									this.selector.updateStyle({
@@ -4141,32 +4202,33 @@ const view = {
 									})
 									delete this.parentElement.parentElement.selected[this.bucketId];
 									delete this.bucketId;
-									console.log('unselecting');
 								}
 								this.parentElement.parentElement.showInfo();
-								console.log(this.parentElement.parentElement.selected);
 							}
 						}
 					}))
 				}
 				if(!len)
 					this.cart.addChild(makeElement('div',{
-						innerHTML:'Keranjang masih kosong!',
+						innerHTML:'Keranjang kosong!',
 						style:'text-align:center;margin-top:150px;'
 					}))
 			},
 			showInfo(){
 				let priceTotal = 0;
 				for(let i in this.selected){
-					priceTotal += Number(this.selected[i].price);
+					priceTotal += Number(this.selected[i].price * Number(this.selected[i].quantity.value));
 				}
 				this.counter.innerText = `${objlen(this.selected)} Dipilih`;
 				this.counterprice.innerText = `Total: Rp ${getPrice(priceTotal)}`;
+
+				if(!priceTotal && this.selectAllState)
+					this.selectall.click();
 			},
 			getArrItems(){
 				const todelete = [];
 				for(let i in this.selected){
-					todelete.push(this.selected[i].itemId);
+					todelete.push([this.selected[i].itemId,Number(this.selected[i].quantity.value)]);
 				}
 				return todelete;
 			},
@@ -4192,7 +4254,7 @@ const view = {
 					}
 					if(!this.cart.children.length)
 						this.cart.addChild(makeElement('div',{
-							innerHTML:'Keranjang masih kosong!',
+							innerHTML:'Keranjang kosong!',
 							style:'text-align:center;margin-top:150px;'
 						}))
 				}
@@ -4222,28 +4284,32 @@ const view = {
 				// 	}
 				// }
 				app.showWarnings(response.message);
-				console.log(response);
 				if(response.valid){
 					app.isLogin.saldo = response.saldoleft;
 					app.updateLoginSavedData();
-					app.showCoDetails(response.docolen);
+					app.coDetailsData = response.docolen;
+					location.hash = 'Codetails';
 				}
 			},
 			selectAllState:0,
 			handleSelectAll(){
 				if(!this.selectAllState){
 					this.selectAllState = 1;
+					this.selectall.updateStyle({background:'rgb(48, 63, 159)'});
 					// hufft, undefined error.
 					// turn on state
 					return this.cart.findall('#cartItem').forEach((item,i)=>{
-						if(!item.selector.state)
-							item.selector.click(i+1);
+						if(!item.selector.state){
+							item.selector.uniq = i + 1;
+							item.selector.click();
+						}
 					})
 				}
 				this.selectAllState = 0;
+				this.selectall.updateStyle({background:'white'});
 				this.cart.findall('#cartItem').forEach((item,i)=>{
 					if(item.selector.state)
-						item.selector.click(i+1);
+						item.selector.click();
 				})
 			}
 		})
@@ -4348,7 +4414,8 @@ const view = {
 			}
 		})
 	},
-	coDetails(param){
+	coDetails(){
+		const param = app.coDetailsData;
 		return makeElement('div',{
 			className:'smartWidth',
 			selected:{},

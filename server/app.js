@@ -838,6 +838,7 @@ app.post('/login',async (req,res)=>{
 		const user = (await db.ref(`users/${req.fields.number}`).get()).val(); 
 		if(user){
 			if(user.otplogin && user.otplogin.valid >= new Date().getTime() && user.otplogin.otp === req.fields.otp){
+				await db.ref(`users/${req.fields.number}/otplogin`).remove();
 				delete user.password;
 				delete user.otplogin;
 				if(!user.saldo)
@@ -860,6 +861,8 @@ app.post('/login',async (req,res)=>{
 	const user = (await db.ref(`users/${req.fields.number}`).get()).val(); 
 	if(user){
 		if(user.password === req.fields.password){
+			if(user.otplogin)
+				await db.ref(`users/${req.fields.number}/otplogin`).remove();
 			delete user.password;
 			if(!user.saldo)
 				user.saldo = 0;
@@ -948,8 +951,8 @@ app.post('/cartnewitem',async (req,res)=>{
 
 app.post('/cartdeleteitem',async (req,res)=>{
 	try{
-		for(let item of req.fields.todelete){
-			await db.ref(`users/${req.fields.number}/cart/${item}`).remove();
+		for(let items of req.fields.todelete){
+			await db.ref(`users/${req.fields.number}/cart/${items[0]}`).remove();
 		}
 		res.json({valid:true,message:`${req.fields.todelete.length > 1 ? 'items' : 'item'} berhasil dihapus!`});
 	}catch(e){
@@ -962,35 +965,37 @@ app.post('/cartco',async (req,res)=>{
 		return res.json({valid:false,message:'Maksimal Checkout 5 item!'});
 	const docolen = [];
 	let usersaldo;
-	for(let itemId of req.fields.toco){
-		const item = (await db.ref(`users/${req.fields.number}/cart/${itemId}`).get()).val();
+	for(let items of req.fields.toco){
+		const item = (await db.ref(`users/${req.fields.number}/cart/${items[0]}`).get()).val();
 		const statusItem = await productRechecker(item.productVarian);
 		if(statusItem.buyer_product_status && statusItem.seller_product_status){
-			usersaldo = (await db.ref(`users/${req.fields.number}/saldo`).get()).val()||0;
-			if(usersaldo >= statusItem.price){
-				try{
-					usersaldo -= statusItem.price;
-					await db.ref(`users/${req.fields.number}/saldo`).set(usersaldo);
-					const dateCreate = new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-					const orderId = Date.parse(dateCreate).toString();
-					const orderData = {payments:{
-						dateCreate,
-						orderId,
-						status:'Success'
-					},products:item}
-					const responseorder = await digiOrder(orderData,{sku:orderData.products.productVarian,nocustomer:orderData.products.goalNumber,refid:orderId});
-					orderData.products.status = responseorder.data.data.status;
-					if(orderData.products.status === 'Gagal'){
-						usersaldo += statusItem.price;
+			for(let i=0;i<items[1];i++){
+				usersaldo = (await db.ref(`users/${req.fields.number}/saldo`).get()).val()||0;
+				if(usersaldo >= statusItem.price){
+					try{
+						usersaldo -= statusItem.price;
 						await db.ref(`users/${req.fields.number}/saldo`).set(usersaldo);
+						const dateCreate = new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+						const orderId = Date.parse(dateCreate).toString();
+						const orderData = {payments:{
+							dateCreate,
+							orderId,
+							status:'Success'
+						},products:item}
+						const responseorder = await digiOrder(orderData,{sku:orderData.products.productVarian,nocustomer:orderData.products.goalNumber,refid:orderId});
+						orderData.products.status = responseorder.data.data.status;
+						if(orderData.products.status === 'Gagal'){
+							usersaldo += statusItem.price;
+							await db.ref(`users/${req.fields.number}/saldo`).set(usersaldo);
+						}
+						orderData.digiresponse = responseorder.data.data;
+						await db.ref(`orders/${orderId}`).set(orderData);
+						docolen.push({orderId,product:item.varianName,status:orderData.products.status,message:'Produk berhasil diorder!'});
+					}catch(e){
+						res.json({valid:false,message:'Terjadi kesalahan!'});
 					}
-					orderData.digiresponse = responseorder.data.data;
-					await db.ref(`orders/${orderId}`).set(orderData);
-					docolen.push({orderId,product:item.varianName,status:orderData.products.status,message:'Produk berhasil diorder!'});
-				}catch(e){
-					res.json({valid:false,message:'Terjadi kesalahan!'});
-				}
-			}else docolen.push({product:item.varianName,status:'Canceled',message:'Produk gagal diorder! Saldo tidak cukup!'});
+				}else docolen.push({product:item.varianName,status:'Canceled',message:'Produk gagal diorder! Saldo tidak cukup!'});
+			}
 		}
 	}
 	res.json({valid:true,docolen,message:'Checkout berhasil!',saldoleft:usersaldo});
