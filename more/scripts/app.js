@@ -1,7 +1,7 @@
 const app = {
-	// baseUrl:'http://localhost:8080',
+	baseUrl:'http://localhost:8080',
 	// baseUrl:'https://aware-blue-rooster.cyclic.app',
-	baseUrl:'https://cooperative-tux-worm.cyclic.app',
+	// baseUrl:'https://cooperative-tux-worm.cyclic.app',
 	usernameCheckerUrl:'https://api.kitadigital.my.id/api/game',
 	webtitle:find('title'),
 	headertitle:find('.bigtitle'),
@@ -54,6 +54,8 @@ const app = {
 		// this.generateTools();
 		this.getLogData();
 		this.updateCartData();
+		this.navigationInitiator(window);
+		location.hash = 'Home';
 	},
 	startNotifMovement(){
 		const notif = find('#notif');
@@ -87,9 +89,10 @@ const app = {
 	menuButtonsInit(){
 		this.menuButtons.forEach(btn=>{
 			btn.onclick = ()=>{
-				this.hideAndShow();
-				this.topLayerSetBackground();
-				this[`open${btn.id}`]();
+				// this.hideAndShow();
+				// this.topLayerSetBackground();
+				// this[`open${btn.id}`]();
+				location.hash = btn.id;
 			}
 		})
 	},
@@ -150,11 +153,15 @@ const app = {
 		this.topLayer.hide();
 		this.body.style.overflow = 'auto';
 	},
+	detailsProductData:null,
 	openDetailsProduct(productId='defaultid'){
-		console.log(productId);
+		this.detailsProductData = productId;
+		location.hash = 'Details';
+	},
+	openProductDetails(){
 		this.hideAndShow();
 		this.topLayerSetBackground();
-		this.topLayer.replaceChild(view.productDetails(productId));
+		this.topLayer.replaceChild(view.productDetails(this.detailsProductData));
 	},
 	confirmAction(param){
 		this.body.addChild(view.confirmAction(param));
@@ -381,9 +388,10 @@ const app = {
 	bottomNavEventInit(){
 		this.bottomNav.findall('div').forEach((div)=>{
 			div.onclick = ()=>{
-				this.hideAndShow();
-				this.topLayerSetBackground();
-				this[`open${div.id}`]();
+				// this.hideAndShow();
+				// this.topLayerSetBackground();
+				// this[`open${div.id}`]();
+				location.hash = div.id;
 			}
 		})
 	},
@@ -400,9 +408,10 @@ const app = {
 			this.openMoreMenu();
 		}
 		this.cart.onclick = ()=>{
-			this.hideAndShow();
-			this.topLayerSetBackground();
-			this.openCart();
+			// this.hideAndShow();
+			// this.topLayerSetBackground();
+			// this.openCart();
+			location.hash = 'Cart';
 		}
 	},
 	openMoreMenu(){
@@ -486,6 +495,30 @@ const app = {
 		this.hideAndShow();
 		this.topLayerSetBackground();
 		this.topLayer.replaceChild(view.coDetails(param));
+	},
+	hashNavMeta:{
+		'':'openHome',
+		'#Home':'openHome',
+		'#Regis':'openRegis',
+		'#Login':'openLogin',
+		'#Cart':'openCart',
+		'#Profile':'openProfile',
+		'#Cekpesanan':'openCekpesanan',
+		'#History':'openHistory',
+		'#PriceList':'openPriceList',
+		'#Emoney':'openEmoney',
+		'#PLN':'openPLN',
+		'#Games':'openGames',
+		'#Pulsa':'openPulsa',
+		'#Data':'openData',
+		'#Details':'openProductDetails'
+	},
+	navigationInitiator(global){
+		window.onhashchange = ()=>{
+			this.hideAndShow();
+			this.topLayerSetBackground();
+			this[this.hashNavMeta[location.hash]]();
+		}
 	}
 }
 

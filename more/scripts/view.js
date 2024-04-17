@@ -145,7 +145,7 @@ const view = {
 					<div style="
 						margin-bottom:150px;
 						display:flex;
-						gap:10px;
+						gap:10px;position:sticky;bottom:10px;
 					">
 						<div title="Masukan Keranjang" style="display:flex;align-items:center;justify-content:center;" class=goldbutton id=carting>
 							<img src=./more/media/carticonnewwhite.png width=24>
@@ -155,7 +155,7 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.openHome();
+				history.back();
 			},
 			async forceUserIdChecker(){
 				let userInputs = this.find('#goalNumber').value.split('/');
@@ -906,9 +906,7 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			handleNav(){
 				this.findall('#menu div').forEach(btn=>{
@@ -1231,15 +1229,12 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			handleNav(){
 				this.findall('#menu div').forEach(btn=>{
-					console.log('called');
 					btn.onclick = ()=>{
-						app[`open${btn.id}`]();
+						location.hash = btn.id;
 					}
 				})
 			},
@@ -1378,15 +1373,12 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			handleNav(){
 				this.findall('#menu div').forEach(btn=>{
-					console.log('called');
 					btn.onclick = ()=>{
-						app[`open${btn.id}`]();
+						location.hash = btn.id;
 					}
 				})
 			},
@@ -1526,15 +1518,12 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			handleNav(){
 				this.findall('#menu div').forEach(btn=>{
-					console.log('called');
 					btn.onclick = ()=>{
-						app[`open${btn.id}`]();
+						location.hash = btn.id;
 					}
 				})
 			},
@@ -1673,15 +1662,12 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			handleNav(){
 				this.findall('#menu div').forEach(btn=>{
-					console.log('called');
 					btn.onclick = ()=>{
-						app[`open${btn.id}`]();
+						location.hash = btn.id;
 					}
 				})
 			},
@@ -1821,15 +1807,12 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			handleNav(){
 				this.findall('#menu div').forEach(btn=>{
-					console.log('called');
 					btn.onclick = ()=>{
-						app[`open${btn.id}`]();
+						location.hash = btn.id;
 					}
 				})
 			},
@@ -2600,7 +2583,7 @@ const view = {
 					app.openLupaPass();
 				}
 				this.signup.onclick = ()=>{
-					app.openRegis();
+					location.hash = 'Regis';
 				}
 				this.dologin.onclick = ()=>{
 					this.doLogin();
@@ -2782,7 +2765,7 @@ const view = {
 				this.initPasswordMechanism();
 
 				this.login.onclick = ()=>{
-					app.openLogin();
+					location.hash = 'Login';
 				}
 				this.doregis.onclick = ()=>{
 					this.doRegistration();
@@ -3055,9 +3038,10 @@ const view = {
 			itemsClickInit(){
 				this.clmnParent.findall('div').forEach((div)=>{
 					div.onclick = ()=>{
-						app.hideAndShow();
-						app.topLayerSetBackground();
-						app[`open${div.id}`]();
+						// app.hideAndShow();
+						// app.topLayerSetBackground();
+						// app[`open${div.id}`]();
+						location.hash = div.id;
 					}
 				})
 			}
@@ -3352,7 +3336,28 @@ const view = {
 				overflow:auto;
 			`,
 			innerHTML:`
-				<div class="card bold" style="padding:20px;background:white;border-radius:0 0 10px 10px;position:sticky;top:0;text-align:center;">Profile</div>
+				<div style="
+					padding:10px;
+					height:48px;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					position:sticky;
+					background:#f5f5f9;
+					top:0;
+				">
+					<div style="
+						position: absolute;
+				    left: 10px;
+				    padding: 10px;
+				    width: 32px;
+				    height: 32px;
+				    cursor:pointer;
+					" id=backbutton>
+						<img src=./more/media/back.png>
+					</div>
+					<div class=bold>Profile</div>
+				</div>
 				<div style=margin-top:10px;>
 					<div style=display:flex;gap:10px;align-items:center;flex-direction:column;padding-top:20px;>
 						<div style=display:flex;align-items:center;>
@@ -3446,13 +3451,16 @@ const view = {
 				this.transactionhistory.onclick = ()=>{
 					app.openHistory();
 				}
+				this.backbutton.onclick = ()=>{
+					history.back();
+				}
 			},
 			autoDefine:true,
 			logOut(){
 				delete app.isLogin;
 				localStorage.removeItem('logdata');
 				app.showWarnings('Logout berhasil!');
-				app.openHome();
+				location.hash = 'Home';
 			}
 		})
 	},

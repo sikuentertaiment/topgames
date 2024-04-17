@@ -138,7 +138,7 @@ textarea{
   background:white;
   position: sticky;
   bottom: 0;
-  z-index:15;
+/*  z-index:15;*/
   background-clip: padding-box;
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
   border-radius:10px 10px 0 0;
