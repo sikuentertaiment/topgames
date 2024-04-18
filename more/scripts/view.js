@@ -683,6 +683,10 @@ const view = {
 							<div style=display:flex;><input value="${Date.parse(param.payments.dateCreate) + 600000 < Date.parse(new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })) ? 'Kadaluwarsa' : param.payments.status === 'Pending' ? 'Belum dibayar' : 'Dibayar'}"></div>
 						</div>
 						<div style=margin-bottom:20px;>
+							<div style=margin-bottom:10px;>Status</div>
+							<div style=display:flex;><input value="${param.digiresponse ? param.digiresponse.sn : '-'}"></div>
+						</div>
+						<div style=margin-bottom:20px;>
 							<div style=margin-bottom:10px;>QR / VA</div>
 							<div style=display:${param.payments.vaNumber ? 'flex' : 'none'};gap:10px;>
 								<input value="${param.payments.vaNumber}" id=vanumberinput>
@@ -1335,6 +1339,12 @@ const view = {
 						}
 					}))
 				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
+					}))
+				}
 			}
 		})
 	},
@@ -1476,6 +1486,12 @@ const view = {
 								index += 1;
 							}
 						}
+					}))
+				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
 					}))
 				}
 			}
@@ -1623,6 +1639,12 @@ const view = {
 						}
 					}))
 				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
+					}))
+				}
 			}
 		})
 	},
@@ -1765,6 +1787,12 @@ const view = {
 								index += 1;
 							}
 						}
+					}))
+				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
 					}))
 				}
 			}
@@ -1910,6 +1938,12 @@ const view = {
 								index += 1;
 							}
 						}
+					}))
+				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
 					}))
 				}
 			}
