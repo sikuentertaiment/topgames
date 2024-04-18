@@ -70,11 +70,12 @@ app.get('/feedbacklist',async (req,res)=>{
 
 app.get('/updatefeelist',async (req,res)=>{
 	const digiData = (await db.ref('digiData').get()).val();
+	const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 	const url = 'https://api.digiflazz.com/v1/price-list';
 	const response = await axios.post(url,{
 		cmd:'prepaid',
 		username:digiData.username,
-		sign:md5(digiData.username+digiData.devKey+'pricelist')
+		sign:md5(digiData.username+digiKey+'pricelist')
 	})
 	if(response.data.data.forEach){
 		const feelist = (await db.ref('admin/fee').get()).val();
@@ -102,23 +103,40 @@ app.get('/updatefeelist',async (req,res)=>{
 
 app.get('/pricelist',async (req,res)=>{
 	const digiData = (await db.ref('digiData').get()).val();
+	const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 	const url = 'https://api.digiflazz.com/v1/price-list';
 	const response = await axios.post(url,{
 		cmd:'prepaid',
 		username:digiData.username,
-		sign:md5(digiData.username+digiData.devKey+'pricelist')
+		sign:md5(digiData.username+digiKey+'pricelist')
 	})
 	//update data
 	const admin = (await db.ref('admin').get()).val();
 	const products = {};
 	if(response.data.data.forEach){
 		response.data.data.forEach((data)=>{
-			if(!data.buyer_product_status && !data.seller_product_status)
-				return
-			if(admin.fee[data.category + '-' + data.brand.replaceAll('.','')]){
-				data.price += admin.fee[data.category + '-' + data.brand.replaceAll('.','')];
-			}else data.price += 2000;
+
+			if(!admin.fee[data.category + '-' + data.brand.replaceAll('.','')]){
+				admin.fee[data.category + '-' + data.brand.replaceAll('.','')] = 2000;	
+			}
+
+			data.price += admin.fee[data.category + '-' + data.brand.replaceAll('.','')];
+			
+			if(!admin.thumbnails[data.brand.replaceAll('.','')]){
+				admin.thumbnails[data.brand.replaceAll('.','')] = './more/media/thumbnails/byuicon.png';
+			}
+
 			data.thumbnail = admin.thumbnails[data.brand.replaceAll('.','')];
+
+			if(!admin.carousel[data.category + '-' + data.brand.replaceAll('.','')]){
+				admin.carousel[data.category + '-' + data.brand.replaceAll('.','')] = {
+					bannerUrl:'https://firebasestorage.googleapis.com/v0/b/thebattlehit.appspot.com/o/1712135216445.jpeg?alt=media&token=b2f5b234-d634-445e-ab84-5e0d5710a10b',
+					active:true,
+					command:`${data.category} ${data.brand.replaceAll('.','')}`,
+					fileId:'-'
+				}
+			}
+			
 			if(products[data.category]){
 				if(products[data.category][data.brand])
 					products[data.category][data.brand].data.push(data);
@@ -129,7 +147,11 @@ app.get('/pricelist',async (req,res)=>{
 				innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
 				products[data.category] = innerData;	
 			}
+		
 		})
+		// admin save fee data
+		await db.ref('admin/fee').set(admin.fee);
+		await db.ref('admin/carousel').set(admin.carousel);
 		res.json({products,paymentMethods:admin.paymentSettings,carousel:admin.carousel,valid:true});	
 	}else {
 		res.json({valid:false});
@@ -268,22 +290,31 @@ app.get('/voucherstatus',async (req,res)=>{
 const useSaldoGuarantee = async (req,res,digiproduct)=>{
 	const dateCreate = new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 	const merchantOrderId = Date.parse(dateCreate).toString();
-	console.log('Method used is saldo guarantee');
-	if(!req.fields.saldoId)
-		return res.json({ok:false,message:'SaldoId dibutuhkan!'});
-	let userSaldo = (await db.ref(`saldo/${req.fields.saldoId}`).get()).val();
-	if(userSaldo < req.fields.price)
+
+	const price = Number(digiproduct.price);
+	const user = (await db.ref(`users/${req.fields.userId}`).get()).val();
+	if(!user.saldo)user.saldo=0;
+	if(!user.orders)user.orders=[];
+	if(user.saldo < price)
 		return res.json({ok:false,message:'Saldo anda tidak mencukupi!'});
-	userSaldo -= req.fields.price;
-	await db.ref(`saldo/${req.fields.saldoId}`).set(userSaldo);
+	user.saldo -= price;
+	await db.ref(`users/${req.fields.userId}/saldo`).set(user.saldo);
+	user.orders.push(merchantOrderId);
+	await db.ref(`users/${req.fields.userId}/orders`).set(user.orders);
+
 	//time to make order.
 	const orderData = {payments:{orderId:merchantOrderId,dateCreate,status:'Success',profit:req.fields.price - digiproduct.price},products:req.fields};
 	let digiresponse = await digiOrder(orderData,{sku:orderData.products.productVarian,nocustomer:orderData.products.goalNumber,refid:merchantOrderId});
-	console.log('digi response, ',digiresponse);
+	
+	
 	if(digiresponse.data && digiresponse.data.status)
 		orderData.products.status = digiresponse.data.status;
 	orderData.digiresponse = digiresponse.data;
 	await db.ref(`orders/${merchantOrderId}`).set(orderData);
+
+	// send fonnte message
+	await fonnte.sendMessage(Object.assign(orderData.payments,orderData.products),'neworder',req.fields.waNotif);
+	
 	res.json({ok:true,data:orderData.payments});
 }
 
@@ -449,6 +480,9 @@ app.post('/dopayment',async (req,res)=>{
 	    		await db.ref(`users/${req.fields.userId}/orders`).set(userOrders);
 	    	}
 
+	    	//send fonnte new order message
+	    	await fonnte.sendMessage(Object.assign(response.data,req.fields),'neworder',req.fields.waNotif);
+
 	    	res.json(response);
 	    }else{
 	    	res.json({ok:false,message:result.statusMessage});
@@ -469,6 +503,7 @@ app.post('/dopayment',async (req,res)=>{
 
 app.post('/newdigidepo',async (req,res)=>{
 	const digiData = (await db.ref('digiData').get()).val();
+	const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 	const url = 'https://api.digiflazz.com/v1/deposit';
 	try{
 		const digiReks = {
@@ -482,7 +517,7 @@ app.post('/newdigidepo',async (req,res)=>{
 			amount:Number(req.fields.amount),
 			Bank:req.fields.bank,
 			owner_name:req.fields.rekname,
-			sign:md5(digiData.username+digiData.devKey+'deposit')
+			sign:md5(digiData.username+digiKey+'deposit')
 		})
 		const data = response.data.data;
 		if(data.rc && data.rc === '00'){
@@ -687,12 +722,13 @@ app.get('/orderdetails',async (req,res)=>{
 
 	if(orderData.payments.status === 'Success' && orderData.products.status === 'Pending'){
 		const url = 'https://api.digiflazz.com/v1/transaction';
+		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 		const response = await axios.post(url,{
 			username:digiData.username,
 			buyer_sku_code:orderData.products.productVarian,
 			customer_no:orderData.products.goalNumber,
 			ref_id:orderData.payments.orderId,
-			sign:md5(digiData.username+digiData.devKey+orderData.payments.orderId)
+			sign:md5(digiData.username+digiKey+orderData.payments.orderId)
 		})
 		orderData.products.status = response.data.status;
 		orderData.digiresponse = response.data;
@@ -707,17 +743,17 @@ app.get('/topupsdetails',async (req,res)=>{
 
 app.get('/getsaldo',async (req,res)=>{
 	const digiData = (await db.ref('digiData').get()).val();
+	const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 	const url = 'https://api.digiflazz.com/v1/cek-saldo';
 	const response = await axios.post(url,{
 		cmd:'deposit',
 		username:digiData.username,
-		sign:md5(digiData.username+digiData.devKey+'depo')
+		sign:md5(digiData.username+digiKey+'depo')
 	})
 	res.json(response.data);
 })
 
 app.post('/duitkunotify',async (req,res)=>{
-	console.log(req.fields);
 	const duitkuData = (await db.ref('duitkuData').get()).val();
 	const apiKey = duitkuData.apiKey;
 	const {
@@ -754,15 +790,35 @@ app.post('/duitkunotify',async (req,res)=>{
 					if(digiresponse.data && digiresponse.data.status)
     				orderData.products.status = digiresponse.data.status;
     			orderData.digiresponse = digiresponse.data;
-    			console.log('digi response',digiresponse);
     		}else{
     			orderData.payments.status = 'Canceled';
     			orderData.products.status = 'Gagal';
     		}
     		orderData.duitkuresponse = req.fields;
     		await db.ref(`orders/${merchantOrderId}`).set(orderData);
+    		return res.status(200).send('Success');
     	}
-			res.status(200).send('Success');
+    	const topupData = (await db.ref(`topups/${merchantOrderId}`).get()).val();
+    	if(topupData){
+    		if(resultCode === '00'){
+    			topupData.payments.status = 'Success';
+
+    			// increase user saldo
+    			const user = (await db.ref(`users/${topupData.products.goalNumber}`).get()).val();
+    			if(user){
+    				// the user is exist
+    				// and im gonna set up the user saldo
+    				await db.ref(`users/${topupData.products.goalNumber}/saldo`).set(Number(user.saldo + topupData.products.nominal));
+    			}
+
+    		}else{
+    			topupData.payments.status = 'Canceled';
+    			topupData.products.status = 'Gagal';
+    		}
+    		topupData.duitkuresponse = req.fields;
+    		await db.ref(`topups/${merchantOrderId}`).set(topupData);
+    	}
+    	res.status(200).send('Success');
     } else {
       res.status(400).send('Bad Signature');
     }
@@ -777,7 +833,7 @@ app.post('/diginotify',async (req,res)=>{
 	const post_data = req.fields;
   const signature = crypto.createHmac('sha1', secret).update(JSON.stringify(post_data)).digest('hex');
   if (req.headers['x-hub-signature'] === `sha1=${signature}`) {
-    console.log('data fields from digi webhook',req.fields);
+    // console.log('data fields from digi webhook',req.fields);
     // Process the webhook payload here
     const orderData = (await db.ref(`orders/${post_data.data.ref_id}`).get()).val();
     if(orderData){
@@ -1150,11 +1206,12 @@ app.get('/gettpsdata',async (req,res)=>{
 const productRechecker = (buyyerProductCode) => {
 	return new Promise(async (resolve,reject)=>{
 		const digiData = (await db.ref('digiData').get()).val();
+		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 		const url = 'https://api.digiflazz.com/v1/price-list';
 		const response = await axios.post(url,{
 			cmd:'prepaid',
 			username:digiData.username,
-			sign:md5(digiData.username+digiData.devKey+'pricelist'),
+			sign:md5(digiData.username+digiKey+'pricelist'),
 			code:buyyerProductCode
 		})
 		resolve(response.data.data[0]);
@@ -1163,6 +1220,7 @@ const productRechecker = (buyyerProductCode) => {
 const digiOrder = (orderData,param) => {
 	return new Promise(async (resolve,reject)=>{
 		const digiData = (await db.ref('digiData').get()).val();
+		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 		const digiSaldo = await getDigiSaldo();
 		if(digiSaldo.data.deposit >= digiData.minSaldoToMakeOrder || 50000){
 			//process digi order
@@ -1172,12 +1230,12 @@ const digiOrder = (orderData,param) => {
 				buyer_sku_code:param.sku,
 				customer_no:param.nocustomer,
 				ref_id:param.refid,
-				sign:md5(digiData.username+digiData.devKey+param.refid)
+				sign:md5(digiData.username+digiKey+param.refid)
 			})
 			resolve(response);
 		}else{
 			//send notifications to owner, that no saldo left on digi acount | digi saldo is currently small.
-			await fonnte.sendMessage(Object.assign(orderData,digiSaldo),'needMoreSaldo');
+			await fonnte.sendMessage(Object.assign(orderData,digiSaldo),'needmoresaldo');
 			resolve({data:{status:'Gagal',message:'Saldo digi tidak mencukupi, order dibatalkan'}});
 		}
 	})
@@ -1185,11 +1243,12 @@ const digiOrder = (orderData,param) => {
 const getDigiSaldo = () => {
 	return new Promise(async (resolve,reject)=>{
 		const digiData = (await db.ref('digiData').get()).val();
+		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
 		const url = 'https://api.digiflazz.com/v1/cek-saldo';
 		const response = await axios.post(url,{
 			cmd:'deposit',
 			username:digiData.username,
-			sign:md5(digiData.username+digiData.devKey+'depo')
+			sign:md5(digiData.username+digiKey+'depo')
 		})
 		resolve(response);	
 	})

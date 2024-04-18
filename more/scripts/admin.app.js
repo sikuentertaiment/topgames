@@ -1,5 +1,6 @@
 const app = {
-	baseUrl:'https://aware-blue-rooster.cyclic.app',
+	// baseUrl:'http://localhost:8080',
+	baseUrl:'https://cooperative-tux-worm.cyclic.app',
 	body:find('body'),
 	app:find('#app'),
 	menu:find('#menu'),

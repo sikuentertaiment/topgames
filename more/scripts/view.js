@@ -333,7 +333,7 @@ const view = {
 					`,
 					async onadded(){
 						if(app.isLogin)
-							this.find('#saldolabel').innerText = `Anda memiliki saldo Rp. ${getPrice(app.isLogin.saldo)}`;
+							this.find('#saldolabel').innerText = `Saldo anda tersisah Rp. ${getPrice(app.isLogin.saldo)}`;
 						else this.find('#saldolabel').innerText = 'Mohon login terlebih dahulu.';
 					},
 					onclick(){
@@ -3386,8 +3386,8 @@ const view = {
 								<div class=card style=border-radius:10px;background:white;overflow:hidden;font-size:12px;>
 									<div style="display:flex;padding:20px;gap:20px;background:#303f9f;border-bottom:1px solid gainsboro;font-weight:bold;color:white;">
 										<div style=width:50%;overflow:hidden;white-space:nowrap;>Produk</div>
-										<div style=width:40%;overflow:hidden;white-space:nowrap;>Harga</div>
-										<div style=width:10%;overflow:hidden;white-space:nowrap;>Status</div>
+										<div style=width:30%;overflow:hidden;white-space:nowrap;>Harga</div>
+										<div style=width:20%;overflow:hidden;white-space:nowrap;>Status</div>
 									</div>
 								</div>
 							`,
@@ -3398,8 +3398,8 @@ const view = {
 										style:`display:flex;padding:20px;gap:20px;${app.products[i][j].data.length > 1 ? x < app.products[i][j].data.length - 1 ? 'border-bottom:1px solid gainsboro;' : '' : ''}`,
 										innerHTML:`
 											<div style=width:50%;overflow:hidden;white-space:nowrap;>${data.product_name}</div>
-											<div style=width:40%;overflow:hidden;white-space:nowrap;>Rp ${getPrice(data.price)}</div>
-											<div style=width:10%;overflow:hidden;white-space:nowrap;>${(data.seller_product_status && data.buyer_product_status)?'On':'Off'}</div>
+											<div style=width:30%;overflow:hidden;white-space:nowrap;>Rp ${getPrice(data.price)}</div>
+											<div style=width:20%;overflow:hidden;white-space:nowrap;>${(data.seller_product_status && data.buyer_product_status)?'On':'Off'}</div>
 										`
 									}))
 								})

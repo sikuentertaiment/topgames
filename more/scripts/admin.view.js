@@ -677,31 +677,31 @@ const view = {
 						<div>Web Page Data</div>
 						<div style=font-size:12px;color:gray;display:flex;flex-direction:column;gap:10px;>
 							<div>
-								<div>Web Title</div>
+								<div class=mb10>Web Title</div>
 								<div style=display:flex;>
 									<input id=dataFront-webtitle>
 								</div>
 							</div>
 							<div>
-								<div>Big Title</div>
+								<div class=mb10>Big Title</div>
 								<div style=display:flex;>
 									<input id=dataFront-headertitle>
 								</div>
 							</div>
 							<div>
-								<div>The Slogan</div>
+								<div class=mb10>The Slogan</div>
 								<div style=display:flex;>
 									<input id=dataFront-theslogan>
 								</div>
 							</div>
 							<div>
-								<div>Home Label</div>
+								<div class=mb10>Home Label</div>
 								<div style=display:flex;>
 									<input id=dataFront-homelabel>
 								</div>
 							</div>
 							<div>
-								<div>Footer</div>
+								<div class=mb10>Footer</div>
 								<div style=display:flex;>
 									<input id=dataFront-footer>
 								</div>
@@ -719,21 +719,27 @@ const view = {
 						<div>Digiflazz Data</div>
 						<div style=font-size:12px;color:gray;display:flex;flex-direction:column;gap:10px;>
 							<div>
-								<div>Username</div>
+								<div class=mb10>Username</div>
 								<div style=display:flex;>
 									<input id=digiData-username>
 								</div>
 							</div>
 							<div>
-								<div>Dev Key</div>
+								<div class=mb10>Dev Key</div>
 								<div style=display:flex;>
 									<input id=digiData-devKey>
 								</div>
 							</div>
 							<div>
-								<div>Production Key</div>
+								<div class=mb10>Production Key</div>
 								<div style=display:flex;>
 									<input id=digiData-productionKey>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Webhook Secret</div>
+								<div style=display:flex;>
+									<input id=digiData-webhookSecret>
 								</div>
 							</div>
 						</div>
@@ -749,25 +755,25 @@ const view = {
 						<div>Duitku Data</div>
 						<div style=font-size:12px;color:gray;display:flex;flex-direction:column;gap:10px;>
 							<div>
-								<div>Merchant Id</div>
+								<div class=mb10>Merchant Id</div>
 								<div style=display:flex;>
 									<input id=duitkuData-merchantCode>
 								</div>
 							</div>
 							<div>
-								<div>Api Key</div>
+								<div class=mb10>Api Key</div>
 								<div style=display:flex;>
 									<input id=duitkuData-apiKey>
 								</div>
 							</div>
 							<div>
-								<div>Return Url</div>
+								<div class=mb10>Return Url</div>
 								<div style=display:flex;>
 									<input id=duitkuData-returnUrl>
 								</div>
 							</div>
 							<div>
-								<div>Callback Url</div>
+								<div class=mb10>Callback Url</div>
 								<div style=display:flex;>
 									<input id=duitkuData-callbackUrl>
 								</div>
@@ -785,21 +791,69 @@ const view = {
 						<div>Fontte Data</div>
 						<div style=font-size:12px;color:gray;display:flex;flex-direction:column;gap:10px;>
 							<div>
-								<div>Owner Number</div>
+								<div class=mb10>Owner Number</div>
 								<div style=display:flex;>
 									<input id=fonnteData-ownerNumber>
 								</div>
 							</div>
 							<div>
-								<div>Token</div>
+								<div class=mb10>Token</div>
 								<div style=display:flex;>
 									<input id=fonnteData-token>
 								</div>
 							</div>
 							<div>
-								<div>Delay Broadcast</div>
+								<div class=mb10>Delay Broadcast</div>
 								<div style=display:flex;>
 									<input id=fonnteData-delayBroadcast>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template OTP</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-sendotp></textarea>
+								</div>
+							</div>
+							<div>
+								<div>Template Saldo Kurang</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-needmoresaldo></textarea>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template Order Baru</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-neworder></textarea>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template Topup Baru</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-newtopup></textarea>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template Status Order</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-orderstatuschanged></textarea>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template Status Topup</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-topupstatuschanged></textarea>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template Broadcast</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-broadcastmessage></textarea>
+								</div>
+							</div>
+							<div>
+								<div class=mb10>Template User Baru</div>
+								<div style=display:flex;>
+									<textarea id=fonnteData-messageTemplate-newuser></textarea>
 								</div>
 							</div>
 						</div>
@@ -822,6 +876,13 @@ const view = {
 						webConfig[ids[0]][ids[1]] = input.value;
 					}
 				})
+				this.txtareas.forEach((input)=>{
+					const ids = input.id.split('-');
+					if(!webConfig[ids[0]][ids[1]])
+						webConfig[ids[0]][ids[1]] = {};
+					webConfig[ids[0]][ids[1]][ids[2]] = input.value;
+				})
+
 				const savelog = await new Promise((resolve,reject)=>{
 					cOn.post({
 						url:`${app.baseUrl}/setwebconfig`,
@@ -845,6 +906,7 @@ const view = {
 					this.saveAll();
 				}
 				this.inputs = this.findall('input');
+				this.txtareas = this.findall('textarea');
 				this.pplace = this.find('#pplace');
 				this.anim({
 					targets:this,
@@ -862,9 +924,18 @@ const view = {
 						}
 					})
 				})
-				console.log(webConfig);
 				this.inputs.forEach((input)=>{
 					const ids = input.id.split('-');
+					if(ids.length === 3){
+						return input.value = webConfig[ids[0]][ids[1]][ids[2]];
+					}
+					input.value = webConfig[ids[0]][ids[1]];
+				})
+				this.txtareas.forEach((input)=>{
+					const ids = input.id.split('-');
+					if(ids.length === 3){
+						return input.value = webConfig[ids[0]][ids[1]][ids[2]];
+					}
 					input.value = webConfig[ids[0]][ids[1]];
 				})
 			}

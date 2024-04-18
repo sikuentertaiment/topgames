@@ -390,6 +390,10 @@ textarea{
   overflow: hidden;
 }
 
+.mb10{
+  margin-bottom: 10px;
+}
+
 @media screen and (max-width:900px){
   .smartWidth{
     width:95%;
