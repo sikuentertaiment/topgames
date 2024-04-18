@@ -170,7 +170,11 @@ const app = {
 		this.body.addChild(view.transactionSettings());
 	},
 	openPaymentDetails(param,param2=false){
-		this.topLayer.replaceChild(view.paymentDetails(param,param2));
+		this.paymentDetailsData = [param,param2];
+		location.hash = 'Detailspayment';
+	},
+	openShowPaymentDetails(){
+		this.topLayer.replaceChild(view.paymentDetails(this.paymentDetailsData[0],this.paymentDetailsData[1]));
 	},
 	openFeedBackSender(param){
 		this.body.addChild(view.feedBack(param));
@@ -514,7 +518,8 @@ const app = {
 		'#Details':'openProductDetails',
 		'#Lupapassword':'openLupaPass',
 		'#Topup':'openTopup',
-		'#Codetails':'showCoDetails'
+		'#Codetails':'showCoDetails',
+		'#Detailspayment':'openShowPaymentDetails'
 	},
 	navigationInitiator(global){
 		window.onhashchange = ()=>{

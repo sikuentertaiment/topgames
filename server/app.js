@@ -182,7 +182,7 @@ app.get('/getpayment',async (req,res)=>{
 	let formattedDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
 	const nospacies = formattedDateTime.replace(',','').split(' ');
 	nospacies[0] = nospacies[0].split('/');
-	nospacies[0] = `${nospacies[0][2]}-${nospacies[0][1]}-${nospacies[0][0]}`;
+	nospacies[0] = `${nospacies[0][2]}-${nospacies[0][0]}-${nospacies[0][1]}`;
 	const datetime = `${nospacies[0]} ${nospacies[1]}`;
 	const merchantCode = duitkuData.merchantCode;
 	const apiKey = duitkuData.apiKey;
@@ -196,6 +196,9 @@ app.get('/getpayment',async (req,res)=>{
     datetime: datetime,
     signature: signature
 	};
+
+	console.log(params);
+
 
 	const url = 'https://passport.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod';
 
@@ -438,6 +441,14 @@ app.post('/dopayment',async (req,res)=>{
 	    	const orderId = merchantOrderId;
 	    	const response = {ok:true,data:{orderId,dateCreate,status:'Pending',profit:req.fields.price - productStatus.price,paymentUrl:result.paymentUrl,vaNumber:result.vaNumber||null,qrString:result.qrString||null}};
 	    	const savingStatus = await db.ref(`orders/${orderId}`).set({products:req.fields,payments:response.data});
+
+	    	// if user is login, save this order data to order id
+	    	if(req.fields.userId){
+	    		const userOrders = (await db.ref(`users/${req.fields.userId}/orders`).get()).val()||[];
+	    		userOrders.push(orderId);
+	    		await db.ref(`users/${req.fields.userId}/orders`).set(userOrders);
+	    	}
+
 	    	res.json(response);
 	    }else{
 	    	res.json({ok:false,message:result.statusMessage});
@@ -688,6 +699,10 @@ app.get('/orderdetails',async (req,res)=>{
 		await db.ref(`orders/${req.query.orderId}`).set(orderData);
 	}
 	res.json({valid:true,data:orderData});
+})
+
+app.get('/topupsdetails',async (req,res)=>{
+	res.json({valid:true,data:(await db.ref(`topups/${req.query.orderId}`).get()).val()})
 })
 
 app.get('/getsaldo',async (req,res)=>{
@@ -1003,6 +1018,132 @@ app.post('/cartco',async (req,res)=>{
 
 app.get('/checkproduct',async (req,res)=>{
 	res.json(await productRechecker(req.query.sku));
+})
+
+app.post('/dotopup',async (req,res)=>{
+	//payment sections.
+	const duitkuData = (await db.ref('duitkuData').get()).val();
+
+	const merchantCode = duitkuData.merchantCode;
+	const apiKey = duitkuData.apiKey;
+	const paymentAmount = req.fields.price;
+	const paymentMethod = req.fields.paymentMethod;
+	const dateCreate = new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+	const merchantOrderId = Date.parse(dateCreate).toString();
+	const productDetails = `Pembayaran ${req.fields.varianName}`;
+	const email = 'gemalagifrominfinitydreams@gmail.com';
+	const phoneNumber = req.fields.goalNumber;
+	const expiryPriod = 10;
+	const returnUrl = duitkuData.returnUrl;
+	const callbackUrl = duitkuData.callbackUrl;
+
+	const firstName = 'John';
+	const lastName = 'Doe';
+	const alamat = 'Jl. Kembangan Raya';
+	const city = 'Jakarta';
+	const postalCode = '11530';
+	const countryCode = 'ID';
+
+	const address = {
+	  firstName: firstName,
+	  lastName: lastName,
+	  address: alamat,
+	  city: city,
+	  postalCode: postalCode,
+	  phone: phoneNumber,
+	  countryCode: countryCode,
+	};
+
+	const customerDetail = {
+	  firstName,
+	  lastName,
+	  email,
+	  phoneNumber,
+	  billingAddress: address,
+	  shippingAddress: address,
+	};
+
+	const item1 = {
+	  name: req.fields.varianName,
+	  price: paymentAmount,
+	  quantity: 1,
+	};
+
+	const itemDetails = [item1];
+
+	const signature = crypto.createHash('md5').update(merchantCode + merchantOrderId + paymentAmount + apiKey).digest('hex');
+
+	const params = {
+	  merchantCode,
+	  paymentAmount,
+	  paymentMethod,
+	  merchantOrderId,
+	  productDetails,
+	  email,
+	  phoneNumber,
+	  itemDetails,
+	  customerDetail,
+	  signature,
+	  expiryPriod,
+	  returnUrl,
+	  callbackUrl
+	};
+
+	axios.post('https://passport.duitku.com/webapi/api/merchant/v2/inquiry', params, {
+	  headers: {
+	    'Content-Type': 'application/json',
+	  },
+	})
+	  .then(async response => {
+	    const result = response.data;
+	    if(result.statusCode === '00'){
+	    	const orderId = merchantOrderId;
+	    	const response = {ok:true,data:{orderId,dateCreate,status:'Pending',paymentUrl:result.paymentUrl,vaNumber:result.vaNumber||null,qrString:result.qrString||null}};
+	    	const savingStatus = await db.ref(`topups/${orderId}`).set({products:req.fields,payments:response.data});
+	    	// if user is login, save this order data to order id
+    		const userOrders = (await db.ref(`users/${req.fields.goalNumber}/topups`).get()).val()||[];
+    		userOrders.push(orderId);
+    		await db.ref(`users/${req.fields.goalNumber}/topups`).set(userOrders);
+	    	res.json(response);
+	    }else{
+	    	res.json({ok:false,message:result.statusMessage});
+	    }
+	  })
+	  .catch(error => {
+	    if (error.response) {
+	      const httpCode = error.response.status;
+	      const errorMessage = 'Server Error ' + httpCode + ' ' + error.response.data.Message;
+	      console.log(errorMessage);
+	    	res.json({ok:false,message:errorMessage});
+	    } else {
+	      console.log(error.message);
+	      res.json({ok:false,message:error.message});
+	    }
+	  });
+})
+
+app.get('/gettrxdata',async (req,res)=>{
+	if(!req.query.userid)
+		res.json({valid:false,message:'Invalid data given!'})
+	const userOrderList = (await db.ref(`users/${req.query.userid}/orders`).get()).val()||[];
+	const orders = [];
+	for(let orderId of userOrderList){
+		const order = (await db.ref(`orders/${orderId}`).get()).val();
+		orders.push(order);
+	}
+	res.json({valid:true,orders});
+})
+
+app.get('/gettpsdata',async (req,res)=>{
+	if(!req.query.userid)
+		res.json({valid:false,message:'Invalid data given!'})
+	const userOrderList = (await db.ref(`users/${req.query.userid}/topups`).get()).val()||[];
+	const orders = [];
+	for(let orderId of userOrderList){
+		const order = (await db.ref(`topups/${orderId}`).get()).val();
+		orders.push(order);
+	}
+	res.json({valid:true,orders});
 })
 //functions
 

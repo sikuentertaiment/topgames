@@ -516,6 +516,7 @@ const view = {
 			`,
 			async doConfirm(){
 				console.log(param);
+				this.isLoginUser();
 				this.box.remove();
 				this.loadingConfirm.show('flex');
 				const results = JSON.parse(await new Promise((resolve,reject)=>{
@@ -536,6 +537,10 @@ const view = {
 					app.openPaymentDetails({payments:results.data,products:param},true);
 					this.remove();	
 				}
+			},
+			isLoginUser(){
+				if(app.isLogin)
+					param.userId = app.isLogin.phonenumber;
 			},
 			onadded(){
 				console.log(param);
@@ -622,7 +627,7 @@ const view = {
 					" class=card>
 						<div style="padding-bottom:10px;margin-bottom:20px;font-weight:bold;">Detail Pesanan</div>
 						<div style=margin-bottom:20px;>
-							<div style=margin-bottom:10px;>Order Id</div>
+							<div style=margin-bottom:10px;>${app.isTrxState ? 'Order Id' : 'Topup Id'}</div>
 							<div style=display:flex;><input placeholder=08-xxx-xxx-xxx value="${param.payments.orderId}"></div>
 						</div>
 						<div style=margin-bottom:20px;>
@@ -750,15 +755,13 @@ const view = {
 				</div>
 			`,
 			close(){
-				app.topLayer.hide();
-				app.body.style.overflow = 'auto';
-				this.remove();
+				history.back();
 			},
 			onadded(){
 				if(param2)
 					app.pushNewTransactionData(param);
 				this.find('#backbutton').onclick = ()=>{
-					app.openHistory();
+					this.close();
 				}
 				this.find('#vacopybutton').onclick = ()=>{
 					navigator.clipboard.writeText(this.find('#vanumberinput').value);
@@ -777,7 +780,7 @@ const view = {
 				this.find('#refreshbutton').onclick = async ()=>{
 					const response = await new Promise((resolve,reject)=>{
 						cOn.get({
-							url:`${app.baseUrl}/orderdetails?orderId=${param.payments.orderId}`,
+							url:`${app.baseUrl}/${param.products.isTP ? 'topupsdetails' : 'orderdetails'}?orderId=${param.payments.orderId}`,
 							onload(){
 								resolve(this.getJSONResponse());
 							}
@@ -831,7 +834,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div class=bold>Histori Transaksi</div>
+					<div class=bold>Histori ${app.isTrxState ? 'Transaksi' : 'Topup'}</div>
 					<div style="
 						position: absolute;
 				    right: 10px;
@@ -897,7 +900,7 @@ const view = {
 							<div style=margin-bottom:10px;font-weight:bold;>Cek Pesanan</div>
 							<div style=display:flex;gap:10px;>
 								<div style=display:flex;width:100%;>
-									<input placeholder="Masukan / Paste orderId anda!" id=pasteid>
+									<input placeholder="Masukan / Paste ${app.isTrxState ? 'orderId' : 'topupId'} anda!" id=pasteid>
 								</div>
 								<div id=forceCheckingButton class=goldbutton style=font-size:11px;>Cek Pesanan</div>
 							</div>
@@ -928,14 +931,26 @@ const view = {
 				}
 				app.openHistory();
 			},
+			getUserTrxData(){
+				return new Promise((resolve,reject)=>{
+					cOn.get({
+						url:`${app.baseUrl}/${app.isTrxState ? 'gettrxdata' : 'gettpsdata'}?userid=${app.isLogin.phonenumber}`,
+						onload(){
+							resolve(
+								this.getJSONResponse().orders.sort((a,b)=>{
+									return Date.parse(b.payments.dateCreate) - Date.parse(a.payments.dateCreate);
+								})
+							)
+						}
+					})
+				})
+			},
 			async onadded(){
 				//loading the data.
 				this.pasteid = this.find('#pasteid');
 				this.itemsparent = this.find('#itemsparent');
 				this.saldo = this.find('#saldoguarantee');
-				this.trxData = (JSON.parse(localStorage.getItem('easypulsatransactionhistories'))||[]).sort((a,b)=>{
-					return Date.parse(b.payments.dateCreate) - Date.parse(a.payments.dateCreate);
-				});
+				this.trxData = await this.getUserTrxData();
 				this.find('#backbutton').onclick = ()=>{
 					this.close();
 				}
@@ -953,7 +968,7 @@ const view = {
 						return app.showWarnings('Maaf, mohon periksa kembali data orderId anda!');
 					const response = await new Promise((resolve,reject)=>{
 						cOn.get({
-							url:`${app.baseUrl}/orderdetails?orderId=${this.pasteid.value}`,
+							url:`${app.baseUrl}/${app.isTrxState ? 'orderdetails' : 'topupsdetails'}?orderId=${this.pasteid.value}`,
 							onload(){
 								console.log('databack');
 								resolve(this.getJSONResponse());
@@ -1008,7 +1023,7 @@ const view = {
 								<div style="
 									font-size:12px;
 									margin-bottom:15px;
-								">OrderId: ${data.payments.orderId}</div>
+								">${app.isTrxState ? 'OrderId' : 'TopupId'}: ${data.payments.orderId}</div>
 								<div style="
 									padding-bottom:10px;
 									margin-bottom:20px;
@@ -1057,7 +1072,7 @@ const view = {
 						async checkOrder(){
 							const response = await new Promise((resolve,reject)=>{
 								cOn.get({
-									url:`${app.baseUrl}/orderdetails?orderId=${data.payments.orderId}`,
+									url:`${app.baseUrl}/${app.isTrxState ? 'orderdetails' : 'topupsdetails'}?orderId=${data.payments.orderId}`,
 									onload(){
 										console.log('databack');
 										resolve(this.getJSONResponse());
@@ -2669,7 +2684,9 @@ const view = {
 			},
 			processData(param){
 				app.saveLoginData(param);
-				location.hash = 'Profile';
+				if(location.hash !== '#Profile')
+					location.hash = 'Profile';
+				else app.openProfile();
 			},
 			async sendOTP(){
 				const response = await new Promise((resolve,reject)=>{
@@ -2683,7 +2700,6 @@ const view = {
 				if(!response.valid)
 					return app.showWarnings(response.message || 'Otp tidak berhasil dikirim!');
 				app.showWarnings('Otp berhasil dikirim!');
-				console.log(this.response);
 			}
 		})
 	},
@@ -3101,6 +3117,13 @@ const view = {
 						// app.hideAndShow();
 						// app.topLayerSetBackground();
 						// app[`open${div.id}`]();
+						if(div.id === 'History'){
+							if(!app.isLogin){
+								app.showWarnings('Mohon login terlebih dahulu!');
+								return app.openLogin();
+							}
+							app.isTrxState = true;
+						}
 						location.hash = div.id;
 					}
 				})
@@ -3506,10 +3529,12 @@ const view = {
 					location.hash = 'Lupapassword';
 				}
 				this.topuphistory.onclick = ()=>{
-					app.openTopupHistory();
+					location.hash = 'History';
+					app.isTrxState = false;
 				}
 				this.transactionhistory.onclick = ()=>{
 					location.hash = 'History';
+					app.isTrxState = true;
 				}
 				this.backbutton.onclick = ()=>{
 					history.back();
@@ -3626,6 +3651,7 @@ const view = {
 					" id=topupnow>Topup Sekarang</div>
 				</div>
 			`,
+			data:{paymentMethod:'NQ',methodName:'NOBU QRIS',payPrice:100000},
 			onadded(){
 				this.generateChooseButton();
 				this.generatePaymentMethod(0);
@@ -3640,6 +3666,7 @@ const view = {
 				}
 			},
 			async generatePaymentMethod(price){
+				let parent = this;
 				const availMethods = await new Promise((resolve,reject)=>{
 					cOn.get({url:`${app.baseUrl}/getpayment?price=${price}`,onload(){
 						const results = this.getJSONResponse();
@@ -3654,7 +3681,6 @@ const view = {
 				if(availMethods){
 					availMethods.forEach(method=>{
 						this.payments.addChild(makeElement('div',{
-							parent:this,
 							className:'card',
 							style:`
 								border-radius:5px;
@@ -3675,18 +3701,19 @@ const view = {
 								</div>
 							`,
 							onclick(){
-								console.log(this.parent);
-								if(this.parent.data.productVarian){
+								if(parent.nominal.value){
 									if(activeVarian)
 										activeVarian.classList.remove('varianselected');
+									parent.data.paymentMethod = method.paymentMethod;
+									parent.data.methodName = method.paymentName;
+									parent.data.payPrice = Number(method.totalFee + price);
 									this.classList.add('varianselected');
 									activeVarian = this;
-									this.parent.data.paymentMethod = method.paymentMethod;
-									this.parent.data.methodName = method.paymentName;
-								}else app.showWarnings('Silahkan memilih produk terlebih dahulu!');
+								}else app.showWarnings('Silahkan isi nominal topup terlebih dahulu!');
 							}
 						}))
 					})
+					this.topupnow.valid = true;
 				}else{
 					this.payments.addChild(makeElement('div',{
 						innerHTML:'Metode pembayaran tidak ditemukan!',
@@ -3697,12 +3724,12 @@ const view = {
 						background:'gray',
 						borderColor:'gray'
 					})
-					this.topupnow.valid = false;
+					this.topupnow.valid = true;
 				}
 			},
 			generateChooseButton(){
 				const nominal = this.nominal;
-				const generatePaymentMethod = this.generatePaymentMethod;
+				const generatePaymentMethod = (price)=>{this.generatePaymentMethod(price)};
 				for(let i=0;i<5;i++){
 					this.choosebutton.addChild(makeElement('div',{
 						className:'goldbutton',
@@ -3722,13 +3749,22 @@ const view = {
 				}
 			},
 			autoDefine:true,
-			processTopup(){
+			async processTopup(){
 				// simple algorithm
 				// make sure the data is filled correctly
 				// memastikan kalo datanya itu diisi dengan benar
-				if(this.eval()){
+				const topupData = this.collectData();
+				if(this.eval() && topupData.valid){
 					// now make the request
-					app.showWarnings('processing the request');
+					const response = await new Promise((resolve,reject)=>{
+						cOn.post({
+							url:`${app.baseUrl}/dotopup`,
+							someSettings:[['setRequestHeader','Content-type','application/json']],
+							data:jsonstr(topupData.data),
+							onload(){resolve(this.getJSONResponse())}
+						})
+					})
+					app.openPaymentDetails({payments:response.data,products:topupData.data},true);
 				}
 			},
 			eval(){
@@ -3747,6 +3783,47 @@ const view = {
 				if(!valid)
 					app.showWarnings(message);
 				return valid;
+			},
+			collectData(){
+				// goalNumber
+				// :
+				// "1231231"
+				// methodName
+				// :
+				// "NOBU QRIS"
+				// paymentMethod
+				// :
+				// "NQ"
+				// price
+				// :
+				// 6559
+				// productVarian
+				// :
+				// "tr5"
+				// varianName
+				// :
+				// "Three 5.000"
+				// waNotif
+				// :
+				// "1231231"
+				let valid = true;
+				const data = {
+					goalNumber:app.isLogin.phonenumber,
+					methodName:this.data.methodName,
+					paymentMethod:this.data.paymentMethod,
+					nominal:this.nominal.value,
+					price:this.data.payPrice,
+					productVarian:`tp${this.nominal.value}`,
+					varianName:`Topup ${getPrice(Number(this.nominal.value))}`,
+					waNotif:app.isLogin.phonenumber,
+					isTP:true
+				}
+				// validating the data
+				for(let i in data){
+					if(i!=='price' && !data[i])
+						valid = false;
+				}
+				return {valid,data};
 			}
 		})
 	},
