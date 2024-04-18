@@ -3508,7 +3508,7 @@ const view = {
 							<div style=margin-bottom:5px;>Hp / Whatsapp</div>
 							<div style=font-size:11px;>${app.isLogin.phonenumber}</div>
 						</div>
-						<div style="padding:20px 20px;border-bottom:1px solid gainsboro;">
+						<div style="padding:20px 20px;">
 							<div style=margin-bottom:5px;>Tanggal Bergabung</div>
 							<div style=font-size:11px;>${app.isLogin.regisdate}</div>
 						</div>
