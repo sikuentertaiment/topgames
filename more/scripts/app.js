@@ -523,6 +523,8 @@ const app = {
 	},
 	navigationInitiator(global){
 		window.onhashchange = ()=>{
+			if(location.hash === '#Refresh')
+				return history.back();
 			this.hideAndShow();
 			this.topLayerSetBackground();
 			this[this.hashNavMeta[location.hash]]();

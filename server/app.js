@@ -179,7 +179,7 @@ app.post('/editbanner',async (req,res)=>{
 
 app.get('/getpayment',async (req,res)=>{
 	const duitkuData = (await db.ref('duitkuData').get()).val();
-	let formattedDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+	let formattedDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
 	const nospacies = formattedDateTime.replace(',','').split(' ');
 	nospacies[0] = nospacies[0].split('/');
 	nospacies[0] = `${nospacies[0][2]}-${nospacies[0][0]}-${nospacies[0][1]}`;

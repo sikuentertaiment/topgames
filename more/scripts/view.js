@@ -780,7 +780,7 @@ const view = {
 				this.find('#refreshbutton').onclick = async ()=>{
 					const response = await new Promise((resolve,reject)=>{
 						cOn.get({
-							url:`${app.baseUrl}/${param.products.isTP ? 'topupsdetails' : 'orderdetails'}?orderId=${param.payments.orderId}`,
+							url:`${app.baseUrl}/${!app.isTrxState ? 'topupsdetails' : 'orderdetails'}?orderId=${param.payments.orderId}`,
 							onload(){
 								resolve(this.getJSONResponse());
 							}
@@ -788,7 +788,8 @@ const view = {
 					})
 					if(!response.valid)
 						return app.showWarnings('Maaf, mohon periksa kembali data orderId anda!');
-					app.openPaymentDetails(response.data);
+					location.hash = 'Refresh';
+					app.paymentDetailsData = [param,false]
 				}
 				this.find('#openeksternalpayment').onclick = ()=>{
 					const expiredStamp = Date.parse(param.payments.dateCreate) + 600000;
