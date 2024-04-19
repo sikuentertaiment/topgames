@@ -94,6 +94,12 @@ const app = {
 	openBroadcast(){
 		this.topLayer.replaceChild(view.sendBroadcast());
 	},
+	openTopup(){
+		this.topLayer.replaceChild(view.topupPage());
+	},
+	openUsers(){
+		this.topLayer.replaceChild(view.usersPage());
+	},
 	openNewDepoDetails(param){
 		this.topLayer.replaceChild(view.depoDetails(param));
 	},
@@ -139,8 +145,14 @@ const app = {
 			}
 		}))
 	},
-	openPaymentDetails(param,param2=false){
-		this.topLayer.replaceChild(view.paymentDetails(param,param2));
+	openPaymentDetails(param,param2=false,param3=false){
+		this.topLayer.replaceChild(view.paymentDetails(param,param2,param3));
+	},
+	openUserEditor(param){
+		this.topLayer.replaceChild(view.userEditor(param));
+	},
+	openKategori(){
+		this.topLayer.replaceChild(view.kategoriPage());
 	}
 }
 

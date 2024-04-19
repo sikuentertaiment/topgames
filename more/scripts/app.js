@@ -14,7 +14,7 @@ const app = {
 	bottomNav:find('#bottomNav'),
 	menuLogin:find('#menulogin'),
 	bodydiv:find('#body'),
-	menuButtons:findall('#menu div'),
+	menuButtons:null,
 	topLayer:find('#toplayer'),
 	carouselParent:find('.owl-carousel'),
 	moremenu:find('#moremenu'),
@@ -25,22 +25,24 @@ const app = {
 		this.openInitLoading();
 		this.provideScurities();
 		await this.handleFrontData();
-		this.loginMenuEventInit();
-		this.menuButtonsInit();
-		this.bottomNavEventInit();
-		this.openMoreMenuInit();
-		let {products,paymentMethods,carousel,valid} = await this.getPriceList();
+		let {products,paymentMethods,carousel,valid,categories} = await this.getPriceList();
 		if(!valid){
 			const old = this.getOldList();
 			products = old.products;
 			paymentMethods = old.paymentMethods;
 			carousel = old.carousel;
+			categories = old.categories;
 		}else{
-			this.saveOldList({products,paymentMethods,carousel});
+			this.saveOldList({products,paymentMethods,carousel,categories});
 		}
 		this.products = products;
 		this.paymentMethods = paymentMethods;
 		this.carousel = carousel;
+		this.categories = categories;
+		this.loginMenuEventInit();
+		this.menuButtonsInit();
+		this.bottomNavEventInit();
+		this.openMoreMenuInit();
 		this.generateBanner();
 		this.generateRandomProduct();
 		// this.handleCustomerSupport();
@@ -86,13 +88,18 @@ const app = {
 		this.initLoading.remove();
 	},
 	menuButtonsInit(){
-		this.menuButtons.forEach(btn=>{
-			btn.onclick = ()=>{
-				// this.hideAndShow();
-				// this.topLayerSetBackground();
-				// this[`open${btn.id}`]();
-				location.hash = btn.id;
-			}
+		const sortedCategories = [];
+
+		Object.keys(this.categories).forEach((key)=>{
+			sortedCategories[this.categories[key]] = key;
+		})
+		sortedCategories.forEach((key)=>{
+			this.menu.addChild(makeElement('div',{
+				innerHTML:key,
+				onclick(){
+					app.openEtalase(key);
+				}
+			}))
 		})
 	},
 	handleFrontData(){
@@ -518,7 +525,8 @@ const app = {
 		'#Lupapassword':'openLupaPass',
 		'#Topup':'openTopup',
 		'#Codetails':'showCoDetails',
-		'#Detailspayment':'openShowPaymentDetails'
+		'#Detailspayment':'openShowPaymentDetails',
+		'#Etalase':'showEtalase'
 	},
 	navigationInitiator(global){
 		window.onhashchange = ()=>{
@@ -528,6 +536,14 @@ const app = {
 			this.topLayerSetBackground();
 			this[this.hashNavMeta[location.hash]]();
 		}
+	},
+	openEtalase(param){
+		const hash = location.hash === '#Etalase' ? 'Refresh' : 'Etalase';
+		this.etalaseState = param;
+		location.hash = hash;
+	},
+	showEtalase(){
+		this.topLayer.replaceChild(view.productEtalase(this.etalaseState));
 	}
 }
 

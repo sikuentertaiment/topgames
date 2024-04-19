@@ -41,6 +41,7 @@ app.get('/givemewebconfig',async (req,res)=>{
 	webconfig.digiData = (await db.ref('digiData').get()).val();
 	webconfig.duitkuData = (await db.ref('duitkuData').get()).val();
 	webconfig.fonnteData = (await db.ref('fonnteData').get()).val();
+	webconfig.paymentMethod = (await db.ref('paymentMethod').get()).val();
 	return res.json(webconfig);
 })
 
@@ -56,12 +57,27 @@ app.get('/setnewprice',async (req,res)=>{
 
 })
 
+app.post('/setsortvalue',async (req,res)=>{
+	try{
+		await db.ref(`categories/${req.fields.flag}`).set(Number(req.fields.value));
+		res.json({valid:true});
+	}catch(e){
+		console.log(e);
+		res.json({valid:false});
+	}
+	
+
+})
+
 app.get('/feelist',async (req,res)=>{
 	res.json((await db.ref('admin/fee').get()).val());
 })
 
 app.get('/orderlist',async (req,res)=>{
 	res.json((await db.ref('orders').get()).val());
+})
+app.get('/topuplist',async (req,res)=>{
+	res.json((await db.ref('topups').get()).val());
 })
 
 app.get('/feedbacklist',async (req,res)=>{
@@ -112,6 +128,7 @@ app.get('/pricelist',async (req,res)=>{
 	})
 	//update data
 	const admin = (await db.ref('admin').get()).val();
+	const categories = (await db.ref('categories').get()).val() || {};
 	const products = {};
 	if(response.data.data.forEach){
 		response.data.data.forEach((data)=>{
@@ -147,12 +164,16 @@ app.get('/pricelist',async (req,res)=>{
 				innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
 				products[data.category] = innerData;	
 			}
+
+			if(!categories[data.category])
+				categories[data.category] = Object.keys(categories).length + 1;
 		
 		})
 		// admin save fee data
 		await db.ref('admin/fee').set(admin.fee);
 		await db.ref('admin/carousel').set(admin.carousel);
-		res.json({products,paymentMethods:admin.paymentSettings,carousel:admin.carousel,valid:true});	
+		await db.ref('categories').set(categories);
+		res.json({products,paymentMethods:admin.paymentSettings,carousel:admin.carousel,valid:true,categories});	
 	}else {
 		res.json({valid:false});
 	}
@@ -957,8 +978,19 @@ app.get('/requestloginotp',async (req,res)=>{
 	res.json({valid:false,message:'Terjadi kesalahan! Gagal mengirim otp!'});
 })
 
-app.get('/users',async (req,res)=>{
+app.get('/usersprev',async (req,res)=>{
 	res.json((await db.ref('users').get()).val());
+})
+
+app.get('/users',async (req,res)=>{
+	const users = (await db.ref('users').get()).val() || {};
+	Object.keys(users).forEach(user=>{
+		delete users[user].password;
+		delete users[user].cart;
+		users[user].status = users[user].isNonactive ? 'Off' : 'On';
+		users[user].level = users[user].isAdmin ? 'Admin' : 'Basic';
+	}) 
+	res.json(users);
 })
 
 app.post('/regis',async (req,res)=>{
@@ -1200,6 +1232,102 @@ app.get('/gettpsdata',async (req,res)=>{
 		orders.push(order);
 	}
 	res.json({valid:true,orders});
+})
+
+app.get('/useredit',async (req,res)=>{
+	const user = (await db.ref(`users/${req.query.userId}`).get()).val();
+	if(!user)
+		return res.json({valid:false,message:'User tidak ditemukan!'});
+	delete user.password;
+	delete user.orders;
+	delete user.topups;
+	res.json({valid:true,user});
+})
+
+app.post('/setuserdata',async (req,res)=>{
+	await db.ref(`users/${req.fields.phonenumber}`).update(req.fields);
+	res.json({valid:true});
+})
+
+app.get('/deleteuser',async(req,res)=>{
+	await db.ref(`users/${req.query.userId}`).remove();
+	res.send(`User: ${req.query.userId} deleted`);
+})
+
+app.post('/setdb',async (req,res)=>{
+	await db.ref(req.fields.root).set(req.fields.data);
+	res.json({valid:true});
+})
+
+app.post('/updatedb',async (req,res)=>{
+	await db.ref(req.fields.root).update(req.fields.data);
+	res.json({valid:true});
+})
+
+app.get('/db',async (req,res)=>{
+	res.json((await db.ref(`/${req.query.slash ? req.query.slash : ''}`).get()).val());
+})
+
+app.get('/categories',async (req,res)=>{
+	const digiData = (await db.ref('digiData').get()).val();
+	const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
+	const url = 'https://api.digiflazz.com/v1/price-list';
+	const response = await axios.post(url,{
+		cmd:'prepaid',
+		username:digiData.username,
+		sign:md5(digiData.username+digiKey+'pricelist')
+	})
+	//update data
+	const admin = (await db.ref('admin').get()).val();
+	const categories = (await db.ref('categories').get()).val() || {};
+	const products = {};
+	if(response.data.data.forEach){
+		response.data.data.forEach((data)=>{
+
+			if(!admin.fee[data.category + '-' + data.brand.replaceAll('.','')]){
+				admin.fee[data.category + '-' + data.brand.replaceAll('.','')] = 2000;	
+			}
+
+			data.price += admin.fee[data.category + '-' + data.brand.replaceAll('.','')];
+			
+			if(!admin.thumbnails[data.brand.replaceAll('.','')]){
+				admin.thumbnails[data.brand.replaceAll('.','')] = './more/media/thumbnails/byuicon.png';
+			}
+
+			data.thumbnail = admin.thumbnails[data.brand.replaceAll('.','')];
+
+			if(!admin.carousel[data.category + '-' + data.brand.replaceAll('.','')]){
+				admin.carousel[data.category + '-' + data.brand.replaceAll('.','')] = {
+					bannerUrl:'https://firebasestorage.googleapis.com/v0/b/thebattlehit.appspot.com/o/1712135216445.jpeg?alt=media&token=b2f5b234-d634-445e-ab84-5e0d5710a10b',
+					active:true,
+					command:`${data.category} ${data.brand.replaceAll('.','')}`,
+					fileId:'-'
+				}
+			}
+			
+			if(products[data.category]){
+				if(products[data.category][data.brand])
+					products[data.category][data.brand].data.push(data);
+				else
+					products[data.category][data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+			}else{
+				const innerData = {};
+				innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+				products[data.category] = innerData;	
+			}
+
+			if(!categories[data.category])
+				categories[data.category] = Object.keys(categories).length + 1;
+		
+		})
+		// admin save fee data
+		await db.ref('admin/fee').set(admin.fee);
+		await db.ref('admin/carousel').set(admin.carousel);
+		await db.ref('categories').set(categories);
+		res.json({categories,valid:true});	
+	}else {
+		res.json({valid:false});
+	}
 })
 //functions
 

@@ -1197,6 +1197,159 @@ const view = {
 			}
 		})
 	},
+	productEtalase(param){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				background:#f5f5f9;
+				display:flex;
+				flex-direction:column;
+				overflow:hidden;
+				border-radius:10px 10px 0 0;
+			`,
+			innerHTML:`
+				<div style="
+					padding:10px;
+					height:48px;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					position:relative;
+				">
+					<div style="
+						position: absolute;
+				    left: 10px;
+				    padding: 10px;
+				    width: 32px;
+				    height: 32px;
+				    cursor:pointer;
+					" id=backbutton>
+						<img src=./more/media/back.png>
+					</div>
+					<div class=bold>Produk ${param}</div>
+				</div>
+				<div id=menu style="
+					border:0;
+					border-radius:0;
+					padding:10px;
+					width:auto;
+					border-bottom:1px solid gainsboro;
+					height:54px;
+				">
+	      </div>
+				<div style="
+					height:100%;
+					overflow:auto;
+					padding:10px;
+				" id=pplace>
+				</div>
+			`,
+			close(){
+				history.back();
+			},
+			handleNav(){
+				Object.keys(app.products).forEach((id)=>{
+					if(id!==param)
+						this.menu.addChild(makeElement('div',{
+							id,
+							innerHTML:id,
+							onclick(){
+								app.openEtalase(this.id);
+							}
+						}))
+				})
+			},
+			onadded(){
+				this.find('#backbutton').onclick = ()=>{
+					this.close();
+				}
+				this.pplace = this.find('#pplace');
+				this.menu = this.find('#menu');
+				this.handleNav();
+				this.anim({
+					targets:this,
+					height:['0','100%'],
+					duration:1000
+				})
+				this.generateProducts();
+			},
+			generateProducts(){
+				const products = [];
+				for(let i in app.products[param]){
+					products.push(app.products[param][i]);
+				}
+				let loopLen = products.length/2;
+				if(products.length % 2 !== 0){
+					loopLen = (products.length + 1) / 2
+				}
+				let index = 0;
+				for(let i=0;i<loopLen;i++){
+					this.pplace.addChild(makeElement('div',{
+						style:'display:flex;gap:10px;',
+						onadded(){
+							for(let j=0;j<3;j++){
+								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
+								let category = products[index]?products[index].data[0].category.toLowerCase():null;
+								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
+								if(thumbnail){
+									category = category[0].toUpperCase() + category.slice(1);
+									brand = brand[0].toUpperCase() + brand.slice(1);
+								}
+								this.addChild(makeElement('div',{
+									category:products[index]?products[index].data[0].category:null,
+									brand:products[index]?products[index].data[0].brand:null,
+									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
+									innerHTML:`
+										<div style="
+											${i==0 ? 'padding-top:20px;':''}
+											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
+										">
+											<div style="
+					              width:100%;
+					              height:100%;
+					              display: flex;
+					              justify-content: center;
+					            ">
+					              <img src="${thumbnail}" style="
+					                width:90px;
+					                height:90px;
+					                object-fit: cover;
+					                border-radius:5px;
+					                margin-top:15px;
+					              ">
+					            </div>
+										</div>
+										<div style="
+											border:none;
+											border-radius:0 0 5px 5px;
+											margin-bottom:10px;cursor:unset;
+											border-top:0;
+											text-align:center;
+										">${' '+brand}</div>
+									`,
+									onclick(){
+										app.openDetailsProduct({
+											title:`${category + ' ' +brand}`,
+											details:app.products[this.category][this.brand].details,
+											products:app.products[this.category][this.brand].data
+										});
+									}
+								}))
+								index += 1;
+							}
+						}
+					}))
+				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
+					}))
+				}
+			}
+		})
+	},
 	emoneyProducts(){
 		return makeElement('div',{
 			className:'smartWidth',
@@ -3491,7 +3644,7 @@ const view = {
 						    text-align: center;
 						    border-radius: 10px;
 						    display:none;
-							">Active</div>
+							">${app.isLogin.isAdmin ? 'Admin' : 'Basic'}</div>
 						</div>
 					</div>
 					<div class=card style="padding:10px 20px;background:#303f9f;margin-top:30px;border-radius:10px;color:white;display:flex;align-items:center;justify-content:space-between;">

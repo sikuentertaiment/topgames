@@ -192,6 +192,21 @@ textarea{
   background-clip: padding-box;
   box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
 }
+#finder{
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  /*position: sticky;
+  top:10px;*/
+  padding:10px;
+  background: white;
+  z-index:12;
+  border-radius: 0.5rem !important;
+/*  border:1px solid gainsboro;*/
+  overflow: auto;
+  background-clip: padding-box;
+  box-shadow: 0 2px 6px 0 rgba(67, 89, 113, 0.12);
+}
 #menulogin{
   display: flex;
   justify-content: space-between;
@@ -229,6 +244,22 @@ textarea{
   font-weight: bold;
 }
 #menu div{
+  padding:10px;
+  background: #303f9f;
+  color:white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-radius:8px;
+  cursor: pointer;
+  gap:5px;
+/*  border:1px solid gainsboro;*/
+  font-size: 12px;
+  white-space: nowrap;
+  border:1px solid #303f9f;
+}
+#finder div{
   padding:10px;
   background: #303f9f;
   color:white;

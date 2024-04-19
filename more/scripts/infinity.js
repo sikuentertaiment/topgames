@@ -53,13 +53,9 @@ Array.prototype.split = function(len){
 
 	return newArray;
 }
-//Object.prototype.forEach = function(callback){
-//	let i = 0;
-//	for(let key in this){
-//		callback(this[key],i);
-//		i++;
-//	}
-//}
+// Object.prototype.forEach = function(cb){
+// 	Object.keys(this).forEach(cb);
+// }
 JSON.toEncoded = function(obj){
 	let string = '';
 	for(let i in obj){
