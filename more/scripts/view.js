@@ -3643,7 +3643,6 @@ const view = {
 						    padding: 5px;
 						    text-align: center;
 						    border-radius: 10px;
-						    display:none;
 							">${app.isLogin.isAdmin ? 'Admin' : 'Basic'}</div>
 						</div>
 					</div>

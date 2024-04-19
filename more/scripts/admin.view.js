@@ -639,19 +639,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>Atur Markup Price</div>
-					<div style="
-						position: absolute;
-				    right: 10px;
-				    padding: 10px;
-				    width: 24px;
-				    height: 24px;
-				    cursor: pointer;
-				    background: #303f9f;
-				    border-radius: 5px;
-					" id=updatebutton>
-						<img src=./more/media/refreshicon.png style=width:100%;>
-					</div>
+					<div>Markup Harga</div>
 				</div>
 				<div style="
 					height:100%;
@@ -662,55 +650,72 @@ const view = {
 					<div style="
 						padding:20px;
 						background:white;
-						border:1px solid gainsboro;
 						border-radius:5px;
+						margin-bottom:5px;
+						border:1px solid gainsboro;
 						display:flex;
-						gap:10px;
 						flex-direction:column;
-						margin-bottom:20px;
+						gap:10px;
 					">
-						<div>Quick Search</div>
-						<div style=display:flex;>
-							<input placeholder="Gunakan Pencarian Cepat..." id=qsearch>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Value</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<input placeholder="Masukan harga" type=number id=price value=1 min=1>
+							</div>
 						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Tipe Markup ( Persen/Bulat )</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<select id=type class=child>
+									<option value=0>Persen</option>
+									<option value=1>Bulat</option>
+								</select>
+							</div>
+							<div class=smallimportan>* Untuk produk dengan harga digi dibawah 1000, markup tipe persen tidak akan terpengaruh</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Kategori</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<select id=category class=child>
+									<option value=all>Semua</option>
+								</select>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Brand</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<select id=brand class=child>
+									<option value=all>Semua</option>
+								</select>
+							</div>
+						</div>
+						<div style="
+							padding:15px;
+							color:white;
+							background:#303f9f;
+							border-radius:5px;
+							cursor:pointer;
+							text-align:center;
+							margin-top:10px;
+						" id=savebutton>Markup Harga Produk</div>
 					</div>
 				</div>
 			`,
+			autoDefine:true,
 			close(){
 				app.topLayer.hide();
 				app.body.style.overflow = 'auto';
 				this.remove();
 			},
-			processSearch(){
-				const key = this.qsearch.value;
-				for(let i in this.feeels){
-					if(i.toLowerCase().search(key.toLowerCase())===-1){
-						this.feeels[i].hide();
-					}else this.feeels[i].show('block');
-				}
-			},feeels:{},
-			async forceUpdate(){
-				const response = await new Promise((resolve,reject)=>{
-					cOn.get({
-						url:`${app.baseUrl}/updatefeelist`,
-						onload(){resolve(this.getJSONResponse())}
-					})
-				})
-				if(response.valid)
-					return app.openPrice();
-				app.showWarnings('Gagal memperbarui data!');
-			},
 			onadded(){
-				this.find('#backbutton').onclick = ()=>{
+				this.backbutton.onclick = ()=>{
 					this.close();
 				}
-				this.find('#updatebutton').onclick = ()=>{
-					this.forceUpdate();
+				this.category.onchange = ()=>{
+					this.generateBrand(this.category.value);
 				}
-				this.pplace = this.find('#pplace');
-				this.qsearch = this.find('#qsearch');
-				this.qsearch.onchange = ()=>{
-					this.processSearch();
+				this.savebutton.onclick = ()=>{
+					this.saveData();
 				}
 				this.anim({
 					targets:this,
@@ -720,91 +725,74 @@ const view = {
 				this.generateOrders();
 			},
 			async generateOrders(){
-				const fee = await new Promise((resolve,reject)=>{
+				this.products = await new Promise((resolve,reject)=>{
 					cOn.get({
-						url:`${app.baseUrl}/feelist`,
+						url:`${app.baseUrl}/pricelist`,
+						onload(){
+							resolve(this.getJSONResponse().products);
+						}
+					})
+				})
+				for(let i in this.products){
+					this.category.addChild(makeElement('option',{
+						value:i,innerHTML:i
+					}))
+				}
+				this.generateBrand('all');
+			},
+			generateBrand(category){
+				this.brand.clear();
+				this.brand.addChild(makeElement('option',{innerHTML:'Semua',value:'all'}));
+				if(category === 'all'){
+					const displayed = [];
+					for(let i in this.products){
+						for(let j in this.products[i]){
+							if(displayed.includes(j))
+								continue;
+							this.brand.addChild(makeElement('option',{
+								innerHTML:`${j}`,
+								value:j.replaceAll('.','')
+							}))
+							displayed.push(j);
+						}
+					}
+					return
+				}
+				for(let i in this.products[category]){
+					this.brand.addChild(makeElement('option',{innerHTML:i,value:i.replaceAll('.','')}));
+				}
+			},
+			collectData(){
+				const data = {
+					price:this.price.value,
+					type:this.type.value,
+					category:this.category.value,
+					brand:this.brand.value
+				};
+				let valid = true;
+				for(let i in data){
+					if(!data[i].length){
+						valid = false;
+						break;
+					}
+				}
+				return {valid,data};
+			},
+			async saveData(){
+				const data = this.collectData();
+				if(!data.valid)
+					return app.showWarnings('Mohon periksa kembali data anda!');
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						url:`${app.baseUrl}/markupprice`,
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						data:jsonstr(data.data),
 						onload(){
 							resolve(this.getJSONResponse());
 						}
 					})
 				})
-				console.log(fee);
-				let count = 0;
-				for(let i in fee){
-					count += 1;
-					this.feeels[i] = this.pplace.addChild(makeElement('div',{
-						innerHTML:`
-							<div style="
-								display:flex;
-								justify-content:space-between;
-								align-items:flex-start;
-								gap:10px;
-							">
-								<div style="
-									padding:10px;width:5%
-								">${count}.</div>
-								<div style="width:75%;">
-									<div style="padding:10px 0;">${i}</div>
-									<div style=display:flex;flex-direction:column;font-size:12px;color:gray;gap:5px;>
-										<div style=display:flex;gap:10px;justify-content:space-between;>
-											<input placeholder="Input nilai baru">
-										</div>
-									</div>
-								</div>
-								<div style="width:20%;white-space:nowrap;text-align:center;display:flex;flex-direction:column;">
-									<div style=padding:10px; id=label>Rp ${getPrice(fee[i])}</div>
-									<div style="
-										padding:9px;
-										border-radius:5px;
-										color:white;
-										cursor:pointer;
-										background:#303f9f;
-									" id=setbutton>Set</div>
-								</div>
-							</div>
-						`,
-						flag:i,
-						async setNewValue(){
-							const newPrice = this.find('input').value;
-							const result = await new Promise((resolve,reject)=>{
-								cOn.get({
-									url:`${app.baseUrl}/setnewprice?value=${newPrice}&&flag=${this.flag}`,
-									onload(){
-										resolve(this.getJSONResponse());
-									}
-								})
-							})
-							if(result.valid){
-								this.find('#label').innerHTML = `Rp ${getPrice(newPrice)}`;
-								this.find('input').value = '';
-								app.showWarnings('Data disimpan!');
-							}else app.showWarnings('Gagal menyimpan data!');
-						},
-						onclick(){
-							this.find('#setbutton').onclick = ()=>{
-								this.setNewValue();
-							}
-						},
-						style:`
-							background:white;
-							padding:10px;
-							border:1px solid gainsboro;
-							margin-bottom:5px;
-							border-radius:5px;
-						`,
-					}))
-				}
-				
-				if(!count)
-					this.pplace.addChild(makeElement('div',{
-						innerHTML:'Belum ada data produk!',
-						style:`
-							font-size: 12px;
-					    color: gray;
-					    text-align: center;
-					    margin-top: 200px;
-						`
-					}))
+				console.log(response);
 			}
 		})
 	},
@@ -1689,6 +1677,7 @@ const view = {
 		    background: white;
 		    border-radius:5px;
 		    padding: 20px;
+		    margin-bottom:20px;
 			`,
 			innerHTML:`
 				<div style="font-weight:bold;margin-bottom:10px;">Kurva Profit</div>

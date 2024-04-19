@@ -129,16 +129,23 @@ app.get('/pricelist',async (req,res)=>{
 	//update data
 	const admin = (await db.ref('admin').get()).val();
 	const categories = (await db.ref('categories').get()).val() || {};
+	const markup = (await db.ref('markup').get()).val();
 	const products = {};
 	if(response.data.data.forEach){
 		response.data.data.forEach((data)=>{
 
-			if(!admin.fee[data.category + '-' + data.brand.replaceAll('.','')]){
-				admin.fee[data.category + '-' + data.brand.replaceAll('.','')] = 2000;	
+			if(!markup[data.category][data.brand.replaceAll('.','')]){
+				markup[data.category][data.brand.replaceAll('.','')] = {value:'2000',type:'1'};	
 			}
 
-			data.price += admin.fee[data.category + '-' + data.brand.replaceAll('.','')];
-			
+			const markupSetting = markup[data.category][data.brand.replaceAll('.','')];
+			if(markupSetting.type === '1')
+				data.price += Number(markupSetting.value);
+			else if(data.price > 1000){
+				data.price += Number(data.price * Number(markupSetting.value) / 100);
+				data.price = Number(String(data.price).replaceAll('.',''));
+			}
+
 			if(!admin.thumbnails[data.brand.replaceAll('.','')]){
 				admin.thumbnails[data.brand.replaceAll('.','')] = './more/media/thumbnails/byuicon.png';
 			}
@@ -1278,56 +1285,46 @@ app.get('/categories',async (req,res)=>{
 		sign:md5(digiData.username+digiKey+'pricelist')
 	})
 	//update data
-	const admin = (await db.ref('admin').get()).val();
 	const categories = (await db.ref('categories').get()).val() || {};
-	const products = {};
 	if(response.data.data.forEach){
 		response.data.data.forEach((data)=>{
-
-			if(!admin.fee[data.category + '-' + data.brand.replaceAll('.','')]){
-				admin.fee[data.category + '-' + data.brand.replaceAll('.','')] = 2000;	
-			}
-
-			data.price += admin.fee[data.category + '-' + data.brand.replaceAll('.','')];
-			
-			if(!admin.thumbnails[data.brand.replaceAll('.','')]){
-				admin.thumbnails[data.brand.replaceAll('.','')] = './more/media/thumbnails/byuicon.png';
-			}
-
-			data.thumbnail = admin.thumbnails[data.brand.replaceAll('.','')];
-
-			if(!admin.carousel[data.category + '-' + data.brand.replaceAll('.','')]){
-				admin.carousel[data.category + '-' + data.brand.replaceAll('.','')] = {
-					bannerUrl:'https://firebasestorage.googleapis.com/v0/b/thebattlehit.appspot.com/o/1712135216445.jpeg?alt=media&token=b2f5b234-d634-445e-ab84-5e0d5710a10b',
-					active:true,
-					command:`${data.category} ${data.brand.replaceAll('.','')}`,
-					fileId:'-'
-				}
-			}
-			
-			if(products[data.category]){
-				if(products[data.category][data.brand])
-					products[data.category][data.brand].data.push(data);
-				else
-					products[data.category][data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
-			}else{
-				const innerData = {};
-				innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
-				products[data.category] = innerData;	
-			}
 
 			if(!categories[data.category])
 				categories[data.category] = Object.keys(categories).length + 1;
 		
 		})
 		// admin save fee data
-		await db.ref('admin/fee').set(admin.fee);
-		await db.ref('admin/carousel').set(admin.carousel);
 		await db.ref('categories').set(categories);
 		res.json({categories,valid:true});	
 	}else {
 		res.json({valid:false});
 	}
+})
+
+app.post('/markupprice',async (req,res)=>{
+	const products = await getProducts();
+	if(!products.valid)
+		return res.json({valid:false,message:'Terjadi kesalahan! Mohon coba lagi nanti!'});
+	const markup = {};
+	for(let i in products.data){
+		if(req.fields.category !== 'all' && req.fields.category !== i)
+			continue;
+		for(let j in products.data[i]){
+			if(req.fields.brand !== 'all' && req.fields.brand !== j)
+				continue;
+			if(products.data[i][j]){
+				if(!markup[i])
+					markup[i] = {}
+				markup[i][j.replaceAll('.','')] = {type:req.fields.type,value:req.fields.price}
+			}
+		}
+	}
+	for(let i in markup){
+		for(let j in markup[i]){
+			await db.ref(`markup/${i}/${j}`).update(markup[i][j]);		
+		}
+	}
+	res.json({valid:true,message:'Produk berhasil dimarkup!'});
 })
 //functions
 
@@ -1384,6 +1381,63 @@ const getDigiSaldo = () => {
 const getOtp = ()=>{
 	let otp = new Date().getTime().toString();
 	return otp.slice(otp.length - 6);
+}
+const getProducts = ()=>{
+	return new Promise(async (resolve,reject)=>{
+		const digiData = (await db.ref('digiData').get()).val();
+		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
+		const url = 'https://api.digiflazz.com/v1/price-list';
+		const response = await axios.post(url,{
+			cmd:'prepaid',
+			username:digiData.username,
+			sign:md5(digiData.username+digiKey+'pricelist')
+		})
+		//update data
+		const admin = (await db.ref('admin').get()).val();
+		const categories = (await db.ref('categories').get()).val() || {};
+		const products = {};
+		if(response.data.data.forEach){
+			response.data.data.forEach((data)=>{
+
+				if(!admin.fee[data.category + '-' + data.brand.replaceAll('.','')]){
+					admin.fee[data.category + '-' + data.brand.replaceAll('.','')] = 2000;	
+				}
+
+				// data.price += admin.fee[data.category + '-' + data.brand.replaceAll('.','')];
+				
+				if(!admin.thumbnails[data.brand.replaceAll('.','')]){
+					admin.thumbnails[data.brand.replaceAll('.','')] = './more/media/thumbnails/byuicon.png';
+				}
+
+				data.thumbnail = admin.thumbnails[data.brand.replaceAll('.','')];
+
+				if(!admin.carousel[data.category + '-' + data.brand.replaceAll('.','')]){
+					admin.carousel[data.category + '-' + data.brand.replaceAll('.','')] = {
+						bannerUrl:'https://firebasestorage.googleapis.com/v0/b/thebattlehit.appspot.com/o/1712135216445.jpeg?alt=media&token=b2f5b234-d634-445e-ab84-5e0d5710a10b',
+						active:true,
+						command:`${data.category} ${data.brand.replaceAll('.','')}`,
+						fileId:'-'
+					}
+				}
+				
+				if(products[data.category]){
+					if(products[data.category][data.brand])
+						products[data.category][data.brand].data.push(data);
+					else
+						products[data.category][data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+				}else{
+					const innerData = {};
+					innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+					products[data.category] = innerData;	
+				}
+
+				if(!categories[data.category])
+					categories[data.category] = Object.keys(categories).length + 1;
+			
+			})
+			resolve({valid:true,data:products});
+		}else resolve({valid:false})
+	})
 }
 
 //object app
