@@ -786,7 +786,7 @@ const view = {
 						}
 					})
 				})
-				console.log(response);
+				app.showWarnings(response.message);
 			}
 		})
 	},
@@ -3395,6 +3395,221 @@ const view = {
 						`,
 					}))
 				}
+			}
+		})
+	},
+	products(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				background:white;
+				border:1px solid gainsboro;
+				display:flex;
+				flex-direction:column;
+				overflow:hidden;
+				border-radius:10px 10px 0 0;
+			`,
+			innerHTML:`
+				<div style="
+					padding:10px;
+					height:48px;
+					border-bottom:1px solid gainsboro;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					position:relative;
+				">
+					<div style="
+						position: absolute;
+				    left: 10px;
+				    padding: 10px;
+				    width: 32px;
+				    height: 32px;
+				    cursor:pointer;
+					" id=backbutton>
+						<img src=./more/media/back.png>
+					</div>
+					<div>Produk List</div>
+					<div style="
+						position: absolute;
+				    right: 10px;
+				    padding: 10px;
+				    width: 24px;
+				    height: 24px;
+				    cursor: pointer;
+				    background: #303f9f;
+				    border-radius: 5px;
+					" id=updatebutton>
+						<img src=./more/media/refreshicon.png style=width:100%;>
+					</div>
+				</div>
+				<div style="
+					height:100%;
+					overflow:auto;
+					padding:10px;
+					background:whitesmoke;
+				" id=pplace>
+						<div style="
+							padding:20px;
+							background:white;
+							border:1px solid gainsboro;
+							border-radius:5px;
+							display:flex;
+							gap:10px;
+							flex-direction:column;
+							margin-bottom:20px;
+						">
+							<div>Quick Search</div>
+							<div style=display:flex;>
+								<input placeholder="Gunakan Pencarian Cepat..." id=qsearch>
+							</div>
+						</div>
+				</div>
+			`,
+			close(){
+				app.topLayer.hide();
+				app.body.style.overflow = 'auto';
+				this.remove();
+			},
+			processSearch(){
+				const keys = this.qsearch.value.split(' ');
+				keys.forEach((key,k)=>{
+					for(let i=0;i<this.ordersels.length;i++){
+						if(k !== 0 && this.ordersels[i].style.display === 'none')
+							continue;
+						let found = false;
+						for(let j in this.ordersels[i]){
+							if(!this.ordersels[i][j] || !this.ordersels[i][j].toLowerCase)
+								continue;
+							if(this.ordersels[i][j].toLowerCase().search(key.toLowerCase())!==-1){
+								found = true;
+								break;
+							}
+						}
+						if(!found){
+							this.ordersels[i].hide();
+						}else this.ordersels[i].show('block');
+					}
+				})
+			},ordersels:[],
+			onadded(){
+				this.find('#backbutton').onclick = ()=>{
+					this.close();
+				}
+				this.find('#updatebutton').onclick = ()=>{
+					app.openOrder();
+				}
+				this.pplace = this.find('#pplace');
+				this.qsearch = this.find('#qsearch');
+				this.qsearch.onchange = ()=>{
+					this.processSearch();
+				}
+				this.anim({
+					targets:this,
+					height:['0','95%'],
+					duration:1000
+				})
+				this.generateOrders();
+				console.log(this.ordersels);
+			},
+			async generateOrders(){
+				const orders = objToArray(await new Promise((resolve,reject)=>{
+					cOn.get({
+						url:`${app.baseUrl}/productlist`,
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				}))
+				for(let i=0;i<orders.length;i++){
+					this.ordersels[i] = this.pplace.addChild(makeElement('div',{
+						orderData:orders[i],
+						innerHTML:`
+							<div style="
+								display:flex;
+								justify-content:flex-start;
+								align-items:flex-start;
+								gap:10px;
+							">
+								<div style="width:100%;">
+									<div style="padding:10px 0;border-bottom:1px solid gainsboro;margin-bottom:10px;">${i + 1}. ${orders[i].product_name}</div>
+									<div style="display:flex;flex-direction:column;font-size:12px;color:gray;gap:5px;padding:5px 0;">
+										<div style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Kategori</div>
+											<div>${orders[i].category}</div>
+										</div>
+										<div  style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Brand</div>
+											<div>${orders[i].brand}</div>
+										</div>
+										<div  style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Status</div>
+											<div>${orders[i].status ? 'Normal' : 'Gangguan'}</div>
+										</div>
+										<div  style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Harga Modal</div>
+											<div>Rp ${getPrice(orders[i].price)}</div>
+										</div>
+										<div  style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Harga Web</div>
+											<div>Rp ${getPrice(orders[i].webPrice)}</div>
+										</div>
+										<div  style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Markup</div>
+											<div>${orders[i].markupValue}</div>
+										</div>
+										<div  style=display:flex;gap:10px;justify-content:space-between;>
+											<div>Profit</div>
+											<div>${orders[i].profit}</div>
+										</div>
+									</div>
+									<!---<div style="
+										padding:10px;
+										border-radius:5px;
+										color:white;
+										cursor:pointer;
+										background:#303f9f;
+										text-align:center;
+										margin-top:20px;
+										margin-bottom:10px;
+									" id=cek>Cek</div>---!>
+								</div>
+							</div>
+						`,
+						onadded(){
+							// this.find('#cek').onclick = async ()=>{
+							// 	const orderdetails = await new Promise((resolve,reject)=>{
+							// 		cOn.get({
+							// 			url:`${app.baseUrl}/orderdetails?orderId=${this.orderId}`,
+							// 			onload(){
+							// 				resolve(this.getJSONResponse());
+							// 			}
+							// 		})
+							// 	})
+							// 	if(orderdetails.valid)
+							// 		return app.openPaymentDetails(orderdetails.data);
+							// 	app.showWarnings('Transaksi tidak ditemukan!');
+							// }
+						},
+						style:`
+							background:white;
+							padding:10px 20px;
+							border:1px solid gainsboro;
+							margin-bottom:5px;
+							border-radius:5px;
+						`,
+					}))
+				}
+				if(!orders.length)
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Belum ada data order!',
+						style:`
+							font-size: 12px;
+					    color: gray;
+					    text-align: center;
+					    margin-top: 200px;
+						`
+					}))
 			}
 		})
 	}

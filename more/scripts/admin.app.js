@@ -177,6 +177,9 @@ const app = {
 	},
 	openHideMenu(){
 		this.menuParent.hide();
+	},
+	openProduk(){
+		this.topLayer.replaceChild(view.products());
 	}
 }
 

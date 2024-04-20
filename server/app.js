@@ -162,13 +162,13 @@ app.get('/pricelist',async (req,res)=>{
 			}
 			
 			if(products[data.category]){
-				if(products[data.category][data.brand])
-					products[data.category][data.brand].data.push(data);
+				if(products[data.category][data.brand.replaceAll('.','')])
+					products[data.category][data.brand.replaceAll('.','')].data.push(data);
 				else
-					products[data.category][data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+					products[data.category][data.brand.replaceAll('.','')] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
 			}else{
 				const innerData = {};
-				innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+				innerData[data.brand.replaceAll('.','')] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
 				products[data.category] = innerData;	
 			}
 
@@ -177,6 +177,7 @@ app.get('/pricelist',async (req,res)=>{
 		
 		})
 		// admin save fee data
+		await db.ref('products').set(products);
 		await db.ref('admin/fee').set(admin.fee);
 		await db.ref('admin/carousel').set(admin.carousel);
 		await db.ref('admin/thumbnails').set(admin.thumbnails);
@@ -1401,6 +1402,36 @@ app.post('/setnewbrandicon',async (req,res)=>{
 	await db.ref(`admin/thumbnails/${req.fields.id}`).set(iconUrl);
 	res.json({valid:true,message:'Icon berhasil diubah!'});
 })
+
+app.get('/productlist',async (req,res)=>{
+	const products = await getProducts();
+	const markup = (await db.ref('markup').get()).val();
+	let productList = [];
+	for(let i in products.data){
+		for(let j in products.data[i]){
+			for(let k=0;k < products.data[i][j].data.length;k++){
+				// working on markup
+				const markupValue = markup[i][j];
+				if(markupValue.type === '1'){
+					products.data[i][j].data[k].webPrice = products.data[i][j].data[k].price + Number(markupValue.value);
+					products.data[i][j].data[k].markupValue = `Rp ${getPrice(markupValue.value)}`;
+				}else if(products.data[i][j].data[k].price > 1000){
+					products.data[i][j].data[k].webPrice = products.data[i][j].data[k].price + (products.data[i][j].data[k].price * Number(markupValue.value) / 100);
+					products.data[i][j].data[k].markupValue = `${getPrice(markupValue.value)}%`;
+				}else{
+					products.data[i][j].data[k].webPrice = products.data[i][j].data[k].price;
+					products.data[i][j].data[k].markupValue = `No Markup`;
+				}
+				// working on status
+				products.data[i][j].data[k].status = products.data[i][j].data[k].buyer_product_status && products.data[i][j].data[k].seller_product_status;
+				// working on profit
+				products.data[i][j].data[k].profit = `Rp ${getPrice(products.data[i][j].data[k].webPrice - products.data[i][j].data[k].price)}`;
+			}
+			productList = productList.concat(products.data[i][j].data);
+		}
+	}
+	res.json(productList);
+})
 //functions
 
 const productRechecker = (buyyerProductCode) => {
@@ -1496,13 +1527,13 @@ const getProducts = ()=>{
 				}
 				
 				if(products[data.category]){
-					if(products[data.category][data.brand])
-						products[data.category][data.brand].data.push(data);
+					if(products[data.category][data.brand.replaceAll('.','')])
+						products[data.category][data.brand.replaceAll('.','')].data.push(data);
 					else
-						products[data.category][data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+						products[data.category][data.brand.replaceAll('.','')] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
 				}else{
 					const innerData = {};
-					innerData[data.brand] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
+					innerData[data.brand.replaceAll('.','')] = {details:{bannerUrl:admin.carousel[data.category + '-' + data.brand.replaceAll('.','')].bannerUrl},data:[data]};
 					products[data.category] = innerData;	
 				}
 
@@ -1510,9 +1541,26 @@ const getProducts = ()=>{
 					categories[data.category] = Object.keys(categories).length + 1;
 			
 			})
+			await db.ref('products').set(products);
 			resolve({valid:true,data:products});
-		}else resolve({valid:false})
+		}else resolve({valid:false,data:(await db.ref('products').get()).val()})
 	})
+}
+const getPrice = function(value){
+	if(!value)
+		value = 0;
+	value = String(value);
+	let result = '';
+	while(true){
+		if(value.length>3){
+			result = '.'+value.slice(value.length-3)+result;
+			value = value.slice(0,value.length-3);
+		}else{
+			result = value+result;
+			break
+		}
+	}
+	return result;
 }
 
 //object app
