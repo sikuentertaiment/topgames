@@ -289,12 +289,15 @@ const view = {
 							margin-top:15px;
 							flex-wrap:wrap;
 							gap:10px;
+							${item.buyer_product_status && item.seller_product_status ? '' : 'cursor:not-allowed;'}
 						`,
 						innerHTML:`
-							<div>${title}</div>
+							<div>${title} ${item.buyer_product_status && item.seller_product_status ? '' : '<span style=color:red class=bold>*Gangguan</span>'}</div>
 							<div>Rp ${getPrice(item.price)}</div>
 						`,
 						onclick(){
+							if(!(item.buyer_product_status && item.seller_product_status))
+								return app.showWarnings('Produk sedang gangguan!');
 							if(activeVarian)
 								activeVarian.classList.remove('varianselected');
 							this.classList.add('varianselected');
@@ -307,66 +310,65 @@ const view = {
 					}))
 				})
 			},
-			generateSaldoGuaranteeMethod(price,activeVarian){
-				this.payments.addChild(makeElement('div',{
-					parent:this,
-					className:'card',
-					style:`
-						border-radius:5px;
-						display:flex;
-						padding:20px;
-						cursor:pointer;
-						margin-top:15px;
-						gap:15px;
-						align-items:center;
-						flex-wrap:wrap;
-					`,
-					innerHTML:`
-						<div><img src="./more/media/wallet.png" style="background:white;object-fit:contain;border-radius:5px;padding:10px;width:32px;height:32px;"></div>
-						<div style=display:flex;gap:10px;flex-direction:column;>
-							<div style=font-size:14px;>
-								<div>Saldo</div>
-								<div id=saldolabel style="font-size:10px;">-</div>
+			generateSaldoGuaranteeMethod(price,activeVarian,isSaldo){
+				if(isSaldo){
+					this.payments.addChild(makeElement('div',{
+						parent:this,
+						className:'card',
+						style:`
+							border-radius:5px;
+							display:flex;
+							padding:20px;
+							cursor:pointer;
+							margin-top:15px;
+							gap:15px;
+							align-items:center;
+							flex-wrap:wrap;
+						`,
+						innerHTML:`
+							<div><img src="./more/media/wallet.png" style="background:white;object-fit:contain;border-radius:5px;padding:10px;width:32px;height:32px;"></div>
+							<div style=display:flex;gap:10px;flex-direction:column;>
+								<div style=font-size:14px;>
+									<div>Saldo</div>
+									<div id=saldolabel style="font-size:10px;">-</div>
+								</div>
+								<div style=font-size:12px;>Rp ${getPrice(Number(price))}</div>
 							</div>
-							<div style=font-size:12px;>Rp ${getPrice(Number(price))}</div>
-						</div>
-					`,
-					async onadded(){
-						if(app.isLogin)
-							this.find('#saldolabel').innerText = `Saldo anda tersisah Rp. ${getPrice(app.isLogin.saldo)}`;
-						else this.find('#saldolabel').innerText = 'Mohon login terlebih dahulu.';
-					},
-					onclick(){
-						if(!app.isLogin)
-							return app.showWarnings('Mohon login terlebih dahulu');
-						if(app.isLogin.saldo < price)
-							return app.showWarnings('Saldo anda tidak mencukupi!');
-						if(this.parent.data.productVarian){
-							if(activeVarian)
-								activeVarian.classList.remove('varianselected');
-							this.classList.add('varianselected');
-							activeVarian = this;
-							this.parent.data.paymentMethod = 'gs';
-							this.parent.data.methodName = 'Saldo Akun';
-						}else app.showWarnings('Silahkan memilih produk terlebih dahulu!');
-					}
-				}))
+						`,
+						async onadded(){
+							if(app.isLogin)
+								this.find('#saldolabel').innerText = `Saldo anda tersisah Rp. ${getPrice(app.isLogin.saldo)}`;
+							else this.find('#saldolabel').innerText = 'Mohon login terlebih dahulu.';
+						},
+						onclick(){
+							if(!app.isLogin)
+								return app.showWarnings('Mohon login terlebih dahulu');
+							if(app.isLogin.saldo < price)
+								return app.showWarnings('Saldo anda tidak mencukupi!');
+							if(this.parent.data.productVarian){
+								if(activeVarian)
+									activeVarian.classList.remove('varianselected');
+								this.classList.add('varianselected');
+								activeVarian = this;
+								this.parent.data.paymentMethod = 'gs';
+								this.parent.data.methodName = 'Saldo Akun';
+							}else app.showWarnings('Silahkan memilih produk terlebih dahulu!');
+						}
+					}))
+				}
 			},
 			async generatePaymentMethod(price){
 				const availMethods = await new Promise((resolve,reject)=>{
 					cOn.get({url:`${app.baseUrl}/getpayment?price=${price}`,onload(){
 						const results = this.getJSONResponse();
-						console.log(results);
-						if(results.ok)
-							return resolve(results.results.paymentFee);
-						resolve(false);
+						resolve(results);
 					}})
 				})
 				this.payments.clear();
 				let activeVarian;
-				this.generateSaldoGuaranteeMethod(price,activeVarian);
-				if(availMethods){
-					availMethods.forEach(method=>{
+				this.generateSaldoGuaranteeMethod(price,activeVarian,availMethods.isSaldo);
+				if(availMethods.ok){
+					availMethods.results.paymentFee.forEach(method=>{
 						this.payments.addChild(makeElement('div',{
 							parent:this,
 							className:'card',
@@ -399,6 +401,11 @@ const view = {
 							}
 						}))
 					})
+				}else if(!availMethods.isSaldo){
+					this.payments.addChild(makeElement('div',{
+						innerHTML:'Metode pembayaran tidak tersedia!',
+						style:'text-align:center;margin-top:20px;'
+					}))
 				}
 			},
 			async keranjangin(){

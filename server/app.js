@@ -179,6 +179,7 @@ app.get('/pricelist',async (req,res)=>{
 		// admin save fee data
 		await db.ref('admin/fee').set(admin.fee);
 		await db.ref('admin/carousel').set(admin.carousel);
+		await db.ref('admin/thumbnails').set(admin.thumbnails);
 		await db.ref('categories').set(categories);
 		res.json({products,paymentMethods:admin.paymentSettings,carousel:admin.carousel,valid:true,categories});	
 	}else {
@@ -228,6 +229,12 @@ app.post('/editbanner',async (req,res)=>{
 })
 
 app.get('/getpayment',async (req,res)=>{
+	const payments = (await db.ref('paymentMethod').get()).val();
+	const isSaldo = payments.usersaldo === 'On' ? true : false;
+	const isAlowed = payments.duitku === 'On' ? true : false;
+	if(!isAlowed)
+		return res.json({ok:false,isSaldo});
+
 	const duitkuData = (await db.ref('duitkuData').get()).val();
 	let formattedDateTime = new Date().toLocaleString('en-US', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false});
 	const nospacies = formattedDateTime.replace(',','').split(' ');
@@ -247,8 +254,6 @@ app.get('/getpayment',async (req,res)=>{
     signature: signature
 	};
 
-	console.log(params);
-
 
 	const url = 'https://passport.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod';
 
@@ -258,7 +263,7 @@ app.get('/getpayment',async (req,res)=>{
     }
 	})
   .then(response => {
-      res.json({ok:true,results:response.data});
+      res.json({ok:true,results:response.data,isSaldo});
   })
   .catch(error => {
       if (error.response) {
@@ -268,7 +273,7 @@ app.get('/getpayment',async (req,res)=>{
       } else {
           console.log(error.message);
       }
-      res.json({ok:false});
+      res.json({ok:false,isSaldo});
   });
 })
 
@@ -1373,6 +1378,28 @@ app.get('/getdatastats',async (req,res)=>{
 		}
 	}
 	res.json(data);
+})
+
+app.get('/brandicons',async (req,res)=>{
+	const brands = (await db.ref('admin/thumbnails').get()).val();
+	res.json(brands);
+})
+
+app.post('/setnewbrandicon',async (req,res)=>{
+	console.log(req.fields,req.files);
+	let iconUrl;
+	if(req.files && req.files.newicon){
+		const newfileid = `${new Date().getTime()}.${req.files.newicon.type.split('/')[1]}`;
+		try{
+			await st.upload(req.files.newicon.path,{destination:newfileid,resumable:true});
+			iconUrl = await getDownloadURL(st.file(newfileid));
+		}catch(e){
+			console.log(e);
+			return res.json({valid:false,message:'Terjadi kesalahan saat mengupload icon!'});
+		}
+	}
+	await db.ref(`admin/thumbnails/${req.fields.id}`).set(iconUrl);
+	res.json({valid:true,message:'Icon berhasil diubah!'});
 })
 //functions
 

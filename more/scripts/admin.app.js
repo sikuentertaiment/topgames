@@ -106,6 +106,9 @@ const app = {
 	openUsers(){
 		this.topLayer.replaceChild(view.usersPage());
 	},
+	openBrand(){
+		this.topLayer.replaceChild(view.brandIcons());
+	},
 	openNewDepoDetails(param){
 		this.topLayer.replaceChild(view.depoDetails(param));
 	},
