@@ -4,9 +4,11 @@ const app = {
 	body:find('body'),
 	app:find('#app'),
 	menu:find('#menu'),
+	menuParent:find('#menuparent'),
 	bodydiv:find('#body'),
 	menuButtons:findall('#menu div'),
 	topLayer:find('#toplayer'),
+	moreMenutButton:find('#moremenutoggle'),
 	init(){
 		this.menuButtonsInit();
 		this.generateHomeContent();
@@ -14,10 +16,14 @@ const app = {
 	menuButtonsInit(){
 		this.menuButtons.forEach(btn=>{
 			btn.onclick = ()=>{
-				this.hideAndShow();
+				if(btn.id !== 'HideMenu')
+					this.hideAndShow();
 				this[`open${btn.id}`]();
 			}
 		})
+		this.moreMenutButton.onclick = ()=>{
+			this.menuParent.show('flex');
+		}
 	},
 	hideAndShow(){
 		this.body.style.overflow = 'hidden';
@@ -106,15 +112,27 @@ const app = {
 	openDuitkuDisbursement(){
 		this.topLayer.replaceChild(view.duitkuDisbursement());
 	},
-	showStatistick(){
-		this.bodydiv.addChild(view.statistickInfo());
-	},
 	async generateHomeContent(){
 		//statistik, fonnte sended message, digi products, orders count and more.
+		await this.showDataStats();
 		await this.showVisitorCurve();
 		await this.showOrderCurve();
 		await this.showProfitCurve();
-		this.showStatistick();
+	},
+	showDataStats(){
+		return new Promise(async (resolve,reject)=>{
+			//getting visitor data
+			const stats = await new Promise((resolve,reject)=>{
+				cOn.get({
+					url:`${app.baseUrl}/getdatastats`,
+					onload(){
+						resolve(this.getJSONResponse());
+					}
+				})
+			})
+			this.bodydiv.addChild(view.statsInfo(stats));
+			resolve(true);	
+		})
 	},
 	showWarnings(message){
 		this.body.addChild(makeElement('div',{
@@ -153,6 +171,9 @@ const app = {
 	},
 	openKategori(){
 		this.topLayer.replaceChild(view.kategoriPage());
+	},
+	openHideMenu(){
+		this.menuParent.hide();
 	}
 }
 

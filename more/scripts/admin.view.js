@@ -1622,6 +1622,262 @@ const view = {
 			}
 		})
 	},
+	statsInfo(param){
+		return makeElement('div',{
+			style:`
+				width: 100%;
+    		margin-top: 10px;
+		    border: 1px solid gainsboro;
+		    background: white;
+		    border-radius:5px;
+		    padding: 20px;
+			`,
+			innerHTML:`
+				<div style="font-weight:bold;margin-bottom:30px;">Web Data</div>
+				<div id=chart style="
+					background:white;
+				">
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/user.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>User</div>
+							<div>${getPrice(param.users)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/user.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Admin</div>
+							<div>${getPrice(param.admins)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/product.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Brand</div>
+							<div>${getPrice(param.brands)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/product.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Produk</div>
+							<div>${getPrice(param.products)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/order.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Order</div>
+							<div>${getPrice(param.orders)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/order.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Order Sukses</div>
+							<div>${getPrice(param.success_orders)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/topup.png>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Topup</div>
+							<div>${getPrice(param.topups)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: #303f9f;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/topup.png width:32px;>
+						</div>
+						<div>
+							<div style= style=font-size:18px; class=bold>Topup Sukses</div>
+							<div>${getPrice(param.success_topups)}</div>
+						</div>
+					</div>
+					<div style="
+						background: white;
+				    border: 1px solid gainsboro;
+				    border-radius: 8px;
+				    padding: 15px;
+				    display: flex;
+				    gap: 20px;
+				    align-items: center;
+				    margin-bottom:10px;
+					" class=card>
+						<div style="
+							width: 64px;
+					    height: 64px;
+					    background: white;
+					    display: flex;
+					    align-items: center;
+					    justify-content: center;
+					    border-radius: 8px;
+						">
+							<img src=./more/media/wallet.png>
+						</div>
+						<div>
+							<div style=font-size:18px; class=bold>Total Saldo Member</div>
+							<div>Rp ${getPrice(param.saldo_users_total)}</div>
+						</div>
+					</div>
+				</div>
+			`,
+			onadded(){
+				
+			}
+		})
+	},
 	visitorChartInfo(visitor){
 		return makeElement('div',{
 			style:`
@@ -1718,11 +1974,6 @@ const view = {
 				this.chart = new ApexCharts(this.find("#chart"), options);
 				this.chart.render();
 			}
-		})
-	},
-	statistickInfo(){
-		return makeElement('div',{
-
 		})
 	},
 	paymentDetails(param,param2,param3){

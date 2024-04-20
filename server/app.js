@@ -1326,6 +1326,54 @@ app.post('/markupprice',async (req,res)=>{
 	}
 	res.json({valid:true,message:'Produk berhasil dimarkup!'});
 })
+
+app.get('/getdatastats',async (req,res)=>{
+	const data = {
+		users:0,admins:0,saldo_users_total:0,
+		products:0,brands:0,
+		orders:0,success_orders:0,
+		topups:0,success_topups:0
+	}
+	const users = (await db.ref('users').get()).val();
+	if(users){
+		for(let i in users){
+			data.users += 1;
+			if(users[i].isAdmin)
+				data.admins += 1;
+			data.saldo_users_total += users[i].saldo || 0;
+		}
+	}
+	const products = await getProducts();
+	if(products.valid){
+		for(let i in products.data){
+			for(let j in products.data[i]){
+				products.data[i][j].data.forEach(()=>{
+					data.products += 1;
+				})
+				data.brands += 1;
+			}
+		}
+	}
+	const orders = (await db.ref(`orders`).get()).val();
+	if(orders){
+		for(let i in orders){
+			data.orders += 1;
+			if(orders[i].products.status && orders[i].products.status === 'Sukses'){
+				data.success_orders += 1;
+			}
+		}
+	}
+	const topups = (await db.ref('topups').get()).val();
+	if(topups){
+		for(let i in topups){
+			data.topups += 1;
+			if(topups[i].products.status && topups[i].products.status === 'Sukses'){
+				data.success_topups += 1;
+			}
+		}
+	}
+	res.json(data);
+})
 //functions
 
 const productRechecker = (buyyerProductCode) => {

@@ -7,8 +7,20 @@
     <link rel="stylesheet" href="./node_modules/owl.carousel/dist/assets/owl.carousel.min.css" />
   </head>
   <body>
-    <div id=app class=smartWidth>
-      <div style="padding:10px;margin-top:20px;position:sticky;top:10px;border-radius:5px;background:white;border:1px solid gainsboro;z-index: 1;" class=card>
+    <div id=app class=smartWidth style="position: relative;">
+      <div style="
+        position: sticky;
+        top: 0;
+        border-radius: 5px;
+        background: #f5f5f957;
+        z-index: 1;
+        position: fixed;
+        width: 100%;
+        padding: 0;
+        height: 100%;
+        display: none;
+        left: 0;
+      " id=menuparent>
         <style>
           #menu div:hover{
             background:blue;
@@ -17,16 +29,28 @@
           }
           #menu div{
             height: 24px;
+            width: auto
           }
         </style>
-        <div id=menu style=box-shadow:none;>
+        <div id=menu style="
+          flex-direction: column;
+          border-right: 1px solid gainsboro;
+          border-left: 1px solid gainsboro;
+          border-radius: 0 !important;
+          padding: 20px;
+          justify-content: flex-start;
+        ">
+          <div style="background: none;border: none;margin-bottom:20px;" id=HideMenu>
+            <img src=./more/media/close.png>
+          </div>
+          <div id=Config class="bold"><img src=./more/media/config.png hidden> Web Config</div>
           <div id=Users class=bold>Users</div>
+          <div id=Kategori class="bold"><img src=./more/media/price.png hidden> Kategori</div>
+          <div id=Produk class="bold"><img src=./more/media/price.png hidden> Produk</div>
+          <div id=Produk class="bold"><img src=./more/media/price.png hidden> Brand</div>
           <div id=Order class="bold"><img src="./more/media/order.png" hidden> Orders</div>
           <div id=Topup class="bold"><img src="./more/media/order.png" hidden> Topups</div>
           <div id=Price class="bold"><img src=./more/media/price.png hidden> Markup Harga</div>
-          <div id=Kategori class="bold"><img src=./more/media/price.png hidden> Kategori</div>
-          <div id=Produk class="bold"><img src=./more/media/price.png hidden> Produk</div>
-          <div id=Config class="bold"><img src=./more/media/config.png hidden> Web Config</div>
           <div id=Feedback class="bold"><img src=./more/media/feedback.png hidden> Feedback</div>
           <div id=Banner class=bold><img src=./more/media/ads.png hidden> Carousel</div>
           <div id=Broadcast class=bold><img src=./more/media/broadcasticon.png hidden> Broadcast Message</div>
@@ -34,6 +58,21 @@
           <div id=DigiDepo class=bold><img src=./more/media/topupicon.png hidden> Deposit Digi</div>
           <div id=DuitkuDisbursement class=bold><img src=./more/media/pullicon.png hidden> Tarik Duitku</div>
         </div>
+      </div>
+      <div style="
+        background: white;
+        width: 48px;
+        position: sticky;
+        top: 10px;
+        border-radius: 8px;
+        border: 1px solid gainsboro;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      " id=moremenutoggle>
+        <img src=./more/media/moremenu.png>
       </div>
       <div id=body>
       </div>
