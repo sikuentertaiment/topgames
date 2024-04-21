@@ -3199,6 +3199,7 @@ const view = {
 			},
 			async doRegistration(){
 				const regisdata = this.collectData();
+				return console.log(regisdata);
 				const dataStatus = this.dataStatus(regisdata);
 				if(!dataStatus.valid)
 					return app.showWarnings(dataStatus.message);

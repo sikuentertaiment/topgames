@@ -707,6 +707,10 @@ const view = {
 				}
 				this.category.onchange = ()=>{
 					this.generateBrand(this.category.value);
+					// this.generateProducts(this.category.value,this.brand.value);
+				}
+				this.brand.onchange = ()=>{
+					// this.generateProducts(this.category.value,this.brand.value);
 				}
 				this.savebutton.onclick = ()=>{
 					this.saveData();
@@ -721,39 +725,56 @@ const view = {
 			async generateOrders(){
 				this.products = await new Promise((resolve,reject)=>{
 					cOn.get({
-						url:`${app.baseUrl}/pricelist`,
+						url:`${app.baseUrl}/productlist`,
 						onload(){
-							resolve(this.getJSONResponse().products);
+							resolve(this.getJSONResponse());
 						}
 					})
 				})
-				for(let i in this.products){
+				for(let i of this.products){
+					if(!this.category.items)
+						this.category.items = [];
+					if(this.category.items.includes(i.category))
+						continue
 					this.category.addChild(makeElement('option',{
-						value:i,innerHTML:i
+						value:i.category,innerHTML:i.category
 					}))
+					this.category.items.push(i.category);
 				}
+
 				this.generateBrand('all');
+				// this.generateProducts('all','all');
 			},
 			generateBrand(category){
+				this.brand.items = {};
 				this.brand.clear();
-				this.brand.addChild(makeElement('option',{innerHTML:'Semua',value:'all'}));
-				if(category === 'all'){
-					const displayed = [];
-					for(let i in this.products){
-						for(let j in this.products[i]){
-							if(displayed.includes(j))
-								continue;
-							this.brand.addChild(makeElement('option',{
-								innerHTML:`${j}`,
-								value:j.replaceAll('.','')
-							}))
-							displayed.push(j);
-						}
+				this.brand.addChild(makeElement('option',{innerHTML:'Semua',value:'all',selected:true}));
+				for(let i of this.products){
+					if(category !== 'all' && i.category !== category){
+						continue
 					}
-					return
+					if(this.brand.items[i.brand]){
+						continue
+					}
+					this.brand.addChild(makeElement('option',{
+						innerHTML:i.brand,
+						value:i.brand
+					}))
+					this.brand.items[i.brand] = true;
 				}
-				for(let i in this.products[category]){
-					this.brand.addChild(makeElement('option',{innerHTML:i,value:i.replaceAll('.','')}));
+			},
+			generateProducts(category,brand){
+				this.product.clear();
+				this.product.addChild(makeElement('option',{innerHTML:'Semua',value:'all'}));
+				for(let i of this.products){
+					if(category !== 'all' && i.category !== category)
+						continue
+					if(brand !== 'all' && i.brand !== brand)
+						continue
+					this.product.addChild(makeElement('option',{
+						innerHTML:i.product_name,
+						value:i.buyer_sku_code
+					}))
 				}
 			},
 			collectData(){
@@ -790,7 +811,7 @@ const view = {
 			}
 		})
 	},
-	usersPage(){
+	usersPage(isAdmin){
 		return makeElement('div',{
 			className:'smartWidth',
 			style:`
@@ -821,7 +842,7 @@ const view = {
 					" id=backbutton>
 						<img src=./more/media/back.png>
 					</div>
-					<div>List Pengguna</div>
+					<div>List ${isAdmin ? 'Admin' : 'Pengguna'}</div>
 					<div style="
 						position: absolute;
 				    right: 10px;
@@ -841,6 +862,7 @@ const view = {
 					padding:10px;
 					background:whitesmoke;
 				" id=pplace>
+						<div class=goldbutton id=adduser style=margin-bottom:10px;>Tambah User</div>
 						<div style="
 							padding:20px;
 							background:white;
@@ -889,8 +911,12 @@ const view = {
 				}
 				this.pplace = this.find('#pplace');
 				this.qsearch = this.find('#qsearch');
+				this.adduser = this.find('#adduser');
 				this.qsearch.onchange = ()=>{
 					this.processSearch();
+				}
+				this.adduser.onclick = ()=>{
+					app.openNewUser();
 				}
 				this.anim({
 					targets:this,
@@ -909,6 +935,8 @@ const view = {
 					})
 				}))
 				for(let i=0;i < orders.length;i++){
+					if(isAdmin && !orders[i].isAdmin)
+						continue
 					this.ordersels[i] = this.pplace.addChild(makeElement('div',{
 						orderId:orders[i].phonenumber,
 						orderData:orders[i],
@@ -1414,7 +1442,7 @@ const view = {
 								</div>
 							</div>
 							<div>
-								<div>Template Saldo Kurang</div>
+								<div class=mb10>Template Saldo Kurang</div>
 								<div style=display:flex;>
 									<textarea id=fonnteData-messageTemplate-needmoresaldo></textarea>
 								</div>
@@ -3610,6 +3638,177 @@ const view = {
 					    margin-top: 200px;
 						`
 					}))
+			}
+		})
+	},
+	newUserPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				background:white;
+				border:1px solid gainsboro;
+				display:flex;
+				flex-direction:column;
+				overflow:hidden;
+				border-radius:10px 10px 0 0;
+			`,
+			innerHTML:`
+				<div style="
+					padding:10px;
+					height:48px;
+					border-bottom:1px solid gainsboro;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					position:relative;
+				">
+					<div style="
+						position: absolute;
+				    left: 10px;
+				    padding: 10px;
+				    width: 32px;
+				    height: 32px;
+				    cursor:pointer;
+					" id=backbutton>
+						<img src=./more/media/back.png>
+					</div>
+					<div>Tambah User</div>
+				</div>
+				<div style="
+					height:100%;
+					overflow:auto;
+					padding:10px;
+					background:whitesmoke;
+				" id=pplace>
+					<div style="
+						padding:20px;
+						background:white;
+						border-radius:5px;
+						margin-bottom:5px;
+						border:1px solid gainsboro;
+						display:flex;
+						flex-direction:column;
+						gap:10px;
+					">
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Nama User</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<input placeholder="Masukan Nama user" id=fullname>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Whatsapp</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<input placeholder="Masukan Whatsapp" type=number id=phonenumber>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Email</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<input placeholder="Masukan Email" type=email id=email>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Password ( Copy )</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<input placeholder="Masukan Password" id=password value="${getTime()}" readonly>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Level</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<select id=level class=child>
+									<option value=basic>Basic</option>
+									<option value=admin>Admin</option>
+								</select>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Status</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<select id=status class=child>
+									<option value=on>Active</option>
+									<option value=off>Off</option>
+								</select>
+							</div>
+						</div>
+						<div style=font-size:12px;>
+							<div style=margin-bottom:10px;>Saldo</div>
+							<div style=margin-bottom:10px;display:flex;>
+								<input placeholder="Masukan Whatsapp" type=number id=saldo value="0" min=0>
+							</div>
+						</div>
+						<div style="
+							padding:15px;
+							color:white;
+							background:#303f9f;
+							border-radius:5px;
+							cursor:pointer;
+							text-align:center;
+							margin-top:10px;
+						" id=savebutton>Tambah User</div>
+					</div>
+				</div>
+			`,
+			autoDefine:true,
+			close(){
+				app.topLayer.hide();
+				app.body.style.overflow = 'auto';
+				this.remove();
+			},
+			onadded(){
+				this.backbutton.onclick = ()=>{
+					this.close();
+				}
+				this.savebutton.onclick = ()=>{
+					this.saveData();
+				}
+				this.anim({
+					targets:this,
+					height:['0','95%'],
+					duration:1000
+				})
+			},
+			collectData(){
+				const data = {
+					fullname:this.fullname.value,
+					phonenumber:this.phonenumber.value,
+					email:this.email.value,
+					password:this.password.value,
+					saldo:this.saldo.value,
+					isAdmin:this.level.value === 'admin' ? true : false,
+					isNonactive:this.status.value === 'on' ? false : true
+				};
+				let valid = true;
+				const ignore = ['saldo','isAdmin','isNonactive'];
+				for(let i in data){
+					if(ignore.includes(i))
+						continue;
+					if(!data[i].length){
+						valid = false;
+						break;
+					}
+				}
+				return {valid,data};
+			},
+			async saveData(){
+				const data = this.collectData();
+				if(!data.valid)
+					return app.showWarnings('Mohon periksa kembali data anda!');
+				const response = await new Promise((resolve,reject)=>{
+					cOn.post({
+						someSettings:[['setRequestHeader','Content-type','application/json']],
+						url:`${app.baseUrl}/regis`,
+						data:jsonstr(data.data),
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				if(!response.valid)
+					return app.showWarnings(response.message);
+				app.showWarnings('User berhasil ditambahkan!');
+				app.openNewUser();
 			}
 		})
 	}

@@ -1031,7 +1031,11 @@ app.post('/regis',async (req,res)=>{
 	}
 	// ref the email id with the wa number
 	// now saving the data
-	await db.ref(`users/${emailId}`).set(Object.assign(req.fields,schecmaUser));
+	const userData = Object.assign(req.fields,schecmaUser);
+	await db.ref(`users/${emailId}`).set(userData);
+
+	// send fonnte new user message
+	const response = await fonnte.sendMessage(userData,'newuser',userData.phonenumber);
 	res.json({valid:true,message:'Registrastion success!'});
 })
 

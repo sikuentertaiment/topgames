@@ -1,6 +1,6 @@
 const app = {
-	// baseUrl:'http://localhost:8080',
-	baseUrl:'https://cooperative-tux-worm.cyclic.app',
+	baseUrl:'http://localhost:8080',
+	// baseUrl:'https://cooperative-tux-worm.cyclic.app',
 	body:find('body'),
 	app:find('#app'),
 	menu:find('#menu'),
@@ -106,6 +106,9 @@ const app = {
 	openUsers(){
 		this.topLayer.replaceChild(view.usersPage());
 	},
+	openAdmin(){
+		this.topLayer.replaceChild(view.usersPage(true));
+	},
 	openBrand(){
 		this.topLayer.replaceChild(view.brandIcons());
 	},
@@ -180,6 +183,9 @@ const app = {
 	},
 	openProduk(){
 		this.topLayer.replaceChild(view.products());
+	},
+	openNewUser(){
+		this.topLayer.replaceChild(view.newUserPage());
 	}
 }
 
