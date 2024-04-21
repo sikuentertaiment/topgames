@@ -377,6 +377,10 @@ const app = {
 		this.topLayerClose();
 	},
 	openCekpesanan(){
+		if(this.isLogin){
+			this.isTrxState = true;
+			return location.hash = 'History';
+		}
 		this.topLayer.replaceChild(view.cekPesanan());
 	},
 	bottomNavEventInit(){
