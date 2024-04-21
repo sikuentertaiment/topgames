@@ -1,6 +1,6 @@
 const app = {
 	// baseUrl:'http://localhost:8080',
-	baseUrl:'https://cooperative-tux-worm.cyclic.app',
+	baseUrl:'https://topgames-gemasajaas-projects.vercel.app',
 	usernameCheckerUrl:'https://api.kitadigital.my.id/api/game',
 	webtitle:find('title'),
 	headertitle:find('.bigtitle'),

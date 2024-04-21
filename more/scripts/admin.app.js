@@ -1,6 +1,6 @@
 const app = {
 	// baseUrl:'http://localhost:8080',
-	baseUrl:'https://cooperative-tux-worm.cyclic.app',
+	baseUrl:'https://topgames-gemasajaas-projects.vercel.app',
 	body:find('body'),
 	app:find('#app'),
 	menu:find('#menu'),
