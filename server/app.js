@@ -1106,6 +1106,9 @@ app.post('/cartco',async (req,res)=>{
 						}
 						orderData.digiresponse = responseorder.data.data;
 						await db.ref(`orders/${orderId}`).set(orderData);
+						const userOrdersList = (await db.ref(`users/${req.fields.number}/orders`).get()).val();
+						userOrderList.push(orderId);
+						await db.ref(`users/${req.fields.number}/orders`).set(userOrderList);
 						docolen.push({orderId,product:item.varianName,status:orderData.products.status,message:'Produk berhasil diorder!'});
 					}catch(e){
 						res.json({valid:false,message:'Terjadi kesalahan!'});

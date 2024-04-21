@@ -124,11 +124,12 @@ textarea{
   font-size:24px;
   height: 64px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
   position: relative;
   text-align: center;
   color:#303f9f;
+  overflow: hidden;
 }
 #bottomNav{
   display:flex;
@@ -238,6 +239,7 @@ textarea{
   cursor:pointer;
   position:sticky;
   top:0;
+  align-items: flex-end;
 }
 #notif div div{
   white-space: nowrap;
@@ -312,7 +314,7 @@ textarea{
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  z-index: 13;display: none;
+  z-index: 15;display: none;
   background: rgb(245 245 249);
 }
 .smallimportan{

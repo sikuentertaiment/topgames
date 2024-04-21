@@ -44,12 +44,12 @@ const app = {
 		this.bottomNavEventInit();
 		this.openMoreMenuInit();
 		this.generateBanner();
-		this.generateRandomProduct();
+		this.generateRandomProduct('');
 		// this.handleCustomerSupport();
 		//record guest
 		await this.handleVisitor();
 		this.removeInitLoading();
-		this.startNotifMovement();
+		// this.startNotifMovement();
 		this.initSearchInput()
 
 		// this.generateTools();
@@ -88,16 +88,17 @@ const app = {
 		this.initLoading.remove();
 	},
 	menuButtonsInit(){
-		const sortedCategories = [];
+		this.sortedCategories = [];
 
 		Object.keys(this.categories).forEach((key)=>{
-			sortedCategories[this.categories[key]] = key;
+			this.sortedCategories[this.categories[key] - 1] = key;
 		})
-		sortedCategories.forEach((key)=>{
+		this.sortedCategories.forEach((key)=>{
 			this.menu.addChild(makeElement('div',{
 				innerHTML:key,
 				onclick(){
-					app.openEtalase(key);
+					// app.openEtalase(key);
+					app.generateRandomProduct(key);
 				}
 			}))
 		})
@@ -305,26 +306,9 @@ const app = {
 			}
 		}
 	},
-	generateRandomProduct(){
-		const productsRandom = [];
-		const allproducts = [];
-		const skuinside = [];
-		for(let i in this.products){
-			for(let j in this.products[i]){
-				this.products[i][j].data.forEach((product)=>{
-					allproducts.push(product);
-				})
-			}
-		}
-		while(productsRandom.length<9){
-			const choosed = allproducts.getRandom();
-			if(!skuinside.includes(choosed.brand)){
-				skuinside.push(choosed.brand);
-				productsRandom.push(choosed);
-			}
-		}
-		console.log(allproducts,productsRandom);
-		app.bodydiv.replaceChild(view.randomProducts(productsRandom));
+	generateRandomProduct(key){
+		const brands = this.products[!key ? this.sortedCategories[0] : key];
+		this.bodydiv.replaceChild(view.randomProducts(!key ? this.sortedCategories[0] : key));
 	},
 	generateBanner(){
 		for(let i in this.carousel){
@@ -458,12 +442,10 @@ const app = {
 	},
 	initSearchInput(){
 		this.finderInput.onclick = ()=>{
-			this.openSearchPage();
+			location.hash = 'Search';
 		}
 	},
 	openSearchPage(){
-		this.hideAndShow();
-		this.topLayerSetBackground();
 		this.topLayer.replaceChild(view.searchPage());
 	},
 	saveLoginData(param){
@@ -526,7 +508,8 @@ const app = {
 		'#Topup':'openTopup',
 		'#Codetails':'showCoDetails',
 		'#Detailspayment':'openShowPaymentDetails',
-		'#Etalase':'showEtalase'
+		'#Etalase':'showEtalase',
+		'#Search':'openSearchPage'
 	},
 	navigationInitiator(global){
 		window.onhashchange = ()=>{

@@ -83,8 +83,8 @@ const view = {
 						margin-bottom:10px;
 						border-radius:5px;
 					" class=card>
-						<div style="padding-bottom:10px;margin-bottom:20px;font-weight:bold;">Detail Kustomer</div>
-						<div style=margin-bottom:20px;>
+						<div style="padding-bottom:10px;font-weight:bold;">Detail Kustomer</div>
+						<div>
 							<div style=margin-bottom:10px;>${param.products[0].category !== 'Games' ? 'Hp Tujuan' : 'User Id / Zone'}</div>
 							<div style=display:flex;gap:10px;><input placeholder="${param.products[0].category !== 'Games' ? '08xxxxxxxxx' : 'user id/zone id'}" id=goalNumber type=number class=formc>
 								<div style="
@@ -97,10 +97,6 @@ const view = {
 								" id=findNumber class=goldbutton>Cari Nomor</div>
 							</div>
 							${param.products[0].category === 'Games' ? '<div style="margin-top:10px;background-color: #d7f5fc;padding:10px;border-radius:8px;border-color: #b3edf9;color: #03c3ec;"><span style="font-size:12px;">Jika games memiliki zona id, maka gunakan formula berikut:<br>"user id/zona id"</span></div>' : ''}
-						</div>
-						<div>
-							<div style=margin-bottom:10px;>Notifikasi Whatsapp</div>
-							<div style=display:flex;><input placeholder=08xxxxxxxxx id=waNotif type=number class=formc></div>
 						</div>
 					</div>
 					<div style="
@@ -131,7 +127,7 @@ const view = {
 						margin-bottom:10px;
 						border-radius:5px;
 					" class=card>
-						<div style="padding-bottom:10px;margin-bottom:10px;font-weight:bold;">Gunakan Voucher</div>
+						<div style="padding-bottom:10px;font-weight:bold;">Gunakan Voucher</div>
 						<div style=display:flex;gap:10px;>
 							<div style=display:flex;width:100%;>
 								<input placeholder="Masukan kode voucher anda" id=voucher type=number class=formc>
@@ -139,6 +135,17 @@ const view = {
 							<div class=goldbutton id=checkvoucherstatus style=font-size:11px;>
 								Cek Voucher
 							</div>
+						</div>
+					</div>
+					<div style="
+						padding:20px;
+						background:white;
+						margin-bottom:10px;
+						border-radius:5px;
+					" class=card>
+						<div>
+							<div style=margin-bottom:10px; class=bold>Notifikasi Whatsapp</div>
+							<div style=display:flex;><input placeholder=08xxxxxxxxx id=waNotif type=number class=formc></div>
 						</div>
 					</div>
 					<div style="margin:20px 0;" class=smallimportan>*Dengan melanjutkan berarti anda setuju dengan semua persyaratan kami.</div>
@@ -908,6 +915,7 @@ const view = {
 							background:white;
 							border-radius:5px;
 							margin-bottom:10px;
+							display:none;
 						" class=card>
 							<div style=margin-bottom:10px;font-weight:bold;>Cek Pesanan</div>
 							<div style=display:flex;gap:10px;>
@@ -1037,7 +1045,7 @@ const view = {
 									margin-bottom:15px;
 								">${app.isTrxState ? 'OrderId' : 'TopupId'}: ${data.payments.orderId}</div>
 								<div style="
-									padding-bottom:10px;
+									padding-bottom:15px;
 									margin-bottom:20px;
 									border-bottom:1px solid gainsboro;
 									display:flex;
@@ -1105,7 +1113,7 @@ const view = {
 				if(!this.trxData.length)
 					this.itemsparent.addChild(makeElement('div',{
 						innerHTML:`
-							Tidak ada history pemesanan...
+							Tidak ada history ${app.isTrxState ? 'pemesanan' : 'topup'}...
 						`,
 						style:`
 							text-align: center;
@@ -2110,57 +2118,70 @@ const view = {
 		})
 	},
 	randomProducts(param){
+		console.log(param);
 		return makeElement('div',{
 			style:'width:100%;',
 			innerHTML:`
 			`,
 			generate(){
+				const products = [];
+				for(let i in app.products[param]){
+					products.push(app.products[param][i]);
+				}
+				let loopLen = products.length/2;
+				if(products.length % 3 !== 0){
+					loopLen = (products.length + 1) / 2
+				}
 				let index = 0;
-				for(let i=0;i<3;i++){
+				for(let i=0;i<loopLen;i++){
 					this.addChild(makeElement('div',{
-						className:'item',
+						style:'display:flex;gap:10px;',
+						isEmpty:false,
 						onadded(){
+							let mtyCount = 0;
 							for(let j=0;j<3;j++){
-								let category = param[index].category.toLowerCase();
-								category = category[0].toUpperCase() + category.slice(1);
-								let brand = param[index].brand.toLowerCase();
-								brand = brand[0].toUpperCase() + brand.slice(1);
-
+								const thumbnail = products[index]?products[index].data[0].thumbnail:null;
+								let category = products[index]?products[index].data[0].category.toLowerCase():null;
+								let brand = products[index]?products[index].data[0].brand.toLowerCase():null;
+								if(thumbnail){
+									category = category[0].toUpperCase() + category.slice(1);
+									brand = brand[0].toUpperCase() + brand.slice(1);
+								}else{
+									mtyCount += 1;
+									if(mtyCount === 3)this.isEmpty = true;
+								}
 								this.addChild(makeElement('div',{
-									className:'box',brand:param[index].brand,category:param[index].category,
+									category:products[index]?products[index].data[0].category:null,
+									brand:products[index]?products[index].data[0].brand:null,
+									style:`width:100%;opacity:${!thumbnail?0:1};cursor:${!thumbnail?'unset':'pointer'};`,
 									innerHTML:`
 										<div style="
-				              width:100%;
-				              height:100%;
-				              display: flex;
-				              justify-content: center;
-				              padding:20px 0;
-				              padding-bottom:5px;
-				            ">
-				              <img src="${param[index].thumbnail}" style="
-				                width:90px;
-				                height:90px;
-				                object-fit: cover;
-				                border-radius:5px;
-				              ">
-				            </div>
-				            <div style="
-				              width:100%;
-				              height:100%;
-				              top:0;
-				              display: flex;
-				              align-items:flex-end;
-				            ">
-				              <div style="
-				                padding: 0 15px;
-				                width: 90%;
-				                text-align: center;
-				                background: whitesmoke;
-				                color: black;
-				                white-space:nowrap;
-				                font-size:13px;
-				              ">${category + ' ' +brand}</div>
-				            </div>
+											${i==0 ? 'padding-top:20px;':''}
+											border-radius:5px 5px 0 0;
+											padding-bottom:10px;
+										">
+											<div style="
+					              width:100%;
+					              height:100%;
+					              display: flex;
+					              justify-content: center;
+					            ">
+					              <img src="${thumbnail}" style="
+					                width:90px;
+					                height:90px;
+					                object-fit: cover;
+					                border-radius:5px;
+					                margin-top:15px;
+					              ">
+					            </div>
+										</div>
+										<div style="
+											border:none;
+											border-radius:0 0 5px 5px;
+											margin-bottom:10px;cursor:unset;
+											border-top:0;
+											text-align:center;
+										">${' '+brand}</div>
 									`,
 									onclick(){
 										app.openDetailsProduct({
@@ -2172,9 +2193,78 @@ const view = {
 								}))
 								index += 1;
 							}
+							if(this.isEmpty)
+								this.remove();
 						}
 					}))
 				}
+				if(!products.length){
+					this.pplace.addChild(makeElement('div',{
+						innerHTML:'Item tidak tersedia',
+						style:'text-align:center;padding:10px;padding-top:150px;'
+					}))
+				}
+
+				// let index = 0;
+				// for(let i=0;i<3;i++){
+				// 	this.addChild(makeElement('div',{
+				// 		className:'item',
+				// 		onadded(){
+				// 			for(let j=0;j<3;j++){
+				// 				let category = param[index].category.toLowerCase();
+				// 				category = category[0].toUpperCase() + category.slice(1);
+				// 				let brand = param[index].brand.toLowerCase();
+				// 				brand = brand[0].toUpperCase() + brand.slice(1);
+
+				// 				this.addChild(makeElement('div',{
+				// 					className:'box',brand:param[index].brand,category:param[index].category,
+				// 					innerHTML:`
+				// 						<div style="
+				//               width:100%;
+				//               height:100%;
+				//               display: flex;
+				//               justify-content: center;
+				//               padding:20px 0;
+				//               padding-bottom:5px;
+				//             ">
+				//               <img src="${param[index].thumbnail}" style="
+				//                 width:90px;
+				//                 height:90px;
+				//                 object-fit: cover;
+				//                 border-radius:5px;
+				//               ">
+				//             </div>
+				//             <div style="
+				//               width:100%;
+				//               height:100%;
+				//               top:0;
+				//               display: flex;
+				//               align-items:flex-end;
+				//             ">
+				//               <div style="
+				//                 padding: 0 15px;
+				//                 width: 90%;
+				//                 text-align: center;
+				//                 background: whitesmoke;
+				//                 color: black;
+				//                 white-space:nowrap;
+				//                 font-size:13px;
+				//               ">${category + ' ' +brand}</div>
+				//             </div>
+				// 					`,
+				// 					onclick(){
+				// 						app.openDetailsProduct({
+				// 							title:`${category + ' ' +brand}`,
+				// 							details:app.products[this.category][this.brand].details,
+				// 							products:app.products[this.category][this.brand].data
+				// 						});
+				// 					}
+				// 				}))
+				// 				index += 1;
+				// 			}
+				// 		}
+				// 	}))
+				// }
 			},
 			onadded(){
 				this.generate();
