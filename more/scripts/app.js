@@ -377,10 +377,6 @@ const app = {
 		this.topLayerClose();
 	},
 	openCekpesanan(){
-		if(this.isLogin){
-			this.isTrxState = true;
-			return location.hash = 'History';
-		}
 		this.topLayer.replaceChild(view.cekPesanan());
 	},
 	bottomNavEventInit(){
@@ -389,6 +385,12 @@ const app = {
 				// this.hideAndShow();
 				// this.topLayerSetBackground();
 				// this[`open${div.id}`]();
+				if(div.id === 'Cekpesanan'){
+					if(this.isLogin){
+						this.isTrxState = true;
+						return location.hash = 'History';
+					}
+				}
 				location.hash = div.id;
 			}
 		})
