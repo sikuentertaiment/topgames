@@ -1450,9 +1450,8 @@ app.get('/getsaldouser',async (req,res)=>{
 })
 
 app.get('/getip',async (req,res)=>{
-	const data = await getIp();
-	console.log(data);
-	res.json(data);
+	const response = await getIp();
+	res.json(response.data);
 })
 //functions
 
@@ -1572,7 +1571,6 @@ const getIp = ()=>{
 	return new Promise(async (resolve,reject)=>{
 		const url = 'https://api.ipify.org/?format=json';
 		const response = await axios.get(url);
-		console.log(response);
 		resolve(response);
 	})
 }
