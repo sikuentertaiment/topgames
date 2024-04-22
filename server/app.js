@@ -1451,6 +1451,7 @@ app.get('/getsaldouser',async (req,res)=>{
 
 app.get('/getip',async (req,res)=>{
 	const data = await getIp();
+	console.log(data);
 	res.json(data);
 })
 //functions
@@ -1571,7 +1572,8 @@ const getIp = ()=>{
 	return new Promise(async (resolve,reject)=>{
 		const url = 'https://api.ipify.org/?format=json';
 		const response = await axios.get(url);
-		resolve(response);	
+		console.log(response);
+		resolve(response);
 	})
 }
 const getPrice = function(value){
