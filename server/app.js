@@ -1441,7 +1441,12 @@ app.get('/productlist',async (req,res)=>{
 })
 
 app.get('/getsaldouser',async (req,res)=>{
-	console.log(await getDigiSaldo());
+	try{
+		const data = await getDigiSaldo();
+		res.json({valid:true,saldo:data.data.data.deposit});
+	}catch(e){
+		res.json({valid:false})
+	}
 })
 //functions
 
