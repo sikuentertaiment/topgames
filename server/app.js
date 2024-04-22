@@ -1439,6 +1439,10 @@ app.get('/productlist',async (req,res)=>{
 	}
 	res.json(productList);
 })
+
+app.get('/getsaldouser',async (req,res)=>{
+	res.json(await getDigiSaldo());
+})
 //functions
 
 const productRechecker = (buyyerProductCode) => {

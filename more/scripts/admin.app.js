@@ -186,6 +186,9 @@ const app = {
 	},
 	openNewUser(){
 		this.topLayer.replaceChild(view.newUserPage());
+	},
+	openCekid(){
+		this.topLayer.replaceChild(view.cekIdPage());
 	}
 }
 

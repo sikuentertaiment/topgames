@@ -3811,5 +3811,201 @@ const view = {
 				app.openNewUser();
 			}
 		})
+	},
+	cekIdPage(){
+		return makeElement('div',{
+			className:'smartWidth',
+			style:`
+				background:white;
+				border:1px solid gainsboro;
+				display:flex;
+				flex-direction:column;
+				overflow:hidden;
+				border-radius:10px 10px 0 0;
+			`,
+			innerHTML:`
+				<div style="
+					padding:10px;
+					height:48px;
+					border-bottom:1px solid gainsboro;
+					display:flex;
+					align-items:center;
+					justify-content:center;
+					position:relative;
+				">
+					<div style="
+						position: absolute;
+				    left: 10px;
+				    padding: 10px;
+				    width: 32px;
+				    height: 32px;
+				    cursor:pointer;
+					" id=backbutton>
+						<img src=./more/media/back.png>
+					</div>
+					<div>Edit Brand Cek Id Status</div>
+					<div style="
+						position: absolute;
+				    right: 10px;
+				    padding: 10px;
+				    width: 24px;
+				    height: 24px;
+				    cursor: pointer;
+				    background: #303f9f;
+				    border-radius: 5px;
+					" id=updatebutton>
+						<img src=./more/media/refreshicon.png style=width:100%;>
+					</div>
+				</div>
+				<div style="
+					height:100%;
+					overflow:auto;
+					padding:10px;
+					background:whitesmoke;
+				" id=pplace>
+						<div style="
+							padding:20px;
+							background:white;
+							border:1px solid gainsboro;
+							border-radius:5px;
+							display:flex;
+							gap:10px;
+							flex-direction:column;
+							margin-bottom:20px;
+						">
+							<div>Quick Search</div>
+							<div style=display:flex;>
+								<input placeholder="Gunakan Pencarian Cepat..." id=qsearch>
+							</div>
+						</div>
+				</div>
+			`,
+			close(){
+				app.topLayer.hide();
+				app.body.style.overflow = 'auto';
+				this.remove();
+			},
+			processSearch(){
+				const key = this.qsearch.value;
+				const rooms = ['products.varianName','payments.orderId','payments.dateCreate','products.status'];
+				for(let i in this.ordersels){
+					let found = i.toLowerCase().search(key.toLowerCase());
+					if(found === -1){
+						this.ordersels[i].hide();
+					}else this.ordersels[i].show('block');
+				}
+			},ordersels:{},
+			autoDefine:true,
+			onadded(){
+				this.backbutton.onclick = ()=>{
+					this.close();
+				}
+				this.updatebutton.onclick = ()=>{
+					app.openBrand();
+				}
+				this.qsearch.onchange = ()=>{
+					this.processSearch();
+				}
+				this.anim({
+					targets:this,
+					height:['0','95%'],
+					duration:1000
+				})
+				this.generateOrders();
+			},
+			async generateOrders(){
+				const orders = await new Promise((resolve,reject)=>{
+					cOn.get({
+						url:`${app.baseUrl}/brandicons`,
+						onload(){
+							resolve(this.getJSONResponse());
+						}
+					})
+				})
+				let count = 0;
+				for(let i in orders){
+					count += 1;
+					this.ordersels[i] = this.pplace.addChild(makeElement('div',{
+						id:i,
+						innerHTML:`
+							<div style="
+								display:flex;
+								justify-content:space-between;
+								align-items:flex-start;
+								gap:10px;
+							">
+								<div style="width:100%;">
+									<div style="padding:10px 0;border-bottom:1px solid gainsboro;margin-bottom:10px;">${count}. ${i}</div>
+									<div style="display:flex;flex-direction:column;font-size:12px;color:gray;gap:5px;padding:5px 0;">
+										<div style=width:64px;height:64px;border-radius:8px;overflow:hidden;margin-bottom:20px;>
+											<img src="${orders[i]}" class="fitimage child" id=image>
+										</div>
+										<div style=display:flex;flex-direction:column;gap:10px;>
+											<div>Status</div>
+											<div style=display:flex;>
+												<input type=file id=newfile>
+											</div>
+										</div>
+										ay:flex;flex-direction:column;gap:10px;>
+											<div>Brand Code</div>
+											<div style=display:flex;>
+												<input id=brandcode>
+											</div>
+										</div>
+									</div>
+									<div style="
+										padding:10px;
+										border-radius:5px;
+										color:white;
+										cursor:pointer;
+										background:#303f9f;
+										text-align:center;
+										margin-top:20px;
+										margin-bottom:10px;
+									" id=cek>Simpan Perubahan</div>
+								</div>
+							</div>
+						`,autoDefine:true,
+						onadded(){
+							this.newfile.onchange = ()=>{
+								this.changeFile();
+							}
+							this.cek.onclick = ()=>{
+								this.saveChanges();
+							}
+						},
+						changeFile(){
+							const fr = new FileReader();
+							fr.onload = ()=>{
+								this.image.src = fr.result;
+							}
+							fr.readAsDataURL(this.newfile.files[0]);
+						},
+						async saveChanges(){
+							const data = new FormData();
+							data.append('id',this.id);
+							data.append('newicon',this.newfile.files[0]);
+							const response = await new Promise((resolve,reject)=>{
+								cOn.post({
+									url:`${app.baseUrl}/setnewbrandicon`,
+									data,
+									onload(){
+										resolve(this.getJSONResponse());
+									}
+								})
+							})
+							app.showWarnings(response.message);
+						},
+						style:`
+							background:white;
+							padding:10px 20px;
+							border:1px solid gainsboro;
+							margin-bottom:5px;
+							border-radius:5px;
+						`,
+					}))
+				}
+			}
+		})
 	}
 }

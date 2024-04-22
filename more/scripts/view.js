@@ -445,7 +445,7 @@ const view = {
 			  display: flex;
 			  align-items: flex-start;
 			  justify-content: center;
-			  z-index: 14;
+			  z-index: 15;
 			  background: rgb(225 225 225 / 47%);
 			`,
 			innerHTML:`
@@ -697,7 +697,7 @@ const view = {
 							<div style=display:flex;><input value="${Date.parse(param.payments.dateCreate) + 600000 < Date.parse(new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })) ? 'Kadaluwarsa' : param.payments.status === 'Pending' ? 'Belum dibayar' : 'Dibayar'}"></div>
 						</div>
 						<div style=margin-bottom:20px;>
-							<div style=margin-bottom:10px;>Status</div>
+							<div style=margin-bottom:10px;>Keterangan</div>
 							<div style=display:flex;><input value="${param.digiresponse ? param.digiresponse.sn : '-'}"></div>
 						</div>
 						<div style=margin-bottom:20px;>
@@ -731,7 +731,7 @@ const view = {
 							    width: 100%;
 							    height: 100%;
 							    background: #f5f5f5ed;
-							    display: ${Date.parse(param.payments.dateCreate) + 600000 < Date.parse(new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })) ? 'flex' : 'none'};
+							    display: ${Date.parse(param.payments.dateCreate) + 600000 < Date.parse(new Date().toLocaleString('en-US',{ timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12:false})) ? 'flex' : 'none'};
 							    align-items: center;
 							    justify-content: center;
 							    font-weight: bold;
