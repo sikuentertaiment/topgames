@@ -1448,6 +1448,11 @@ app.get('/getsaldouser',async (req,res)=>{
 		res.json({valid:false})
 	}
 })
+
+app.get('/getip',async (req,res)=>{
+	const data = await getIp();
+	res.json(data);
+})
 //functions
 
 const productRechecker = (buyyerProductCode) => {
@@ -1560,6 +1565,13 @@ const getProducts = ()=>{
 			await db.ref('products').set(products);
 			resolve({valid:true,data:products});
 		}else resolve({valid:false,data:(await db.ref('products').get()).val()})
+	})
+}
+const getIp = ()=>{
+	return new Promise(async (resolve,reject)=>{
+		const url = 'https://api.ipify.org/?format=json';
+		const response = await axios.get(url);
+		resolve(response);	
 	})
 }
 const getPrice = function(value){
