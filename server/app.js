@@ -1353,7 +1353,7 @@ app.get('/getdatastats',async (req,res)=>{
 			data.users += 1;
 			if(users[i].isAdmin)
 				data.admins += 1;
-			data.saldo_users_total += users[i].saldo || 0;
+			data.saldo_users_total += Number(users[i].saldo) || 0;
 		}
 	}
 	const products = await getProducts();
