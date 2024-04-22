@@ -1441,7 +1441,7 @@ app.get('/productlist',async (req,res)=>{
 })
 
 app.get('/getsaldouser',async (req,res)=>{
-	res.json(await getDigiSaldo());
+	console.log(await getDigiSaldo());
 })
 //functions
 
@@ -1462,7 +1462,7 @@ const productRechecker = (buyyerProductCode) => {
 const digiOrder = (orderData,param) => {
 	return new Promise(async (resolve,reject)=>{
 		const digiData = (await db.ref('digiData').get()).val();
-		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
+		const digiKey = !digiData.productionKey.length ? digiData.devKey : digiData.productionKey;
 		const digiSaldo = await getDigiSaldo();
 		if(digiSaldo.data.deposit >= digiData.minSaldoToMakeOrder || 50000){
 			//process digi order
@@ -1485,7 +1485,7 @@ const digiOrder = (orderData,param) => {
 const getDigiSaldo = () => {
 	return new Promise(async (resolve,reject)=>{
 		const digiData = (await db.ref('digiData').get()).val();
-		const digiKey = !digiData.devKey.length ? digiData.productionKey : digiData.devKey;
+		const digiKey = !digiData.productionKey.length ? digiData.devKey : digiData.productionKey;
 		const url = 'https://api.digiflazz.com/v1/cek-saldo';
 		const response = await axios.post(url,{
 			cmd:'deposit',
