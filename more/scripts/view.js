@@ -2118,7 +2118,6 @@ const view = {
 		})
 	},
 	randomProducts(param){
-		console.log(param);
 		return makeElement('div',{
 			style:'width:100%;',
 			innerHTML:`
@@ -2186,8 +2185,8 @@ const view = {
 									onclick(){
 										app.openDetailsProduct({
 											title:`${category + ' ' +brand}`,
-											details:app.products[this.category][this.brand].details,
-											products:app.products[this.category][this.brand].data
+											details:app.products[this.category][this.brand.replaceAll('.','')].details,
+											products:app.products[this.category][this.brand.replaceAll('.','')].data
 										});
 									}
 								}))
