@@ -873,7 +873,7 @@ app.post('/diginotify',async (req,res)=>{
     if(orderData){
     	orderData.products.status = post_data.data.status;
     	orderData.digiresponse = post_data.data;
-    	await db.ref(`order/${post_data.data.ref_id}`).set(orderData);
+    	await db.ref(`orders/${post_data.data.ref_id}`).set(orderData);
     	//sending fonnte notification
     	await fonnte.sendMessage(orderData,'digiStatusChanged',orderData.products.waNotif);
     }
