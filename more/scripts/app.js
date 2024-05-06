@@ -1,6 +1,6 @@
 const app = {
-	baseUrl:'http://localhost:8080',
-	// baseUrl:'https://topgames.vercel.app',
+	// baseUrl:'http://localhost:8080',
+	baseUrl:'https://topgames.vercel.app',
 	usernameCheckerUrl:'https://api.kitadigital.my.id/api/game',
 	webtitle:find('title'),
 	headertitle:find('.bigtitle'),
