@@ -134,8 +134,11 @@ app.get('/pricelist',async (req,res)=>{
 	if(response.data.data.forEach){
 		response.data.data.forEach((data)=>{
 
-			if(!markup[data.category][data.brand.replaceAll('.','')]){
-				markup[data.category][data.brand.replaceAll('.','')] = {value:'2000',type:'1'};	
+			if(!markup[data.category]){
+				markup[data.category] = {};
+				if(!markup[data.category][data.brand.replaceAll('.','')]){
+					markup[data.category][data.brand.replaceAll('.','')] = {value:'2000',type:'1'};	
+				}
 			}
 
 			const markupSetting = markup[data.category][data.brand.replaceAll('.','')];
